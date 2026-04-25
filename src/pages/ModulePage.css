@@ -1,72 +1,104 @@
-/* GLOBAL FAB & UTILITIES FIX */
+/* RESET DE SCROLL Y MODALES - FIX TOTAL */
 
-.fab-module {
-  position: fixed !important;
-  bottom: 95px !important; /* Por encima del navbar móvil */
-  right: 25px !important;
-  width: 64px !important;
-  height: 64px !important;
-  border-radius: 50% !important;
-  background: var(--grad-main) !important;
-  color: white !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5) !important;
-  z-index: 9999 !important; /* SUPERIOR A TODO */
-  border: none !important;
-  cursor: pointer !important;
+html, body {
+  overflow-x: hidden;
+  overflow-y: auto !important; /* Forzar scroll */
+  height: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-.fab-module svg {
-  width: 30px !important;
-  height: 30px !important;
+.container {
+  padding-bottom: 120px !important; /* Espacio para el navbar móvil */
 }
 
-@media (min-width: 769px) {
-  .fab-module { display: none !important; }
+/* MODAL REDESIGN - ADIÓS X GRIS */
+.modal-overlay {
+  background: rgba(0, 0, 0, 0.8) !important;
+  backdrop-filter: blur(10px);
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
 }
 
-/* ITINERARIO MÓVIL - REDISEÑO TOTAL */
+.modal-content {
+  background: var(--bg-surface) !important;
+  border: 1px solid var(--glass-border);
+  border-radius: 24px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 90vh;
+  overflow-y: auto; /* El modal ahora es scrollable internamente */
+  position: relative;
+  padding: 2rem !important;
+  box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(255,255,255,0.05);
+  border: none;
+  color: white;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 10;
+}
+
+/* TARJETAS COMPACTAS (MOBILE) */
 @media (max-width: 768px) {
-  .itinerary-day-title {
-    font-size: 1.5rem !important;
-    margin-top: 3rem !important;
-    margin-bottom: 1.5rem !important;
-    text-align: center;
-  }
-
-  .activity-card {
-    grid-template-columns: 1fr !important; /* Stack vertical */
-    text-align: center;
-    padding: 2rem !important;
+  .item-row {
+    padding: 1.25rem !important;
     gap: 1rem !important;
+    border-radius: 18px !important;
   }
 
-  .activity-time {
-    background: var(--grad-main);
-    width: fit-content;
-    margin: 0 auto;
-    padding: 0.4rem 1.2rem;
-    border-radius: 20px;
+  .member-card {
+    display: flex !important;
+    flex-direction: row !important; /* Volver a fila pero compacta */
+    align-items: center !important;
+    text-align: left !important;
+  }
+
+  .member-avatar {
+    width: 45px !important;
+    height: 45px !important;
     font-size: 1rem !important;
   }
 
-  .activity-title {
-    font-size: 1.5rem !important;
+  .member-name {
+    font-size: 1rem !important;
+    margin-bottom: 2px !important;
   }
 
-  .activity-actions {
-    justify-content: center !important;
-    margin-top: 1rem;
-    border-top: 1px solid var(--glass-border);
-    padding-top: 1rem;
+  .member-tags {
+    justify-content: flex-start !important;
+    gap: 4px !important;
+  }
+
+  .member-email { display: none !important; } /* Ocultar email repetido en móvil */
+
+  .badge {
+    font-size: 0.6rem !important;
+    padding: 0.2rem 0.5rem !important;
   }
 }
 
-/* FIX MAPAS */
-.map-list-container {
-  max-height: 500px;
-  overflow-y: auto;
-  padding-right: 10px;
+/* VOTACIÓN ITINERARIO - COLORES */
+.vote-btn-up { color: var(--mint) !important; background: rgba(16, 185, 129, 0.1) !important; }
+.vote-btn-up:hover { background: var(--mint) !important; color: white !important; }
+
+.vote-btn-down { color: var(--coral) !important; background: rgba(244, 63, 94, 0.1) !important; }
+.vote-btn-down:hover { background: var(--coral) !important; color: white !important; }
+
+/* FIX MAPA - COMPACTO */
+.poi-card {
+  padding: 1rem 1.5rem !important;
 }
