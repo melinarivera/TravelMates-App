@@ -8,6 +8,7 @@ import {
 import './Navbar.css'
 
 const tripLinks = [
+  { to: '', label: 'Inicio', icon: <Home size={18} /> },
   { to: '/members', label: 'Integrantes', icon: <Users size={18} /> },
   { to: '/expenses', label: 'Gastos', icon: <DollarSign size={18} /> },
   { to: '/itinerary', label: 'Itinerario', icon: <Calendar size={18} /> },
@@ -113,7 +114,7 @@ export default function Navbar({ tripName }) {
           </Link>
 
           {/* Trip sub-links if inside a trip */}
-          {isTripPage && tripLinks.slice(1).map(link => {
+          {isTripPage && tripLinks.map(link => {
             const href = `${basePath}${link.to}`
             const active = location.pathname === href
             return (
