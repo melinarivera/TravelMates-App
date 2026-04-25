@@ -5,8 +5,7 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
-  Plus, Trash2, DollarSign, PiggyBank, 
-  TrendingDown, TrendingUp, ShoppingBag
+  Plus, Trash2, DollarSign, TrendingDown, TrendingUp, ShoppingBag
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -42,13 +41,12 @@ export default function Expenses() {
       if (me) setMyRole(me.role)
     }
 
-    const { data: exps, error } = await supabase
+    const { data: exps } = await supabase
       .from('expenses')
       .select('*, profiles!paid_by(full_name, email)')
       .eq('trip_id', tripId)
       .order('created_at', { ascending: false })
     
-    if (error) console.error('Fetch expenses error:', error)
     if (exps) setExpenses(exps)
     setLoading(false)
   }
@@ -56,8 +54,7 @@ export default function Expenses() {
   async function addExpense(e) {
     e.preventDefault()
     setSaving(true)
-    
-    const { error } = await supabase.from('expenses').insert({
+    await supabase.from('expenses').insert({
       trip_id: tripId,
       user_id: user.id,
       description: form.description,
@@ -66,14 +63,9 @@ export default function Expenses() {
       paid_by: form.paid_by || user.id,
       split_with: members.map(m => m.user_id)
     })
-
-    if (!error) {
-      setShowModal(false)
-      setForm({ description: '', amount: '', category: 'Otros', paid_by: '' })
-      fetchData()
-    } else {
-      alert('Error al guardar: ' + error.message)
-    }
+    setShowModal(false)
+    setForm({ description: '', amount: '', category: 'Otros', paid_by: '' })
+    fetchData()
     setSaving(false)
   }
 
@@ -90,7 +82,6 @@ export default function Expenses() {
     const paid = expenses
       .filter(e => e.paid_by === m.user_id)
       .reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0)
-    
     return {
       userId: m.user_id,
       name: m.profiles?.full_name || m.profiles?.email?.split('@')[0] || 'Viajero',
@@ -109,110 +100,107 @@ export default function Expenses() {
         <header className="module-header fade-in-up">
           <div className="module-title-group">
             <div className="module-icon-box">
-              <DollarSign size={24} />
+              <DollarSign size={28} />
             </div>
             <div>
-              <h1 className="module-title text-gradient">Gastos</h1>
-              <p className="module-subtitle">Cuentas claras entre amigos</p>
+              <h1 className="module-title">Gastos</h1>
+              <p className="module-subtitle">Divide cuentas entre amigos</p>
             </div>
           </div>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-            <Plus size={18} /> Añadir
+          <button className="btn btn-add-desktop hide-mobile" onClick={() => setShowModal(true)}>
+            <Plus size={20} /> Añadir Gasto
           </button>
         </header>
 
-        <section className="expenses-stats fade-in-up delay-1">
+        <section className="expenses-stats fade-in-up">
           <div className="stat-card glass-card">
             <span className="stat-value">{totalSpent.toFixed(2)}€</span>
-            <span className="stat-label">Total Viaje</span>
+            <span className="stat-label">Gasto Total</span>
           </div>
           <div className="stat-card glass-card">
             <span className="stat-value">{perPerson.toFixed(2)}€</span>
-            <span className="stat-label">Por Persona</span>
+            <span className="stat-label">Couta / Persona</span>
           </div>
         </section>
 
-        <div className="auth-tabs" style={{ marginBottom: '2rem' }}>
+        <div className="auth-tabs" style={{ marginBottom: '3rem' }}>
           <button className={`auth-tab ${activeTab === 'list' ? 'active' : ''}`} onClick={() => setActiveTab('list')}>
              Lista de Gastos
           </button>
           <button className={`auth-tab ${activeTab === 'balance' ? 'active' : ''}`} onClick={() => setActiveTab('balance')}>
-             Balance / Deudas
+             Balance de Deudas
           </button>
         </div>
 
-        {loading ? <div className="spinner" /> : (
-          <>
-            {activeTab === 'list' ? (
-              <div className="items-list fade-in-up">
-                {expenses.length === 0 ? (
-                  <div className="empty-state glass-card">
-                    <ShoppingBag size={48} opacity="0.1" />
-                    <p>No hay gastos registrados aún.</p>
-                  </div>
-                ) : expenses.map(exp => (
-                  <div key={exp.id} className="item-row glass-card">
-                    <div className="expense-info">
-                      <div className="expense-desc">{exp.description}</div>
-                      <div className="expense-meta">
-                        <span className="badge" style={{ background: 'var(--primary-glow)', color: 'white', border: '1px solid var(--primary)' }}>{exp.category}</span>
-                        <span>Pagó: {exp.profiles?.full_name || exp.profiles?.email?.split('@')[0] || 'Desconocido'}</span>
-                      </div>
-                    </div>
-                    <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div className="expense-amount" style={{ fontSize: '1.25rem', fontWeight: 800 }}>{parseFloat(exp.amount).toFixed(2)}€</div>
-                      {isTitular && (
-                        <button className="btn btn-ghost btn-icon btn-sm" onClick={() => deleteExpense(exp.id)} style={{ color: 'var(--coral)' }}>
-                          <Trash2 size={16} />
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+        {activeTab === 'list' ? (
+          <div className="items-list fade-in-up">
+            {expenses.length === 0 ? (
+              <div className="empty-state glass-card" style={{ padding: '4rem' }}>
+                <ShoppingBag size={48} opacity="0.1" style={{ marginBottom: '1rem' }} />
+                <p>No hay gastos registrados.</p>
               </div>
-            ) : (
-              <div className="items-list fade-in-up">
-                {balanceData.map(b => (
-                  <div key={b.userId} className="item-row glass-card">
-                    <div className="expense-info">
-                      <div className="expense-desc">{b.name}</div>
-                      <div className="expense-meta">Total aportado: {b.paid.toFixed(2)}€</div>
-                    </div>
-                    <div style={{ textAlign: 'right' }}>
-                       <div style={{ 
-                         display: 'flex', 
-                         alignItems: 'center', 
-                         justifyContent: 'flex-end',
-                         gap: '8px',
-                         color: b.balance >= 0 ? 'var(--mint)' : 'var(--coral)',
-                         fontWeight: 'bold',
-                         fontSize: '1.3rem'
-                       }}>
-                         {b.balance >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
-                         {Math.abs(b.balance).toFixed(2)}€
-                       </div>
-                       <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                         {b.balance >= 0 ? 'A favor' : 'Debe pagar'}
-                       </span>
-                    </div>
+            ) : expenses.map(exp => (
+              <div key={exp.id} className="item-row glass-card">
+                <div className="expense-info">
+                  <div className="expense-desc" style={{ fontWeight: 700, fontSize: '1.2rem' }}>{exp.description}</div>
+                  <div className="expense-meta" style={{ marginTop: '0.5rem' }}>
+                    <span className="badge" style={{ background: 'var(--primary)', color: 'white', border: 'none', padding: '0.3rem 0.7rem' }}>{exp.category}</span>
+                    <span style={{ fontSize: '0.9rem', opacity: 0.8 }}>Pagado por: {exp.profiles?.full_name || exp.profiles?.email?.split('@')[0]}</span>
                   </div>
-                ))}
+                </div>
+                <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                  <div className="expense-amount" style={{ fontSize: '1.5rem', fontWeight: 800 }}>{parseFloat(exp.amount).toFixed(2)}€</div>
+                  {isTitular && (
+                    <button className="btn btn-ghost btn-icon" onClick={() => deleteExpense(exp.id)} style={{ color: 'var(--coral)' }}>
+                      <Trash2 size={18} />
+                    </button>
+                  )}
+                </div>
               </div>
-            )}
-          </>
+            ))}
+          </div>
+        ) : (
+          <div className="items-list fade-in-up">
+            {balanceData.map(b => (
+              <div key={b.userId} className="item-row glass-card">
+                <div className="expense-info">
+                  <div className="expense-desc" style={{ fontWeight: 700 }}>{b.name}</div>
+                  <div className="expense-meta">Total aportado: {b.paid.toFixed(2)}€</div>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                   <div style={{ 
+                     display: 'flex', 
+                     alignItems: 'center', 
+                     justifyContent: 'flex-end',
+                     gap: '10px',
+                     color: b.balance >= 0 ? 'var(--mint)' : 'var(--coral)',
+                     fontWeight: 800,
+                     fontSize: '1.5rem'
+                   }}>
+                     {b.balance >= 0 ? <TrendingUp size={22} /> : <TrendingDown size={22} />}
+                     {Math.abs(b.balance).toFixed(2)}€
+                   </div>
+                   <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+                     {b.balance >= 0 ? 'A FAVOR' : 'DEBE PAGAR'}
+                   </span>
+                </div>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 
+      {/* FAB Mobile Only */}
       <button className="fab-module show-mobile-only" onClick={() => setShowModal(true)}>
         <Plus size={32} />
       </button>
 
       {showModal && (
-        <Modal title="Registrar Gasto" onClose={() => setShowModal(false)}>
+        <Modal title="Añadir Gasto" onClose={() => setShowModal(false)}>
           <form onSubmit={addExpense} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">Descripción</label>
-              <input type="text" className="form-input" required value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Ej. Cena, Vuelo, Entradas..." />
+              <input type="text" className="form-input" required value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Ej. Cena, Vuelos, Taxi..." />
             </div>
             <div className="grid-2">
               <div className="form-group">
@@ -231,7 +219,7 @@ export default function Expenses() {
               </div>
             </div>
             <div className="form-group">
-              <label className="form-label">¿Quién pagó?</label>
+              <label className="form-label">¿Quién ha pagado?</label>
               <select className="form-input" value={form.paid_by} onChange={e => setForm(f => ({ ...f, paid_by: e.target.value }))}>
                  <option value="">Yo ({user.email})</option>
                  {members.filter(m => m.user_id !== user.id).map(m => (
@@ -240,8 +228,8 @@ export default function Expenses() {
               </select>
             </div>
             <div className="modal-actions">
-              <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button>
-              <button type="submit" className="btn btn-primary" disabled={saving} style={{ flex: 1 }}>Guardar</button>
+              <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Cancelar</button>
+              <button type="submit" className="btn btn-primary" disabled={saving} style={{ flex: 2 }}>Guardar Gasto</button>
             </div>
           </form>
         </Modal>
