@@ -1,62 +1,67 @@
-/* EFECTO NEÓN EXTREMO - SOLO PARA BOTONES DE ACCIÓN */
+/* ESTILO CRISTAL-NEÓN (LIGERO Y ELEGANTE) */
 
-/* VERDE NEÓN (AÑADIR / CREAR) */
+/* VERDE CRISTAL (AÑADIR / CREAR / CONFIRMAR) */
 .btn-add-vibrant {
-  background: #39ff14 !important; /* Verde Neón Puro */
-  color: #000 !important;
-  font-weight: 900 !important;
-  border: none !important;
-  box-shadow: 
-    0 0 10px #39ff14,
-    0 0 20px #39ff14,
-    0 0 40px rgba(57, 255, 20, 0.4) !important;
-  transition: all 0.3s ease;
+  background: rgba(57, 255, 20, 0.05) !important;
+  color: #39ff14 !important;
+  border: 2px solid #39ff14 !important;
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.3) !important;
+  font-weight: 800 !important;
+  border-radius: 12px !important;
+  padding: 0.8rem 1.6rem !important;
   text-transform: uppercase;
   letter-spacing: 1px;
+  backdrop-filter: blur(5px);
 }
 
 .btn-add-vibrant:hover {
-  transform: translateY(-3px);
-  box-shadow: 
-    0 0 15px #39ff14,
-    0 0 35px #39ff14,
-    0 0 60px rgba(57, 255, 20, 0.6) !important;
+  background: rgba(57, 255, 20, 0.15) !important;
+  box-shadow: 0 0 25px rgba(57, 255, 20, 0.5) !important;
+  transform: translateY(-2px);
 }
 
-/* ROJO NEÓN (BASURA / SALIR) */
+/* ROJO CRISTAL (BASURA / SALIR) */
 .btn-delete-vibrant, .btn-logout-vibrant {
-  background: #ff0000 !important; /* Rojo Neón Puro */
-  color: #fff !important;
-  border: none !important;
-  box-shadow: 
-    0 0 10px #ff0000,
-    0 0 20px #ff0000,
-    0 0 40px rgba(255, 0, 0, 0.4) !important;
+  background: rgba(255, 49, 49, 0.05) !important;
+  color: #ff3131 !important;
+  border: 2px solid #ff3131 !important;
+  box-shadow: 0 0 15px rgba(255, 49, 49, 0.3) !important;
+  width: 42px !important;
+  height: 42px !important;
+  border-radius: 12px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  transition: all 0.3s ease;
+  backdrop-filter: blur(5px);
 }
 
 .btn-delete-vibrant:hover, .btn-logout-vibrant:hover {
-  transform: scale(1.1);
-  box-shadow: 
-    0 0 15px #ff0000,
-    0 0 35px #ff0000,
-    0 0 60px rgba(255, 0, 0, 0.6) !important;
+  background: rgba(255, 49, 49, 0.15) !important;
+  box-shadow: 0 0 25px rgba(255, 49, 49, 0.5) !important;
+  transform: scale(1.05);
 }
 
-/* NO TOCAR LO DEMÁS - ESTADO ACTUAL */
-.trip-card-status-badge {
-  background: rgba(0, 212, 255, 0.2) !important;
-  color: #00d4ff !important;
-  border: 2px solid #00d4ff !important;
-  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4) !important;
-  font-weight: 900 !important;
-}
-
+/* BOTÓN ENTRAR (MORADO ORIGINAL - NO TOCAR) */
 .btn-entrar {
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
   color: white !important;
+  border: none !important;
+  padding: 0.7rem 1.6rem !important;
+  border-radius: 12px !important;
   font-weight: 800 !important;
+  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4) !important;
+}
+
+.btn-entrar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6) !important;
+}
+
+/* ESTADO PLANIFICADO (REFERENCIA DE ESTILO) */
+.trip-card-status-badge {
+  background: rgba(0, 212, 255, 0.1) !important;
+  color: #00d4ff !important;
+  border: 2px solid #00d4ff !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.3) !important;
+  font-weight: 900 !important;
 }
