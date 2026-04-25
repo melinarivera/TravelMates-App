@@ -386,3 +386,108 @@
   margin-top: 2.5rem !important; /* Más espacio entre el botón y las cards */
   margin-bottom: 3.5rem !important;
 }
+
+/* ESTILOS DE ITINERARIO PREMIUM */
+
+.itinerary-day-section {
+  margin-bottom: 3.5rem;
+}
+
+.itinerary-day-title {
+  font-size: 1.5rem;
+  font-weight: 900;
+  color: white;
+  margin-bottom: 1.8rem;
+  padding-left: 0.5rem;
+  border-left: 4px solid var(--btn-add);
+  text-transform: capitalize;
+  letter-spacing: -0.5px;
+}
+
+.activity-card {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.2rem !important;
+  padding: 1.8rem 2rem !important;
+  margin-bottom: 1.5rem !important;
+  border-left: 5px solid rgba(139, 92, 246, 0.5) !important;
+}
+
+.activity-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.activity-time-badge {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 0.5rem 1rem;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: #39ff14; /* Verde Neón */
+  font-weight: 800;
+  font-size: 0.9rem;
+  border: 1px solid rgba(57, 255, 20, 0.2);
+}
+
+.activity-title {
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  color: white !important;
+  margin: 0 !important;
+}
+
+.activity-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-top: 0.5rem;
+}
+
+.vote-btns {
+  display: flex;
+  gap: 0.8rem;
+}
+
+.vote-btn {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 14px !important;
+  padding: 0.6rem 1rem !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  transition: 0.3s !important;
+  cursor: pointer;
+}
+
+.vote-btn-up:hover, .vote-btn-up.voted {
+  border-color: #39ff14 !important;
+  background: rgba(57, 255, 20, 0.1) !important;
+  color: #39ff14 !important;
+}
+
+.vote-btn-down:hover, .vote-btn-down.voted {
+  border-color: #ff3131 !important;
+  background: rgba(255, 49, 49, 0.1) !important;
+  color: #ff3131 !important;
+}
+
+.vote-count {
+  font-weight: 900;
+  font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+  .activity-bottom {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.5rem;
+  }
+  .activity-bottom .btn-delete-vibrant {
+    align-self: flex-end;
+  }
+}
