@@ -23,7 +23,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
   const [search, setSearch] = useState('')
-  const [form, setForm] = useState({ name: '', destination: '', start_date: '', end_date: '', description: '' })
+  const [form, setForm] = useState({ name: '', destination: '', start_date: '', end_date: '', description: '', cover_url: '' })
   const [creating, setCreating] = useState(false)
 
   useEffect(() => {
@@ -297,6 +297,18 @@ export default function Dashboard() {
               </div>
             </div>
             <div className="form-group">
+              <label className="form-label" htmlFor="trip-cover">URL de Imagen de Portada</label>
+              <input
+                id="trip-cover"
+                type="text"
+                className="form-input"
+                placeholder="https://images.unsplash.com/photo-..."
+                value={form.cover_url}
+                onChange={e => setForm(f => ({ ...f, cover_url: e.target.value }))}
+              />
+              <p style={{ fontSize: '0.7rem', color: 'var(--gray-400)', marginTop: '0.2rem' }}>Pega un enlace de Unsplash o Pexels para darle punch.</p>
+            </div>
+            <div className="form-group">
               <label className="form-label" htmlFor="trip-desc">Descripción</label>
               <textarea
                 id="trip-desc"
@@ -334,8 +346,10 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
       onClick={isInvitation ? null : onClick}
       id={`trip-card-${trip.id}`}
     >
-      <div className="trip-card-cover" style={{ background: status.grad }}>
-        <div className="trip-card-icon">{status.icon}</div>
+      <div className="trip-card-cover" style={{ 
+        background: trip.cover_url ? `url(${trip.cover_url}) center/cover no-repeat` : status.grad 
+      }}>
+        {!trip.cover_url && <div className="trip-card-icon">{status.icon}</div>}
         <div className={`badge ${status.badge} trip-card-badge`}>
           {isInvitation ? 'Nueva Invitación' : status.label}
         </div>
