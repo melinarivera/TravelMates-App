@@ -46,16 +46,7 @@
   transform: scale(1.05);
 }
 
-/* BOTÓN ENTRAR (MORADO ORIGINAL - NO TOCAR) */
-.btn-entrar {
-  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
-  color: white !important;
-  border: none !important;
-  padding: 0.7rem 1.6rem !important;
-  border-radius: 12px !important;
-  font-weight: 800 !important;
-  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4) !important;
-}
+/* BOTÓN ENTRAR ELIMINADO PARA USAR EL DE DASHBOARD.CSS */
 
 /* MORADO CRISTAL (EDITAR) */
 .btn-edit-neon {
@@ -80,10 +71,7 @@
   transform: scale(1.1);
 }
 
-.btn-entrar:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6) !important;
-}
+
 
 /* ESTADO PLANIFICADO (REFERENCIA DE ESTILO) */
 .trip-card-status-badge {
