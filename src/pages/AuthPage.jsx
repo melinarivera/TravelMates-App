@@ -52,9 +52,7 @@ export default function AuthPage() {
         {/* Lado Branding (Landing) */}
         <div className="auth-brand">
           <div className="auth-logo-group">
-            <div className="auth-logo-icon">
-              <Plane size={32} color="white" />
-            </div>
+            <img src="/logo.svg" alt="TravelMates Logo" style={{ width: '48px', height: '48px', objectFit: 'contain' }} />
             <h1 className="auth-brand-title">TravelMates</h1>
           </div>
           
