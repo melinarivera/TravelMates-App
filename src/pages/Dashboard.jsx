@@ -11,9 +11,9 @@ import {
 import './Dashboard.css'
 
 const STATUS_MAP = {
-  planning: { label: 'PLANIFICANDO', color: 'var(--badge-titular)', bg: 'rgba(251, 191, 36, 0.2)' },
-  active:   { label: 'EN CURSO',     color: 'var(--btn-add)', bg: 'rgba(16, 185, 129, 0.2)' },
-  done:     { label: 'FINALIZADO',   color: 'var(--text-muted)', bg: 'rgba(255, 255, 255, 0.1)' },
+  planning: { label: 'PLANIFICANDO', color: 'var(--badge-titular)', bg: 'rgba(251, 191, 36, 0.5)' },
+  active:   { label: 'EN CURSO',     color: '#10b981', bg: 'rgba(16, 185, 129, 0.5)' },
+  done:     { label: 'FINALIZADO',   color: '#fff', bg: 'rgba(255, 255, 255, 0.2)' },
 }
 
 export default function Dashboard() {
@@ -80,7 +80,7 @@ export default function Dashboard() {
   const formatDate = (dateStr) => {
     if (!dateStr) return ''
     const d = new Date(dateStr)
-    return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'numeric', year: 'numeric' })
+    return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })
   }
 
   return (
@@ -93,7 +93,6 @@ export default function Dashboard() {
             <h1 className="dashboard-title text-gradient">Mis Viajes</h1>
             <p className="dashboard-subtitle">Gestiona tus próximas aventuras</p>
           </div>
-          {/* BOTÓN VERDE FORZADO */}
           <button className="btn-add-vibrant" onClick={() => setShowModal(true)}>
             <Plus size={22} /> Crear Nuevo Viaje
           </button>
@@ -106,9 +105,9 @@ export default function Dashboard() {
             {trips.length === 0 ? (
               <div className="empty-state-card glass-card fade-in-up">
                 <div className="hero-icon-glow"><Globe size={40} color="white" /></div>
-                <h3>¿A dónde vamos?</h3>
-                <button className="btn-add-vibrant" style={{ marginTop: '2rem' }} onClick={() => setShowModal(true)}>
-                  <Plus size={20} /> Crear mi primer viaje
+                <h3>¿Cuál será tu próxima aventura?</h3>
+                <button className="btn-add-vibrant" style={{ marginTop: '2.5rem' }} onClick={() => setShowModal(true)}>
+                   Comenzar ahora
                 </button>
               </div>
             ) : trips.map(trip => {
@@ -120,14 +119,13 @@ export default function Dashboard() {
                       <img src={trip.cover_url} alt={trip.name} />
                     ) : (
                       <div className="trip-card-cover-placeholder">
-                        <Plane size={60} color="rgba(255,255,255,0.15)" />
+                        <Plane size={70} color="rgba(255,255,255,0.1)" />
                       </div>
                     )}
                     <div className="trip-card-status-badge" style={{ 
                       color: status.color, 
                       borderColor: status.color,
-                      background: status.bg,
-                      boxShadow: `0 0 15px ${status.color}44`
+                      background: status.bg
                     }}>
                       {status.label}
                     </div>
@@ -136,9 +134,9 @@ export default function Dashboard() {
                   <div className="trip-card-content">
                     <h3 className="trip-card-name">{trip.name}</h3>
                     <div className="trip-card-meta">
-                      <div className="trip-meta-item"><MapPin size={18} /> {trip.destination}</div>
+                      <div className="trip-meta-item"><MapPin size={20} /> {trip.destination}</div>
                       <div className="trip-meta-item">
-                        <Calendar size={18} /> 
+                        <Calendar size={20} /> 
                         {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
                       </div>
                     </div>
@@ -162,11 +160,11 @@ export default function Dashboard() {
       </div>
 
       {showModal && (
-        <Modal title="Nuevo Viaje Verde" onClose={() => setShowModal(false)}>
+        <Modal title="Crear Nuevo Viaje" onClose={() => setShowModal(false)}>
           <form onSubmit={createTrip} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">Nombre del viaje</label>
-              <input type="text" className="form-input" required value={newTrip.name} onChange={e => setNewTrip(t => ({ ...t, name: e.target.value }))} placeholder="Ej. Eurotrip 2024" />
+              <input type="text" className="form-input" required value={newTrip.name} onChange={e => setNewTrip(t => ({ ...t, name: e.target.value }))} placeholder="Ej. Escapada a París" />
             </div>
             <div className="form-group">
               <label className="form-label">Destino</label>
@@ -182,8 +180,8 @@ export default function Dashboard() {
                 <input type="date" className="form-input" required value={newTrip.end_date} onChange={e => setNewTrip(t => ({ ...t, end_date: e.target.value }))} />
               </div>
             </div>
-            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1.5rem', justifyContent: 'center' }}>
-              Crear Viaje Verde
+            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }}>
+              Confirmar Viaje
             </button>
           </form>
         </Modal>
