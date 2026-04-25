@@ -35,44 +35,24 @@ export default function Navbar({ tripName }) {
 
   return (
     <>
-      {/* Backdrop to close mobile menu */}
-      {open && (
-        <div
-          className="navbar-backdrop"
-          onClick={() => setOpen(false)}
-        />
-      )}
-
       <nav className="navbar">
         <div className="navbar-inner">
           {/* Logo */}
           <Link to="/" className="navbar-logo" onClick={() => setOpen(false)}>
             <div className="navbar-logo-icon">
-              <Plane size={20} />
+              <Plane size={20} color="white" />
             </div>
-            <span className="navbar-logo-text">TravelMates</span>
+            <span>TravelMates</span>
           </Link>
 
-          {/* Breadcrumb in trip pages */}
-          {isTripPage && tripName && (
-            <div className="navbar-breadcrumb">
-              <ChevronRight size={16} className="breadcrumb-sep" />
-              <span className="breadcrumb-trip">{tripName}</span>
-            </div>
-          )}
-
-          {/* Desktop nav links */}
+          {/* Desktop Links */}
           {isTripPage && (
             <div className="navbar-links">
               {tripLinks.map(link => {
                 const href = `${basePath}${link.to}`
                 const active = location.pathname === href
                 return (
-                  <Link
-                    key={link.to}
-                    to={href}
-                    className={`navbar-link ${active ? 'active' : ''}`}
-                  >
+                  <Link key={link.to} to={href} className={`navbar-link ${active ? 'active' : ''}`}>
                     {link.icon}
                     <span>{link.label}</span>
                   </Link>
@@ -81,64 +61,63 @@ export default function Navbar({ tripName }) {
             </div>
           )}
 
+          {/* Actions */}
           <div className="navbar-actions">
-            <div className="avatar avatar-sm" title={user?.email}>{initials}</div>
-            <button
-              className="btn btn-ghost btn-icon navbar-logout"
-              onClick={handleSignOut}
-              title="Cerrar sesión"
-            >
-              <LogOut size={18} />
+            <div className="navbar-user">
+              <div className="avatar">{initials}</div>
+              <span className="hide-mobile">{user?.email?.split('@')[0]}</span>
+            </div>
+            
+            <button className="navbar-hamburger" onClick={() => setOpen(true)}>
+              <Menu size={24} />
             </button>
-            <button
-              className="btn btn-ghost btn-icon navbar-hamburger"
-              onClick={() => setOpen(o => !o)}
-              aria-label="Menu"
-              aria-expanded={open}
-            >
-              {open ? <X size={22} /> : <Menu size={22} />}
+
+            <button className="btn btn-ghost navbar-logout-desktop" onClick={handleSignOut} title="Cerrar sesión">
+              <LogOut size={18} />
             </button>
           </div>
         </div>
+      </nav>
 
-        {/* Mobile drawer */}
-        <div className={`navbar-mobile${open ? ' open' : ''}`}>
-          {/* Dashboard link always visible */}
-          <Link
-            to="/"
-            className={`navbar-mobile-link ${location.pathname === '/' ? 'active' : ''}`}
-            onClick={() => setOpen(false)}
-          >
-            <Home size={18} />
+      {/* Fullscreen Mobile Menu */}
+      <div className={`navbar-mobile ${open ? 'open' : ''}`}>
+        <div className="navbar-mobile-header">
+          <div className="navbar-logo">
+             <div className="navbar-logo-icon">
+                <Plane size={20} color="white" />
+              </div>
+              <span>TravelMates</span>
+          </div>
+          <button className="navbar-hamburger" onClick={() => setOpen(false)}>
+            <X size={24} />
+          </button>
+        </div>
+
+        <div className="navbar-mobile-links">
+          <Link to="/" className={`navbar-mobile-link ${location.pathname === '/' ? 'active' : ''}`} onClick={() => setOpen(false)}>
+            <Home size={22} />
             <span>Mis viajes</span>
           </Link>
 
-          {/* Trip sub-links if inside a trip */}
           {isTripPage && tripLinks.map(link => {
             const href = `${basePath}${link.to}`
             const active = location.pathname === href
             return (
-              <Link
-                key={link.to}
-                to={href}
-                className={`navbar-mobile-link ${active ? 'active' : ''}`}
-                onClick={() => setOpen(false)}
-              >
+              <Link key={link.to} to={href} className={`navbar-mobile-link ${active ? 'active' : ''}`} onClick={() => setOpen(false)}>
                 {link.icon}
                 <span>{link.label}</span>
               </Link>
             )
           })}
+        </div>
 
-          <div className="navbar-mobile-divider" />
-
-          <button className="navbar-mobile-link" onClick={handleSignOut} style={{ color: 'var(--accent)' }}>
-            <LogOut size={18} />
-            <span>Cerrar sesión</span>
+        <div className="navbar-mobile-footer">
+          <button className="btn-logout-mobile" onClick={handleSignOut}>
+            <LogOut size={22} />
+            <span>Cerrar Sesión</span>
           </button>
         </div>
-      </nav>
-      <div className="navbar-spacer" />
+      </div>
     </>
   )
 }
