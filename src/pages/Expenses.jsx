@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
-  Plus, Trash2, DollarSign, TrendingDown, TrendingUp, Wallet, Receipt, PieChart
+  Plus, Trash2, DollarSign, TrendingDown, TrendingUp, Wallet, Receipt
 } from 'lucide-react'
 import './ModulePage.css'
 
