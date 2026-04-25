@@ -148,3 +148,25 @@
   
   .hub-channel-card { margin-top: 2rem; }
 }
+
+/* BOTÓN DE CANAL DEL GRUPO (ESTILO NEÓN) */
+.btn-join-neon {
+  background: rgba(188, 19, 254, 0.1) !important; /* Fondo morado translúcido */
+  border: 1px solid rgba(188, 19, 254, 0.5) !important; /* Borde morado neón */
+  color: #bc13fe !important; /* Texto morado neón */
+  padding: 0.8rem 1.5rem !important;
+  border-radius: 14px !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  transition: 0.3s !important;
+  text-decoration: none !important;
+  cursor: pointer;
+}
+
+.btn-join-neon:hover {
+  background: rgba(188, 19, 254, 0.2) !important;
+  box-shadow: 0 0 20px rgba(188, 19, 254, 0.3) !important;
+  color: #bc13fe !important;
+}
