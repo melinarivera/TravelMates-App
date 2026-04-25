@@ -1,88 +1,32 @@
-/* DASHBOARD PREMIUM DESIGN */
+/* DASHBOARD TRIP CARDS - PREMIUM REDESIGN */
 
-.dashboard-hero {
-  padding: 4rem 0 3rem;
-}
-
-.dashboard-hero-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2.5rem;
-}
-
-.hero-icon-glow {
-  width: 70px;
-  height: 70px;
-  background: var(--grad-main);
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 10px 30px var(--primary-glow);
-  margin-bottom: 1.5rem;
-}
-
-.dashboard-title {
-  font-size: 3rem;
-  margin: 0;
-  font-weight: 800;
-  font-family: 'Outfit', sans-serif;
-}
-
-.dashboard-subtitle {
-  color: var(--text-muted);
-  font-size: 1.2rem;
-  margin-top: 0.5rem;
-}
-
-/* SEARCH */
-.dashboard-search {
-  max-width: 600px;
-  position: relative;
-}
-
-.dashboard-search-input {
-  width: 100%;
-  padding: 1rem 1.5rem 1rem 3.5rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  color: white;
-  font-size: 1.1rem;
-  transition: 0.2s;
-}
-
-.dashboard-search-input:focus {
-  background: rgba(255,255,255,0.06);
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
-}
-
-/* TRIPS GRID */
 .trips-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 2rem;
-  margin-top: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 2.5rem;
+  margin-top: 3rem;
 }
 
 .trip-card {
-  padding: 0;
+  position: relative;
   overflow: hidden;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  padding: 0 !important; /* La imagen ocupa todo el ancho */
+  display: flex;
+  flex-direction: column;
 }
 
 .trip-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.4);
   border-color: var(--primary);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
 .trip-card-cover {
+  width: 100%;
   height: 200px;
   position: relative;
+  overflow: hidden;
 }
 
 .trip-card-cover img {
@@ -91,45 +35,79 @@
   object-fit: cover;
 }
 
-.trip-card-body {
-  padding: 1.5rem;
+/* STATUS BADGE - POSITIONED OVER IMAGE */
+.trip-card-status-badge {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  padding: 0.4rem 0.8rem;
+  background: rgba(13, 17, 23, 0.7);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--glass-border);
+  border-radius: 10px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--badge-ok);
+  z-index: 2;
+}
+
+.trip-card-content {
+  padding: 1.5rem 2rem;
+  flex: 1;
 }
 
 .trip-card-name {
-  font-size: 1.4rem;
-  font-weight: 700;
-  margin: 0 0 0.5rem;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 0 1rem;
+  color: white;
+  font-family: 'Outfit', sans-serif;
 }
 
+.trip-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.trip-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.trip-meta-item svg {
+  color: var(--primary);
+}
+
+/* FOOTER ACTIONS */
 .trip-card-footer {
-  margin-top: 1.5rem;
-  padding-top: 1rem;
-  border-top: 1px solid rgba(255,255,255,0.05);
+  padding: 1.25rem 2rem;
+  background: rgba(255,255,255,0.02);
+  border-top: 1px solid var(--glass-border);
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-@media (max-width: 768px) {
-  .dashboard-hero { padding: 3rem 0; text-align: center; }
-  .dashboard-hero-content { flex-direction: column; }
-  .dashboard-title { font-size: 2.2rem; }
-  .trips-grid { grid-template-columns: 1fr; }
-  
-  .fab-mobile {
-    position: fixed;
-    bottom: 30px;
-    right: 20px;
-    width: 65px;
-    height: 65px;
-    border-radius: 50%;
-    background: var(--grad-main);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 30px var(--primary-glow);
-    z-index: 1001;
-    border: none;
-  }
+.btn-entrar {
+  background: var(--grad-main) !important;
+  color: white !important;
+  padding: 0.6rem 1.5rem !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  font-size: 0.9rem !important;
+  box-shadow: 0 5px 15px var(--primary-glow) !important;
+}
+
+@media (max-width: 600px) {
+  .trips-grid { grid-template-columns: 1fr; gap: 2rem; }
+  .trip-card-name { font-size: 1.3rem; }
+  .trip-card-content { padding: 1.5rem; }
+  .trip-card-footer { padding: 1.25rem 1.5rem; }
 }
