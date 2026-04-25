@@ -96,7 +96,7 @@ export default function Members() {
       fetchData()
     } catch (err) {
       console.error('Error inviting:', err)
-      alert('Hubo un error al enviar la invitación.')
+      alert(`Error al enviar la invitación: ${err.message || 'Error desconocido'}`)
     } finally {
       setInviting(false)
     }
