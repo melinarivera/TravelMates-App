@@ -6,7 +6,7 @@ import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
   Plus, Trash2, Map as MapIcon, MapPin, 
-  Navigation, Info, Search
+  Navigation, Search
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -64,7 +64,7 @@ export default function MapPOI() {
             </div>
           </div>
           <button className="btn-add-vibrant" onClick={() => setShowModal(true)}>
-            <Plus size={22} /> Guardar Lugar
+            <Plus size={22} /> Añadir
           </button>
         </header>
 
@@ -73,7 +73,7 @@ export default function MapPOI() {
             pois.length === 0 ? (
               <div className="glass-card" style={{ padding: '5rem', textAlign: 'center', opacity: 0.6 }}>
                  <MapPin size={48} style={{ marginBottom: '1.5rem', color: '#00f2ff' }} />
-                 <p style={{ fontSize: '1.2rem' }}>Aún no hay sitios guardados para este viaje.</p>
+                 <p style={{ fontSize: '1.2rem' }}>Aún no hay sitios guardados.</p>
               </div>
             ) : (
               <div className="items-list">
@@ -105,7 +105,7 @@ export default function MapPOI() {
                     <div className="poi-actions">
                       {poi.maps_url ? (
                         <a href={poi.maps_url} target="_blank" rel="noreferrer" className="btn-open-maps">
-                          <Navigation size={18} /> Ver en Google Maps
+                          <Navigation size={18} /> Ver en Maps
                         </a>
                       ) : <div />}
                     </div>
@@ -118,14 +118,14 @@ export default function MapPOI() {
       </div>
 
       {showModal && (
-        <Modal title="Guardar Lugar" onClose={() => setShowModal(false)}>
+        <Modal title="Añadir Lugar" onClose={() => setShowModal(false)}>
           <form onSubmit={addPOI} className="create-trip-form">
             <div className="form-group">
-              <label className="form-label">Nombre del lugar</label>
-              <input type="text" className="form-input" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Ej: Torre Eiffel, Museo del Prado..." />
+              <label className="form-label">Nombre del sitio</label>
+              <input type="text" className="form-input" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Ej: Torre Eiffel..." />
             </div>
             <div className="form-group">
-              <label className="form-label">Tipo de sitio</label>
+              <label className="form-label">¿Qué es?</label>
               <select className="form-input" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
                 <option value="Museo">Museo 🖼️</option>
                 <option value="Restaurante">Restaurante 🍽️</option>
@@ -136,11 +136,11 @@ export default function MapPOI() {
               </select>
             </div>
             <div className="form-group">
-              <label className="form-label">Enlace de Google Maps</label>
-              <input type="url" className="form-input" value={form.maps_url} onChange={e => setForm(f => ({ ...f, maps_url: e.target.value }))} placeholder="https://goo.gl/maps/..." />
+              <label className="form-label">Enlace de Maps</label>
+              <input type="url" className="form-input" value={form.maps_url} onChange={e => setForm(f => ({ ...f, maps_url: e.target.value }))} placeholder="Pega el link aquí..." />
             </div>
-            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }}>
-              Guardar Lugar
+            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1.5rem', justifyContent: 'center' }}>
+              Añadir al Mapa
             </button>
           </form>
         </Modal>
