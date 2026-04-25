@@ -158,16 +158,20 @@ ALTER TABLE public.chat_messages         ENABLE ROW LEVEL SECURITY;
 CREATE POLICY "profiles_select" ON public.profiles FOR SELECT USING (true);
 CREATE POLICY "profiles_update" ON public.profiles FOR UPDATE USING (auth.uid() = id);
 
--- Trips: owner can do everything, members can see
+-- Trips: owner or members can see
 CREATE POLICY "trips_select" ON public.trips FOR SELECT
-  USING (auth.uid() = owner_id OR EXISTS (SELECT 1 FROM public.trip_members WHERE trip_id = id AND user_id = auth.uid()));
+  USING (
+    auth.uid() = owner_id 
+    OR 
+    id IN (SELECT trip_id FROM public.trip_members WHERE user_id = auth.uid())
+  );
 CREATE POLICY "trips_insert" ON public.trips FOR INSERT WITH CHECK (auth.uid() = owner_id);
 CREATE POLICY "trips_update" ON public.trips FOR UPDATE USING (auth.uid() = owner_id);
 CREATE POLICY "trips_delete" ON public.trips FOR DELETE USING (auth.uid() = owner_id);
 
--- Trip members: members of a trip can see all members, anyone can see their own memberships
+-- Trip members: anyone authenticated can see memberships (breaks recursion)
 CREATE POLICY "trip_members_select" ON public.trip_members FOR SELECT
-  USING (user_id = auth.uid() OR EXISTS (SELECT 1 FROM public.trip_members tm WHERE tm.trip_id = trip_id AND tm.user_id = auth.uid()));
+  USING (auth.uid() IS NOT NULL);
 CREATE POLICY "trip_members_insert" ON public.trip_members FOR INSERT
   WITH CHECK (
     auth.uid() = user_id OR
