@@ -124,7 +124,8 @@ export default function Dashboard() {
                     )}
                     <div className="trip-card-status-badge" style={{ 
                       color: status.color, 
-                      borderColor: status.color
+                      borderColor: status.color,
+                      backgroundColor: status.color + '26' /* 15% opacity */
                     }}>
                       {status.label}
                     </div>
