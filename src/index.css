@@ -1,18 +1,15 @@
-/* ============================================================
-   TRAVELMATES – ULTIMATE PREMIUM DESIGN
-   ============================================================ */
+/* INDEX CSS – MOBILE FIRST & APP FEEL */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;600;700&display=swap');
 
 :root {
   --bg-main:      #080a0f;
-  --bg-card:      rgba(15, 23, 42, 0.6);
+  --bg-card:      rgba(15, 23, 42, 0.7);
   --bg-surface:   #0f172a;
   
   --primary:      #6366f1;
-  --primary-glow: rgba(99, 102, 241, 0.3);
+  --primary-glow: rgba(99, 102, 241, 0.4);
   --accent:       #06b6d4;
-  --accent-glow:  rgba(6, 182, 212, 0.3);
   
   --mint:         #10b981;
   --sun:          #f59e0b;
@@ -21,150 +18,120 @@
   --text-main:    #f8fafc;
   --text-muted:   #94a3b8;
   
-  --glass:        rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.08);
-
+  --glass-border: rgba(255, 255, 255, 0.1);
   --radius-md:    16px;
   --radius-lg:    24px;
-  --radius-xl:    32px;
-  
-  --trans-mid:    0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Fondo Global Estilo Landing */
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-main);
   color: var(--text-main);
   min-height: 100vh;
-  position: relative;
   overflow-x: hidden;
-  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
 }
 
-body::before, body::after {
+/* Fondo Landing Dinámico */
+body::before {
   content: '';
   position: fixed;
-  border-radius: 50%;
-  filter: blur(100px);
-  z-index: -1;
-  opacity: 0.4;
-  pointer-events: none;
-}
-
-body::before {
-  width: 600px;
-  height: 600px;
-  background: var(--primary);
-  top: -200px;
-  left: -200px;
-  animation: blobFloat 20s infinite alternate;
-}
-
-body::after {
   width: 500px;
   height: 500px;
-  background: var(--accent);
-  bottom: -150px;
-  right: -150px;
-  animation: blobFloat 15s infinite alternate-reverse;
+  background: radial-gradient(circle, var(--primary-glow) 0%, transparent 70%);
+  top: -100px;
+  left: -100px;
+  z-index: -1;
+  filter: blur(60px);
 }
 
-@keyframes blobFloat {
-  from { transform: translate(0, 0) scale(1); }
-  to { transform: translate(50px, 100px) scale(1.1); }
-}
-
-/* ============================================================
-   ELEMENTOS DE INTERFAZ (UI)
-   ============================================================ */
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 1.25rem;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
 }
 
-h1, h2, h3 { font-family: 'Outfit', sans-serif; }
+@media (max-width: 768px) {
+  .container {
+    padding: 0 1rem; /* Menos margen lateral para aprovechar pantalla */
+  }
+}
 
-/* Botones Premium */
+/* BOTONES APP-READY */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
-  padding: 0.8rem 1.5rem;
-  border-radius: 14px;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: all var(--trans-mid);
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  border-radius: 12px;
+  font-weight: 700;
   cursor: pointer;
   border: none;
-  text-decoration: none;
+  transition: 0.2s;
+  font-size: 0.95rem;
 }
 
-.btn-primary {
-  background: var(--primary);
-  color: white;
-  box-shadow: 0 8px 20px -6px var(--primary-glow);
-}
-.btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 12px 25px -4px var(--primary-glow);
-  filter: brightness(1.1);
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:active { transform: scale(0.96); }
+
+.btn-icon { padding: 0.75rem; border-radius: 50%; }
+
+/* UTILITIES */
+.hide-mobile { display: flex; }
+.show-mobile-only { display: none; }
+
+@media (max-width: 768px) {
+  .hide-mobile { display: none !important; }
+  .show-mobile-only { display: flex !important; }
+  
+  /* Ajuste para el Bottom Nav */
+  .module-page, .hub-page, .dashboard-page {
+    padding-bottom: 90px !important; /* Espacio para que el Bottom Nav no tape el contenido */
+  }
 }
 
-.btn-secondary {
-  background: rgba(255,255,255,0.05);
-  color: white;
-  border: 1px solid var(--glass-border);
-}
-.btn-secondary:hover { background: rgba(255,255,255,0.1); }
-
-.btn-ghost {
-  background: transparent;
-  color: var(--text-muted);
-}
-.btn-ghost:hover { color: white; background: rgba(255,255,255,0.05); }
-
-/* Inputs Cristalinos */
-.form-input {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--glass-border);
-  border-radius: 14px;
-  padding: 1rem 1.2rem;
-  color: white;
-  width: 100%;
-  transition: all 0.2s;
-  font-size: 1rem;
-}
-.form-input:focus {
-  outline: none;
-  border-color: var(--primary);
-  background: rgba(255, 255, 255, 0.05);
-  box-shadow: 0 0 0 4px var(--primary-glow);
-}
-
-/* Tarjetas */
+/* Glass Cards Mobile Optimized */
 .glass-card {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--glass-border);
-  border-radius: var(--radius-lg);
-  padding: 1.5rem;
-  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
 }
 
-/* Scrollbar Personalizada */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
-
-/* Responsividad General */
 @media (max-width: 768px) {
-  .container { padding: 0 1rem; }
-  h1 { font-size: 2rem !important; }
-  .btn { width: 100%; }
+  .glass-card {
+    border-radius: 14px;
+    padding: 1rem;
+  }
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.badge {
+  padding: 0.25rem 0.6rem;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  border: 1px solid transparent;
 }
