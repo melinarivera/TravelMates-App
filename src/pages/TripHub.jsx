@@ -99,13 +99,29 @@ export default function TripHub() {
   }
 
   async function fetchChat() {
-    const { data } = await supabase
+    // We fetch messages and profiles separately if join fails, or use a simpler join
+    const { data, error } = await supabase
       .from('chat_messages')
-      .select('*, profile:profiles(full_name)')
+      .select(`
+        *,
+        profiles:user_id (full_name)
+      `)
       .eq('trip_id', tripId)
       .order('created_at', { ascending: true })
       .limit(50)
-    if (data) setMessages(data)
+    
+    if (error) {
+      console.error('Chat error:', error)
+      // Fallback to basic select
+      const { data: basicData } = await supabase
+        .from('chat_messages')
+        .select('*')
+        .eq('trip_id', tripId)
+        .order('created_at', { ascending: true })
+      if (basicData) setMessages(basicData)
+    } else {
+      setMessages(data || [])
+    }
   }
 
   async function updateStatus(status) {
@@ -278,7 +294,8 @@ export default function TripHub() {
             ) : (
               messages.map(msg => {
                 const isMe = msg.user_id === user.id
-                const displayName = msg.profile?.full_name || msg.user_email?.split('@')[0] || 'Viajero'
+                const profile = Array.isArray(msg.profiles) ? msg.profiles[0] : msg.profiles
+                const displayName = profile?.full_name || msg.user_email?.split('@')[0] || 'Viajero'
                 const initials = displayName.slice(0, 2).toUpperCase()
                 return (
                   <div key={msg.id} className={`chat-message ${isMe ? 'mine' : 'theirs'}`}>
