@@ -48,16 +48,25 @@ export default function Dashboard() {
     e.preventDefault()
     setCreating(true)
 
+    // Sanitize dates: empty strings should be null
+    const tripData = {
+      ...form,
+      owner_id: user.id,
+      status: 'planning',
+      start_date: form.start_date || null,
+      end_date: form.end_date || null
+    }
+
     // Insert the trip
     const { data: trip, error: tripError } = await supabase
       .from('trips')
-      .insert({ ...form, owner_id: user.id, status: 'planning' })
+      .insert(tripData)
       .select()
       .single()
 
     if (tripError) {
       console.error('Error creating trip:', tripError)
-      alert(`Error al crear el viaje: ${tripError.message}`)
+      alert(`Error al crear el viaje: ${tripError.message}\nVerifica que hayas ejecutado el SQL en Supabase.`)
       setCreating(false)
       return
     }
@@ -69,15 +78,19 @@ export default function Dashboard() {
         role: 'titular',
         status: 'accepted',
       })
+      
       if (memberError) {
         console.error('Error adding member:', memberError)
-        // Trip was created but membership failed – still navigate
         alert(`Viaje creado, pero hubo un error al añadirte como miembro: ${memberError.message}`)
       }
+
       setShowModal(false)
       setForm({ name: '', destination: '', start_date: '', end_date: '', description: '' })
       fetchTrips()
-      navigate(`/trip/${trip.id}`)
+      // Wait a tiny bit to show success before navigating
+      setTimeout(() => {
+        navigate(`/trip/${trip.id}`)
+      }, 100)
     }
     setCreating(false)
   }
