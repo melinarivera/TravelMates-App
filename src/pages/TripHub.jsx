@@ -179,7 +179,7 @@ export default function TripHub() {
             ) : (
               trip?.description ? (
                 <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                  <a href={trip.description} target="_blank" rel="noreferrer" className="btn-entrar" style={{ textDecoration: 'none' }}>
+                  <a href={trip.description} target="_blank" rel="noreferrer" className="btn-join-neon" style={{ textDecoration: 'none' }}>
                     <ExternalLink size={22} /> Unirse al Canal
                   </a>
                   {isTitular && (
