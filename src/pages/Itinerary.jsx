@@ -52,10 +52,11 @@ export default function Itinerary() {
   async function saveActivity(e) {
     e.preventDefault()
     setSaving(true)
+    const source = isTitular ? 'manual' : 'voting'
     if (editActivity) {
-      await supabase.from('itinerary_activities').update(form).eq('id', editActivity.id)
+      await supabase.from('itinerary_activities').update({ ...form, source }).eq('id', editActivity.id)
     } else {
-      await supabase.from('itinerary_activities').insert({ ...form, trip_id: tripId, user_id: user.id })
+      await supabase.from('itinerary_activities').insert({ ...form, source, trip_id: tripId, user_id: user.id })
     }
     setShowModal(false)
     setEditActivity(null)
@@ -102,11 +103,9 @@ export default function Itinerary() {
             <h1 className="module-title">Itinerario</h1>
             <p className="module-subtitle">{days.length} días planificados</p>
           </div>
-          {isTitular && (
-            <button className="btn btn-primary" onClick={() => openAdd()} style={{ marginLeft: 'auto' }} id="add-activity-btn">
-              <Plus size={18} /> Añadir actividad
-            </button>
-          )}
+          <button className="btn btn-primary" onClick={() => openAdd()} style={{ marginLeft: 'auto' }} id="add-activity-btn">
+            <Plus size={18} /> {isTitular ? 'Añadir actividad' : 'Proponer actividad'}
+          </button>
         </div>
 
         {loading ? (
@@ -120,11 +119,9 @@ export default function Itinerary() {
             <p className="empty-state-text">
               {isTitular ? 'Añade las primeras actividades del viaje' : 'El titular añadirá las actividades pronto'}
             </p>
-            {isTitular && (
-              <button className="btn btn-primary" onClick={() => openAdd()}>
-                <Plus size={18} /> Primera actividad
-              </button>
-            )}
+            <button className="btn btn-primary" onClick={() => openAdd()}>
+              <Plus size={18} /> {isTitular ? 'Primera actividad' : 'Proponer actividad'}
+            </button>
           </div>
         ) : (
           <div className="itinerary-days fade-in-up delay-1">
@@ -141,7 +138,7 @@ export default function Itinerary() {
                   </div>
                   {isTitular && (
                     <button className="btn btn-ghost btn-sm" onClick={() => openAdd(date)}>
-                      <Plus size={16} /> Actividad
+                      <Plus size={16} /> {isTitular ? 'Actividad' : 'Propuesta'}
                     </button>
                   )}
                 </div>
@@ -149,6 +146,7 @@ export default function Itinerary() {
                 <div className="itinerary-activities">
                   {activities.map(act => {
                     const icon = TYPE_ICONS[act.type] || <Calendar size={18} />
+                    const color = TYPE_COLORS[act.type] || 'var(--accent)'
                     return (
                       <div key={act.id} className="activity-card glass">
                         <div className="activity-type-dot" style={{ background: color }} />
