@@ -1,20 +1,17 @@
 import { X } from 'lucide-react'
+import './Modal.css'
 
-export default function Modal({ title, onClose, children, maxWidth = '520px' }) {
+export default function Modal({ title, children, onClose }) {
   return (
-    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal" style={{ maxWidth }}>
-        <div className="modal-header">
-          <h3 className="modal-title">{title}</h3>
-          <button
-            className="btn btn-ghost btn-icon"
-            onClick={onClose}
-            aria-label="Cerrar"
-          >
-            <X size={20} />
-          </button>
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content fade-in-up" onClick={e => e.stopPropagation()}>
+        <button className="modal-close-btn" onClick={onClose}>
+          <X size={20} />
+        </button>
+        {title && <h2 className="modal-title">{title}</h2>}
+        <div className="modal-body">
+          {children}
         </div>
-        {children}
       </div>
     </div>
   )
