@@ -159,14 +159,14 @@ export default function Expenses() {
                 safeExpenses.map(exp => (
                   <div key={exp.id} className="item-row glass-card expense-item-card">
                     <div className="expense-info">
-                      <div className="member-name">{exp.description}</div>
-                      <div className="member-tags">
+                      <div className="member-name" style={{ fontSize: '1.3rem' }}>{exp.description}</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '0.5rem' }}>
                         <span className="badge-guest">{exp.category}</span>
-                        <span className="expense-subtitle">Pagado por: {getPayerName(exp.paid_by)}</span>
+                        <span className="expense-subtitle">Por: {getPayerName(exp.paid_by)}</span>
                       </div>
                     </div>
                     <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                      <div className="expense-price">{parseFloat(exp.amount).toFixed(2)}€</div>
+                      <div className="expense-price" style={{ fontSize: '1.6rem' }}>{parseFloat(exp.amount).toFixed(2)}€</div>
                       {isTitular && (
                         <button className="btn-delete-vibrant" onClick={() => deleteExpense(exp.id)}>
                           <Trash2 size={20} />
