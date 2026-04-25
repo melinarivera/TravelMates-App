@@ -261,6 +261,16 @@ CREATE POLICY "chat_select" ON public.chat_messages FOR SELECT
 DROP POLICY IF EXISTS "chat_insert" ON public.chat_messages;
 CREATE POLICY "chat_insert" ON public.chat_messages FOR INSERT WITH CHECK (auth.uid() = user_id);
 
--- Enable Realtime for chat
-ALTER PUBLICATION supabase_realtime ADD TABLE public.chat_messages;
+-- Enable Realtime for chat (Safe version)
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_publication_tables 
+    WHERE pubname = 'supabase_realtime' 
+    AND schemaname = 'public' 
+    AND tablename = 'chat_messages'
+  ) THEN
+    ALTER PUBLICATION supabase_realtime ADD TABLE public.chat_messages;
+  END IF;
+END $$;
 ```
