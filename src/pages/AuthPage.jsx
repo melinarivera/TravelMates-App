@@ -82,7 +82,7 @@ export default function AuthPage() {
         <div className="auth-form-panel glass-card">
           <div className="auth-tabs">
             <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => setMode('login')}>
-              Entrar
+              Iniciar Sesión
             </button>
             <button className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => setMode('register')}>
               Registrarse
@@ -122,14 +122,25 @@ export default function AuthPage() {
               <input type="password" className="form-input" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
             </div>
 
-            <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
-              {loading ? <div className="spinner" /> : (mode === 'login' ? 'Entrar' : 'Comenzar')}
+            <button type="submit" className="btn-add-vibrant" disabled={loading} style={{ width: '100%', marginTop: '1.5rem', height: '55px', fontSize: '1.1rem', justifyContent: 'center' }}>
+              {loading ? <div className="spinner" /> : (mode === 'login' ? 'Iniciar Sesión' : 'Comenzar')}
             </button>
           </form>
 
-          <div className="auth-footer">
-            <Shield size={14} />
-            <span>Plataforma 100% Segura</span>
+          <div className="auth-footer" style={{ flexDirection: 'column', gap: '0.8rem', marginTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'rgba(255,255,255,0.7)', fontSize: '0.85rem' }}>
+              <Shield size={14} />
+              <span>Plataforma 100% Segura</span>
+            </div>
+            
+            <div style={{ textAlign: 'center', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
+              <div>&copy; {new Date().getFullYear()} Melina Rivera. Todos los derechos reservados.</div>
+              <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Privacidad de Datos</a>
+                <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Términos y Condiciones</a>
+                <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Aviso Legal (UE/España)</a>
+              </div>
+            </div>
           </div>
         </div>
 
