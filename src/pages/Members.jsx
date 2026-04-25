@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
-  Plus, Trash2, Users, Mail, Check, X, Shield, Star
+  Plus, Trash2, Users, Mail, Star, UserPlus
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -70,16 +70,15 @@ export default function Members() {
       <div className="container module-body">
         <header className="module-header fade-in-up">
           <div className="module-title-group">
-            <div className="module-icon-box">
-              <Users size={32} />
-            </div>
+            <div className="module-icon-box"><Users size={32} /></div>
             <div>
               <h1 className="module-title">Integrantes</h1>
-              <p className="module-subtitle">Gestiona tu equipo de viaje</p>
+              <p className="module-subtitle">Tu equipo de viaje</p>
             </div>
           </div>
-          <button className="btn btn-add-desktop hide-mobile" onClick={() => setShowModal(true)}>
-            <Plus size={20} /> Invitar Amigo
+          {/* BOTÓN VERDE ARRIBA (TAMBIÉN EN MÓVIL) */}
+          <button className="btn btn-add-vibrant" onClick={() => setShowModal(true)}>
+            <Plus size={22} /> Invitar Amigo
           </button>
         </header>
 
@@ -91,33 +90,31 @@ export default function Members() {
 
             return (
               <div key={m.id} className="item-row glass-card member-card">
-                <div className="member-avatar avatar">
-                  {initials}
-                </div>
+                <div className="avatar">{initials}</div>
                 
                 <div className="member-info">
                   <div className="member-top">
                     <span className="member-name">{displayName}</span>
                     <div className="member-tags">
-                      <span className={`badge ${m.role === 'titular' ? 'badge-sun' : 'badge-slate'}`}>
-                        {m.role === 'titular' ? <><Star size={12} /> Titular</> : 'Invitado'}
-                      </span>
-                      <span className={`badge ${m.status === 'accepted' ? 'badge-sky' : 'badge-slate'}`}>
+                      {m.role === 'titular' ? (
+                        <span className="badge-premium badge-titular">
+                          <Star size={14} fill="currentColor" /> Titular
+                        </span>
+                      ) : (
+                        <span className="badge-premium badge-guest">Invitado</span>
+                      )}
+                      
+                      <span className={`badge-premium ${m.status === 'accepted' ? 'badge-ok' : 'badge-slate'}`}>
                         {m.status === 'accepted' ? 'Aceptado' : 'Pendiente'}
                       </span>
-                      {isMe && <span className="badge badge-mint">Tú</span>}
                     </div>
-                  </div>
-                  <div className="member-email">
-                    <Mail size={14} /> 
-                    <span>{m.profiles?.email || m.invite_email}</span>
                   </div>
                 </div>
                 
                 <div className="member-actions">
                   {isTitular && !isMe && (
-                    <button className="btn btn-ghost btn-icon btn-sm btn-delete-member" onClick={() => removeMember(m.id)}>
-                      <Trash2 size={20} />
+                    <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={() => removeMember(m.id)}>
+                      <Trash2 size={22} />
                     </button>
                   )}
                 </div>
@@ -127,23 +124,20 @@ export default function Members() {
         </div>
       </div>
 
-      <button className="fab-module show-mobile-only" onClick={() => setShowModal(true)}>
-        <Plus size={32} />
-      </button>
-
       {showModal && (
-        <Modal title="Invitar al viaje" onClose={() => setShowModal(false)}>
+        <Modal title="Invitar Amigo" onClose={() => setShowModal(false)}>
           <form onSubmit={inviteMember} className="create-trip-form">
-            <div className="form-group" style={{ marginBottom: '2rem' }}>
-              <label className="form-label">Correo electrónico</label>
-              <input type="email" className="form-input" required value={email} onChange={e => setEmail(e.target.value)} placeholder="email@hola.com" />
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '1.25rem', lineHeight: '1.5' }}>
-                Tu amigo recibirá una invitación y podrá unirse al viaje cuando inicie sesión con este correo.
-              </p>
+            <div className="form-group">
+              <label className="form-label">Email de tu amigo</label>
+              <div className="form-input-with-icon">
+                <UserPlus size={18} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
+                <input type="email" className="form-input" style={{ paddingLeft: '3rem' }} required value={email} onChange={e => setEmail(e.target.value)} placeholder="email@hola.com" />
+              </div>
             </div>
             <div className="modal-actions">
-              <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Cancelar</button>
-              <button type="submit" className="btn btn-primary" disabled={inviting} style={{ flex: 2 }}>Enviar Invitación</button>
+              <button type="submit" className="btn btn-add-vibrant" disabled={inviting} style={{ width: '100%' }}>
+                Enviar Invitación Verde
+              </button>
             </div>
           </form>
         </Modal>
