@@ -104,8 +104,6 @@ export default function TripHub() {
       }}>
         <div className="container">
           <div className="hub-hero-inner fade-in-up">
-            
-            {/* FILA SUPERIOR: BACK Y STATUS SEPARADOS */}
             <div className="hub-top-nav">
               <button className="btn btn-secondary btn-sm" onClick={() => navigate('/')}>
                 <ArrowLeft size={18} /> Mis viajes
@@ -117,24 +115,20 @@ export default function TripHub() {
             
             <div className="hub-title-section">
               {editingName && isTitular ? (
-                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
-                  <input type="text" className="form-input" style={{ fontSize: '2.5rem', fontWeight: 800, width: '100%' }} value={newName} onChange={e => setNewName(e.target.value)} autoFocus />
-                  <button className="btn-edit-neon" onClick={updateName}><Check size={22} /></button>
+                <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+                  <input type="text" className="form-input" style={{ fontSize: '2.5rem', fontWeight: 800, flex: 1 }} value={newName} onChange={e => setNewName(e.target.value)} autoFocus />
+                  <button className="btn-edit-neon" onClick={updateName}><Check size={24} /></button>
                 </div>
               ) : (
                 <div className="hub-title-row">
                   <h1 className="hub-trip-name text-gradient">{trip?.name}</h1>
-                  {isTitular && (
-                    <button className="btn-edit-neon" onClick={() => setEditingName(true)}>
-                      <Edit3 size={22} />
-                    </button>
-                  )}
+                  {isTitular && <button className="btn-edit-neon" onClick={() => setEditingName(true)}><Edit3 size={24} /></button>}
                 </div>
               )}
               
               <div className="hub-meta-row">
-                <div className="hub-meta-item"><MapPin size={22} color="#00d4ff" /> {trip?.destination}</div>
-                <div className="hub-meta-item"><Users size={22} color="#39ff14" /> {memberCount} viajeros</div>
+                <div className="hub-meta-item"><MapPin size={24} color="#00d4ff" /> {trip?.destination}</div>
+                <div className="hub-meta-item"><Users size={24} color="#39ff14" /> {memberCount} viajeros</div>
               </div>
             </div>
 
@@ -164,43 +158,43 @@ export default function TripHub() {
           ))}
         </div>
 
-        <div className="glass-card fade-in-up delay-1" style={{ padding: '3rem', textAlign: 'center', marginTop: '3rem' }}>
-          <div className="hero-icon-glow" style={{ margin: '0 auto 1.5rem', width: '80px', height: '80px' }}>
-             <MessageCircle size={32} color="white" />
+        {/* CANAL DEL GRUPO - UNIFICADO Y SCROLLABLE */}
+        <div className="hub-channel-card fade-in-up delay-1">
+          <div className="hub-channel-icon-box">
+             <MessageCircle size={36} color="white" />
           </div>
-          <h2 className="hub-module-title" style={{ fontSize: '2rem', marginBottom: '1rem' }}>Canal del Grupo</h2>
-          
+          <h2 className="hub-module-title" style={{ fontSize: '2.2rem', marginBottom: '1rem' }}>Canal del Grupo</h2>
+          <p className="hub-module-desc" style={{ fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto 2.5rem' }}>
+            Únete al canal oficial para coordinar los detalles finales de tu aventura.
+          </p>
+
           {editingLink && isTitular ? (
-            <div style={{ maxWidth: '500px', margin: '0 auto', display: 'flex', gap: '0.5rem' }}>
+            <div style={{ maxWidth: '500px', margin: '0 auto', display: 'flex', gap: '0.8rem' }}>
                <input type="url" className="form-input" placeholder="Enlace de WhatsApp o Telegram" value={newLink} onChange={e => setNewLink(e.target.value)} />
-               <button className="btn-edit-neon" onClick={updateGroupLink}><Check size={20} /></button>
-               <button className="btn-delete-vibrant" onClick={() => setEditingLink(false)}><X size={20} /></button>
+               <button className="btn-edit-neon" onClick={updateGroupLink}><Check size={22} /></button>
+               <button className="btn-delete-vibrant" onClick={() => setEditingLink(false)}><X size={22} /></button>
             </div>
           ) : (
-            <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-              <p className="hub-module-desc" style={{ fontSize: '1.1rem', marginBottom: '2.5rem' }}>
-                Únete al grupo externo para coordinar detalles con los viajeros.
-              </p>
+            <div className="hub-channel-actions">
               {trip?.description ? (
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                  <a href={trip.description} target="_blank" rel="noreferrer" className="btn-entrar" style={{ textDecoration: 'none' }}>
-                    <ExternalLink size={20} /> Unirse al Grupo
+                <>
+                  <a href={trip.description} target="_blank" rel="noreferrer" className="btn-join-group">
+                    <ExternalLink size={22} /> Unirse al Canal
                   </a>
                   {isTitular && (
-                    <button className="btn btn-secondary" onClick={() => setEditingLink(true)}>
-                      <LinkIcon size={18} /> Cambiar enlace
+                    <button className="btn btn-add-vibrant" style={{ padding: '0.8rem 1.5rem' }} onClick={() => setEditingLink(true)}>
+                      <LinkIcon size={20} /> Cambiar enlace
                     </button>
                   )}
-                </div>
+                </>
               ) : (
-                <div style={{ background: 'rgba(255,255,255,0.02)', padding: '2rem', borderRadius: '16px', border: '1px dashed var(--glass-border)' }}>
-                   <p style={{ color: 'var(--text-muted)', margin: 0 }}>Sin enlace configurado.</p>
-                   {isTitular && (
-                     <button className="btn-add-vibrant" style={{ marginTop: '1rem', padding: '0.6rem 1.2rem' }} onClick={() => setEditingLink(true)}>
-                       Configurar Enlace
-                     </button>
-                   )}
-                </div>
+                isTitular ? (
+                  <button className="btn-add-vibrant" onClick={() => setEditingLink(true)}>
+                    <LinkIcon size={20} /> Configurar Enlace de Grupo
+                  </button>
+                ) : (
+                  <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Enlace no disponible aún.</p>
+                )
               )}
             </div>
           )}
