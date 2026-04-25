@@ -25,37 +25,31 @@ export default function Expenses() {
 
   async function fetchData() {
     setLoading(true)
-    try {
-      const { data: mems } = await supabase
-        .from('trip_members')
-        .select('user_id, role, profiles(full_name, email)')
-        .eq('trip_id', tripId)
-        .eq('status', 'accepted')
-      
-      if (mems) {
-        setMembers(mems)
-        const me = mems.find(m => m.user_id === user.id)
-        if (me) setMyRole(me.role)
-      }
-
-      const { data: exps } = await supabase
-        .from('expenses')
-        .select('*, profiles!paid_by(full_name, email)')
-        .eq('trip_id', tripId)
-        .order('created_at', { ascending: false })
-      
-      if (exps) setExpenses(exps)
-    } catch (err) {
-      console.error('Fetch error:', err)
+    const { data: mems } = await supabase
+      .from('trip_members')
+      .select('user_id, role, profiles(full_name, email)')
+      .eq('trip_id', tripId)
+      .eq('status', 'accepted')
+    
+    if (mems) {
+      setMembers(mems)
+      const me = mems.find(m => m.user_id === user.id)
+      if (me) setMyRole(me.role)
     }
+
+    const { data: exps } = await supabase
+      .from('expenses')
+      .select('*, profiles!paid_by(full_name, email)')
+      .eq('trip_id', tripId)
+      .order('created_at', { ascending: false })
+    
+    if (exps) setExpenses(exps)
     setLoading(false)
   }
 
   async function addExpense(e) {
     e.preventDefault()
-    if (!form.description || !form.amount) return
     setSaving(true)
-    
     const { error } = await supabase.from('expenses').insert({
       trip_id: tripId,
       user_id: user.id,
@@ -66,12 +60,12 @@ export default function Expenses() {
       split_with: members.map(m => m.user_id)
     })
 
-    if (error) {
-      alert('Error al registrar: ' + error.message)
-    } else {
+    if (!error) {
       setShowModal(false)
       setForm({ description: '', amount: '', category: 'Otros', paid_by: '' })
-      await fetchData()
+      fetchData()
+    } else {
+      alert(error.message)
     }
     setSaving(false)
   }
@@ -102,16 +96,13 @@ export default function Expenses() {
   return (
     <div className="module-page">
       <Navbar />
-
       <div className="container module-body">
         <header className="module-header fade-in-up">
           <div className="module-title-group">
-            <div className="module-icon-box">
-              <DollarSign size={28} />
-            </div>
+            <div className="module-icon-box"><DollarSign size={28} /></div>
             <div>
               <h1 className="module-title">Gastos</h1>
-              <p className="module-subtitle">Cuentas compartidas</p>
+              <p className="module-subtitle">Divide cuentas</p>
             </div>
           </div>
           <button className="btn btn-add-desktop hide-mobile" onClick={() => setShowModal(true)}>
@@ -121,46 +112,37 @@ export default function Expenses() {
 
         <section className="expenses-stats fade-in-up">
           <div className="stat-card glass-card">
-            <span className="stat-value">{totalSpent.toFixed(2)}€</span>
+            <span className="stat-value">{totalSpent.toFixed(0)}€</span>
             <span className="stat-label">Total</span>
           </div>
           <div className="stat-card glass-card">
-            <span className="stat-value">{perPerson.toFixed(2)}€</span>
+            <span className="stat-value">{perPerson.toFixed(0)}€</span>
             <span className="stat-label">Couta</span>
           </div>
         </section>
 
-        <div className="auth-tabs" style={{ marginBottom: '3rem' }}>
-          <button className={`auth-tab ${activeTab === 'list' ? 'active' : ''}`} onClick={() => setActiveTab('list')}>
-             Lista
-          </button>
-          <button className={`auth-tab ${activeTab === 'balance' ? 'active' : ''}`} onClick={() => setActiveTab('balance')}>
-             Balances
-          </button>
+        <div className="auth-tabs" style={{ marginBottom: '2rem' }}>
+          <button className={`auth-tab ${activeTab === 'list' ? 'active' : ''}`} onClick={() => setActiveTab('list')}>Lista</button>
+          <button className={`auth-tab ${activeTab === 'balance' ? 'active' : ''}`} onClick={() => setActiveTab('balance')}>Balances</button>
         </div>
 
         {loading ? <div className="spinner" /> : (
           <div className="items-list fade-in-up">
             {activeTab === 'list' ? (
               expenses.length === 0 ? (
-                <div className="empty-state glass-card">
-                  <p>No hay gastos.</p>
-                </div>
+                <div className="empty-state glass-card"><p>Sin gastos.</p></div>
               ) : expenses.map(exp => (
                 <div key={exp.id} className="item-row glass-card">
                   <div className="expense-info">
-                    <div className="expense-desc">{exp.description}</div>
+                    <div className="expense-desc" style={{ fontWeight: 700 }}>{exp.description}</div>
                     <div className="expense-meta">
                       <span className="badge badge-sun">{exp.category}</span>
-                      <span>{exp.profiles?.full_name || exp.profiles?.email?.split('@')[0]}</span>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <div className="expense-amount">{parseFloat(exp.amount).toFixed(2)}€</div>
+                    <div className="expense-amount" style={{ fontWeight: 800 }}>{parseFloat(exp.amount).toFixed(2)}€</div>
                     {isTitular && (
-                      <button className="btn btn-ghost btn-icon btn-sm" onClick={() => deleteExpense(exp.id)} style={{ color: 'var(--coral)' }}>
-                        <Trash2 size={18} />
-                      </button>
+                      <button className="btn btn-ghost btn-sm" onClick={() => deleteExpense(exp.id)} style={{ color: 'var(--coral)' }}><Trash2 size={16} /></button>
                     )}
                   </div>
                 </div>
@@ -169,21 +151,20 @@ export default function Expenses() {
               balanceData.map(b => (
                 <div key={b.userId} className="item-row glass-card">
                   <div className="expense-info">
-                    <div className="expense-desc">{b.name}</div>
-                    <div className="expense-meta">Pagó {b.paid.toFixed(2)}€</div>
+                    <div className="expense-desc" style={{ fontWeight: 700 }}>{b.name}</div>
+                    <div className="expense-meta">Pagó {b.paid.toFixed(0)}€</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                      <div style={{ 
                        display: 'flex', 
                        alignItems: 'center', 
                        justifyContent: 'flex-end',
-                       gap: '8px',
+                       gap: '6px',
                        color: b.balance >= 0 ? 'var(--mint)' : 'var(--coral)',
-                       fontWeight: 'bold',
-                       fontSize: '1.2rem'
+                       fontWeight: 'bold'
                      }}>
-                       {b.balance >= 0 ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
-                       {Math.abs(b.balance).toFixed(2)}€
+                       {b.balance >= 0 ? <TrendingUp size={16} /> : <TrendingDown size={16} />}
+                       {Math.abs(b.balance).toFixed(0)}€
                      </div>
                   </div>
                 </div>
@@ -193,7 +174,6 @@ export default function Expenses() {
         )}
       </div>
 
-      {/* FAB - BOTÓN MÓVIL FORZADO */}
       <button className="fab-module show-mobile-only" onClick={() => setShowModal(true)}>
         <Plus size={32} />
       </button>
@@ -202,16 +182,24 @@ export default function Expenses() {
         <Modal title="Añadir Gasto" onClose={() => setShowModal(false)}>
           <form onSubmit={addExpense} className="create-trip-form">
             <div className="form-group">
-              <label className="form-label">¿En qué se gastó?</label>
-              <input type="text" className="form-input" required value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Cena, Gasolina, etc." />
+              <label className="form-label">¿Qué se pagó?</label>
+              <input type="text" className="form-input" required value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} placeholder="Cena, Vuelo..." />
             </div>
             <div className="form-group">
               <label className="form-label">Importe (€)</label>
               <input type="number" step="0.01" className="form-input" required value={form.amount} onChange={e => setForm(f => ({ ...f, amount: e.target.value }))} />
             </div>
+            <div className="form-group">
+              <label className="form-label">¿Quién pagó?</label>
+              <select className="form-input" value={form.paid_by} onChange={e => setForm(f => ({ ...f, paid_by: e.target.value }))}>
+                 <option value="">Yo ({user.email})</option>
+                 {members.filter(m => m.user_id !== user.id).map(m => (
+                   <option key={m.user_id} value={m.user_id}>{m.profiles?.full_name || m.profiles?.email}</option>
+                 ))}
+              </select>
+            </div>
             <div className="modal-actions">
-              <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Cerrar</button>
-              <button type="submit" className="btn btn-primary" disabled={saving} style={{ flex: 2 }}>Guardar</button>
+              <button type="submit" className="btn btn-primary" disabled={saving} style={{ width: '100%' }}>Guardar Gasto</button>
             </div>
           </form>
         </Modal>
