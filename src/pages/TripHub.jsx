@@ -95,8 +95,7 @@ export default function TripHub() {
       .select('*', { count: 'exact', head: true })
       .eq('trip_id', tripId)
     setMemberCount(count || 0)
-  }
-
+   async function fetchChat() {
     const { data } = await supabase
       .from('chat_messages')
       .select('*, profile:profiles(full_name)')
@@ -104,6 +103,7 @@ export default function TripHub() {
       .order('created_at', { ascending: true })
       .limit(50)
     if (data) setMessages(data)
+  }
 
   async function updateStatus(status) {
     await supabase.from('trips').update({ status }).eq('id', tripId)
@@ -273,6 +273,7 @@ export default function TripHub() {
                 <p>Aún no hay mensajes. ¡Di hola!</p>
               </div>
             ) : (
+              messages.map(msg => {
                 const isMe = msg.user_id === user.id
                 const displayName = msg.profile?.full_name || msg.user_email?.split('@')[0] || 'Viajero'
                 const initials = displayName.slice(0, 2).toUpperCase()
@@ -288,8 +289,29 @@ export default function TripHub() {
                     </div>
                   </div>
                 )
+              })
             )}
           </div>
+
+          <form onSubmit={sendMessage} className="hub-chat-form">
+            <input
+              type="text"
+              className="form-input hub-chat-input"
+              placeholder="Escribe un mensaje..."
+              value={chatMsg}
+              onChange={e => setChatMsg(e.target.value)}
+              id="chat-input"
+            />
+            <button type="submit" className="btn btn-primary btn-icon" disabled={sendingMsg || !chatMsg.trim()} id="chat-send-btn">
+              <Send size={18} />
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  )
+}
+  </div>
 
           <form onSubmit={sendMessage} className="hub-chat-form">
             <input
