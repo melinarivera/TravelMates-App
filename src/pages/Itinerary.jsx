@@ -76,11 +76,12 @@ export default function Itinerary() {
             <div className="module-icon-box"><Calendar size={28} /></div>
             <div>
               <h1 className="module-title">Itinerario</h1>
-              <p className="module-subtitle">Cronograma del viaje</p>
+              <p className="module-subtitle">Planes y propuestas</p>
             </div>
           </div>
-          <button className="btn btn-add-desktop hide-mobile" onClick={() => setShowModal(true)}>
-            <Plus size={20} /> Añadir
+          {/* BOTÓN VERDE ARRIBA */}
+          <button className="btn btn-add-vibrant" onClick={() => setShowModal(true)}>
+            <Plus size={22} /> Nueva Propuesta
           </button>
         </header>
 
@@ -102,7 +103,7 @@ export default function Itinerary() {
                         {act.location && <p className="activity-loc"><MapPin size={12} /> {act.location}</p>}
                       </div>
                       <div className="activity-actions">
-                         <div className="vote-btns" style={{ display: 'flex', gap: '0.5rem' }}>
+                         <div className="vote-btns">
                             <button className="btn btn-sm vote-btn-up" onClick={() => vote(act.id, 'up')}>
                               <ThumbsUp size={16} /> <span>{act.activity_votes?.filter(v => v.vote === 'up').length || 0}</span>
                             </button>
@@ -111,8 +112,8 @@ export default function Itinerary() {
                             </button>
                          </div>
                          {isTitular && (
-                           <button className="btn btn-ghost btn-sm" onClick={() => deleteActivity(act.id)} style={{ color: 'var(--coral)', marginLeft: 'auto' }}>
-                             <Trash2 size={18} />
+                           <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={() => deleteActivity(act.id)}>
+                             <Trash2 size={20} />
                            </button>
                          )}
                       </div>
@@ -125,16 +126,12 @@ export default function Itinerary() {
         )}
       </div>
 
-      <button className="fab-module show-mobile-only" onClick={() => setShowModal(true)}>
-        <Plus size={32} />
-      </button>
-
       {showModal && (
-        <Modal title="Añadir Actividad" onClose={() => setShowModal(false)}>
+        <Modal title="Propuesta Verde" onClose={() => setShowModal(false)}>
           <form onSubmit={saveActivity} className="create-trip-form">
             <div className="form-group">
-              <label className="form-label">Título</label>
-              <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Ej. Cena, Museo..." />
+              <label className="form-label">¿Qué propones?</label>
+              <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
             </div>
             <div className="grid-2">
               <div className="form-group">
@@ -147,7 +144,9 @@ export default function Itinerary() {
               </div>
             </div>
             <div className="modal-actions">
-              <button type="submit" className="btn btn-primary" disabled={saving} style={{ width: '100%' }}>Guardar Actividad</button>
+              <button type="submit" className="btn btn-add-vibrant" disabled={saving} style={{ width: '100%', justifyContent: 'center' }}>
+                <Plus size={20} /> Guardar Propuesta Verde
+              </button>
             </div>
           </form>
         </Modal>
