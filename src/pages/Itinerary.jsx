@@ -112,7 +112,7 @@ export default function Itinerary() {
                             </button>
                          </div>
                          {isTitular && (
-                           <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={() => deleteActivity(act.id)}>
+                           <button className="btn-delete-vibrant" onClick={() => deleteActivity(act.id)}>
                              <Trash2 size={20} />
                            </button>
                          )}

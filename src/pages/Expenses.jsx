@@ -147,7 +147,7 @@ export default function Expenses() {
                   <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                     <div className="expense-amount" style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white' }}>{parseFloat(exp.amount).toFixed(2)}€</div>
                     {isTitular && (
-                      <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={() => deleteExpense(exp.id)}>
+                      <button className="btn-delete-vibrant" onClick={() => deleteExpense(exp.id)}>
                         <Trash2 size={20} />
                       </button>
                     )}

@@ -138,8 +138,8 @@ export default function Dashboard() {
                       Entrar <ChevronRight size={18} />
                     </button>
                     {trip.owner_id === user.id && (
-                      <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={(e) => { e.preventDefault(); deleteTrip(trip.id, trip.owner_id); }}>
-                        <Trash2 size={22} />
+                      <button className="btn-delete-vibrant" onClick={(e) => { e.preventDefault(); deleteTrip(trip.id, trip.owner_id); }}>
+                        <Trash2 size={20} />
                       </button>
                     )}
                   </div>

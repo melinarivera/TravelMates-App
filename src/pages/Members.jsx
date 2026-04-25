@@ -113,8 +113,8 @@ export default function Members() {
                 
                 <div className="member-actions">
                   {isTitular && !isMe && (
-                    <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={() => removeMember(m.id)}>
-                      <Trash2 size={22} />
+                    <button className="btn-delete-vibrant" onClick={() => removeMember(m.id)}>
+                      <Trash2 size={20} />
                     </button>
                   )}
                 </div>
