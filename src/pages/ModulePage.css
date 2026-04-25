@@ -1,62 +1,62 @@
-/* SISTEMA FLUORESCENTE - NEON VIBES */
+/* EFECTO NEÓN EXTREMO - SOLO PARA BOTONES DE ACCIÓN */
 
-:root {
-  --neon-red:   #ff3131; /* Rojo Eléctrico */
-  --neon-green: #39ff14; /* Verde Neón */
-  --neon-blue:  #00d4ff; /* Azul Eléctrico */
-  --neon-purple:#bc13fe; /* Morado Vibrante */
-}
-
-/* BOTONES FLUORESCENTES */
+/* VERDE NEÓN (AÑADIR / CREAR) */
 .btn-add-vibrant {
-  background: var(--neon-green) !important;
-  color: #000 !important; /* Texto negro para contraste máximo sobre neón */
+  background: #39ff14 !important; /* Verde Neón Puro */
+  color: #000 !important;
   font-weight: 900 !important;
-  box-shadow: 0 0 20px rgba(57, 255, 20, 0.4) !important;
-  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  border: none !important;
+  box-shadow: 
+    0 0 10px #39ff14,
+    0 0 20px #39ff14,
+    0 0 40px rgba(57, 255, 20, 0.4) !important;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
+.btn-add-vibrant:hover {
+  transform: translateY(-3px);
+  box-shadow: 
+    0 0 15px #39ff14,
+    0 0 35px #39ff14,
+    0 0 60px rgba(57, 255, 20, 0.6) !important;
+}
+
+/* ROJO NEÓN (BASURA / SALIR) */
 .btn-delete-vibrant, .btn-logout-vibrant {
-  background: var(--neon-red) !important;
-  color: white !important;
+  background: #ff0000 !important; /* Rojo Neón Puro */
+  color: #fff !important;
   border: none !important;
-  box-shadow: 0 0 20px rgba(255, 49, 49, 0.4) !important;
-  font-weight: 900 !important;
+  box-shadow: 
+    0 0 10px #ff0000,
+    0 0 20px #ff0000,
+    0 0 40px rgba(255, 0, 0, 0.4) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease;
 }
 
 .btn-delete-vibrant:hover, .btn-logout-vibrant:hover {
   transform: scale(1.1);
-  box-shadow: 0 0 30px rgba(255, 49, 49, 0.6) !important;
+  box-shadow: 
+    0 0 15px #ff0000,
+    0 0 35px #ff0000,
+    0 0 60px rgba(255, 0, 0, 0.6) !important;
 }
 
-/* BADGE PLANIFICADO AZUL FLUORESCENTE */
+/* NO TOCAR LO DEMÁS - ESTADO ACTUAL */
 .trip-card-status-badge {
   background: rgba(0, 212, 255, 0.2) !important;
-  color: var(--neon-blue) !important;
-  border: 2px solid var(--neon-blue) !important;
+  color: #00d4ff !important;
+  border: 2px solid #00d4ff !important;
   box-shadow: 0 0 15px rgba(0, 212, 255, 0.4) !important;
   font-weight: 900 !important;
 }
 
-/* BOTÓN ENTRAR ORIGINAL MORADO */
 .btn-entrar {
   background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
   color: white !important;
-  padding: 0.7rem 1.6rem !important;
-  border-radius: 12px !important;
   font-weight: 800 !important;
-  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4) !important;
-  border: 1px solid rgba(255,255,255,0.2) !important;
-}
-
-.btn-entrar:hover {
-  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;
-  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6) !important;
-}
-
-/* AVIÓN CENTRADO (DASHBOARD) */
-.trip-card-cover-placeholder {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
 }
