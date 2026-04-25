@@ -10,6 +10,12 @@ import {
 } from 'lucide-react'
 import './Dashboard.css'
 
+const STATUS_MAP = {
+  planning: { label: 'Planificando', color: 'var(--badge-ok)' },
+  active:   { label: 'En curso',     color: 'var(--btn-add)' },
+  done:     { label: 'Finalizado',   color: 'var(--text-muted)' },
+}
+
 export default function Dashboard() {
   const { user } = useAuth()
   const navigate = useNavigate()
@@ -37,7 +43,7 @@ export default function Dashboard() {
   async function createTrip(e) {
     e.preventDefault()
     setSaving(true)
-    const { data: trip, error: tripErr } = await supabase
+    const { data: trip } = await supabase
       .from('trips')
       .insert({
         name: newTrip.name,
@@ -69,7 +75,7 @@ export default function Dashboard() {
       alert('Solo el titular puede eliminar el viaje')
       return
     }
-    if (!confirm('¿Seguro que quieres eliminar este viaje? Esta acción no se puede deshacer.')) return
+    if (!confirm('¿Seguro que quieres eliminar este viaje?')) return
     await supabase.from('trips').delete().eq('id', id)
     fetchTrips()
   }
@@ -97,14 +103,15 @@ export default function Dashboard() {
               <div className="empty-state-card glass-card fade-in-up">
                 <div className="hero-icon-glow"><Globe size={40} color="white" /></div>
                 <h3>¿A dónde vamos?</h3>
-                <p>Aún no tienes ningún viaje creado. ¡Empieza tu aventura hoy mismo!</p>
-                <button className="btn btn-add-vibrant" onClick={() => setShowModal(true)}>
+                <p>Empieza tu aventura hoy mismo!</p>
+                <button className="btn btn-add-vibrant" style={{ marginTop: '2rem' }} onClick={() => setShowModal(true)}>
                   <Plus size={20} /> Crear mi primer viaje
                 </button>
               </div>
-            ) : trips.map(trip => (
-              <div key={trip.id} className="trip-card glass-card fade-in-up">
-                <Link to={`/trip/${trip.id}`} className="trip-card-link">
+            ) : trips.map(trip => {
+              const statusInfo = STATUS_MAP[trip.status] || STATUS_MAP.planning
+              return (
+                <div key={trip.id} className="trip-card glass-card fade-in-up">
                   <div className="trip-card-cover">
                     {trip.cover_url ? (
                       <img src={trip.cover_url} alt={trip.name} />
@@ -113,34 +120,38 @@ export default function Dashboard() {
                         <Plane size={60} color="rgba(255,255,255,0.15)" />
                       </div>
                     )}
-                    <div className="trip-card-status-badge">{trip.status}</div>
+                    <div className="trip-card-status-badge" style={{ color: statusInfo.color, borderColor: statusInfo.color }}>
+                      {statusInfo.label}
+                    </div>
                   </div>
+                  
                   <div className="trip-card-content">
                     <h3 className="trip-card-name">{trip.name}</h3>
                     <div className="trip-card-meta">
-                      <div className="trip-meta-item"><MapPin size={16} /> {trip.destination}</div>
-                      <div className="trip-meta-item"><Calendar size={16} /> {new Date(trip.start_date).toLocaleDateString()}</div>
+                      <div className="trip-meta-item"><MapPin size={18} /> {trip.destination}</div>
+                      <div className="trip-meta-item"><Calendar size={18} /> {new Date(trip.start_date).toLocaleDateString()}</div>
                     </div>
                   </div>
-                </Link>
-                <div className="trip-card-footer">
-                  <button className="btn btn-secondary btn-sm" onClick={() => navigate(`/trip/${trip.id}`)}>
-                    Entrar <ChevronRight size={16} />
-                  </button>
-                  {trip.owner_id === user.id && (
-                    <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={() => deleteTrip(trip.id, trip.owner_id)}>
-                      <Trash2 size={20} />
+
+                  <div className="trip-card-footer">
+                    <button className="btn btn-entrar" onClick={() => navigate(`/trip/${trip.id}`)}>
+                      Entrar <ChevronRight size={18} />
                     </button>
-                  )}
+                    {trip.owner_id === user.id && (
+                      <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={(e) => { e.preventDefault(); deleteTrip(trip.id, trip.owner_id); }}>
+                        <Trash2 size={22} />
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>
 
       {showModal && (
-        <Modal title="Nuevo Viaje" onClose={() => setShowModal(false)}>
+        <Modal title="Nuevo Viaje Verde" onClose={() => setShowModal(false)}>
           <form onSubmit={createTrip} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">Nombre del viaje</label>
