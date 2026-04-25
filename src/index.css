@@ -98,6 +98,11 @@
   --trans-fast:  0.15s var(--ease-smooth);
   --trans-mid:   0.3s var(--ease-smooth);
   --trans-spring:0.4s var(--ease-spring);
+
+  /* Glow Shadows */
+  --shadow-glow-coral: 0 10px 30px -5px rgba(255, 107, 107, 0.4);
+  --shadow-glow-sky:   0 10px 30px -5px rgba(14, 165, 233, 0.4);
+  --shadow-glow-plum:  0 10px 30px -5px rgba(168, 85, 247, 0.4);
 }
 
 /* ============================================================
