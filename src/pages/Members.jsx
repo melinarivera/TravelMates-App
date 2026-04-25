@@ -126,7 +126,7 @@ export default function Members() {
            </div>
            {isTitular && (
              <button className="btn btn-primary" onClick={() => setShowInvite(true)}>
-               <UserPlus size={18} /> Invitar amigo
+               <UserPlus size={18} /> <span className="hide-mobile">Invitar amigo</span>
              </button>
            )}
         </header>
@@ -136,20 +136,25 @@ export default function Members() {
             {members.map(member => {
               const role = ROLE_MAP[member.role] || ROLE_MAP.invitado
               const status = STATUS_MAP[member.status] || STATUS_MAP.pending
-              const initials = (member.profile?.full_name || member.profile?.email || member.invite_email)?.slice(0, 2).toUpperCase() || '??'
+              const displayName = member.profile?.full_name || member.profile?.email || member.invite_email || 'Viajero'
+              const initials = displayName.slice(0, 2).toUpperCase()
               const isMe = member.user_id === user.id
 
               return (
-                <div key={member.id} className="item-row glass-card">
+                <div key={member.id} className="item-row glass-card member-row">
                   <div className="avatar avatar-lg">{initials}</div>
                   <div className="expense-info">
                     <div className="expense-desc">
-                       {member.profile?.full_name || member.profile?.email || member.invite_email}
-                       {isMe && <span className="badge badge-accent" style={{ marginLeft: '1rem' }}>Tú</span>}
+                       {displayName}
+                       {isMe && <span className="badge badge-accent" style={{ marginLeft: '0.75rem' }}>Tú</span>}
                     </div>
-                    <div className="expense-meta">
-                       <span className="badge" style={{ color: role.color, borderColor: role.color }}>{role.label}</span>
-                       <span className="badge" style={{ color: status.color, borderColor: status.color }}>{status.label}</span>
+                    <div className="member-status-tags" style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem', flexWrap: 'wrap' }}>
+                       <span className="badge" style={{ color: role.color, borderColor: `${role.color}44`, background: `${role.color}11`, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                         {role.icon} {role.label}
+                       </span>
+                       <span className="badge" style={{ color: status.color, borderColor: `${status.color}44`, background: `${status.color}11`, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                         {status.icon} {status.label}
+                       </span>
                     </div>
                   </div>
                   
@@ -179,7 +184,7 @@ export default function Members() {
               <label className="form-label">Email del amigo</label>
               <div className="form-input-with-icon">
                 <Mail size={18} className="input-icon" />
-                <input type="email" className="form-input" placeholder="ejemplo@email.com" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} required />
+                <input type="email" className="form-input" placeholder="email@hola.com" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} required />
               </div>
             </div>
             <div className="modal-actions">
