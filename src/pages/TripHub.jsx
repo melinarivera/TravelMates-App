@@ -97,15 +97,13 @@ export default function TripHub() {
     setMemberCount(count || 0)
   }
 
-  async function fetchChat() {
     const { data } = await supabase
       .from('chat_messages')
-      .select('*')
+      .select('*, profile:profiles(full_name)')
       .eq('trip_id', tripId)
       .order('created_at', { ascending: true })
       .limit(50)
     if (data) setMessages(data)
-  }
 
   async function updateStatus(status) {
     await supabase.from('trips').update({ status }).eq('id', tripId)
@@ -275,14 +273,14 @@ export default function TripHub() {
                 <p>Aún no hay mensajes. ¡Di hola!</p>
               </div>
             ) : (
-              messages.map(msg => {
                 const isMe = msg.user_id === user.id
-                const initials = msg.user_email?.slice(0, 2).toUpperCase()
+                const displayName = msg.profile?.full_name || msg.user_email?.split('@')[0] || 'Viajero'
+                const initials = displayName.slice(0, 2).toUpperCase()
                 return (
                   <div key={msg.id} className={`chat-message ${isMe ? 'mine' : 'theirs'}`}>
                     {!isMe && <div className="avatar avatar-sm">{initials}</div>}
                     <div className="chat-bubble-wrap">
-                      {!isMe && <span className="chat-sender">{msg.user_email?.split('@')[0]}</span>}
+                      {!isMe && <span className="chat-sender">{displayName}</span>}
                       <div className="chat-bubble">{msg.message}</div>
                       <span className="chat-time">
                         {new Date(msg.created_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
@@ -290,7 +288,6 @@ export default function TripHub() {
                     </div>
                   </div>
                 )
-              })
             )}
           </div>
 
