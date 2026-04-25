@@ -176,8 +176,8 @@ export default function TripHub() {
                  value={newLink} 
                  onChange={e => setNewLink(e.target.value)} 
                />
-               <button className="btn btn-primary" onClick={updateGroupLink}><Check size={20} /></button>
-               <button className="btn btn-secondary" onClick={() => setEditingLink(false)}><X size={20} /></button>
+               <button className="btn-edit-neon" onClick={updateGroupLink}><Check size={20} /></button>
+               <button className="btn-delete-vibrant" onClick={() => setEditingLink(false)}><X size={20} /></button>
             </div>
           ) : (
             <div style={{ maxWidth: '600px', margin: '0 auto' }}>
