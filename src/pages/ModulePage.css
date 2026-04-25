@@ -302,3 +302,23 @@
   .expenses-stats { grid-template-columns: 1fr; }
   .stat-card-value { font-size: 1.8rem; }
 }
+
+/* AJUSTE GLOBAL DE SCROLL PARA MÓVIL */
+.module-body {
+  padding-bottom: 180px !important; /* Espacio para que el menú no tape la última card */
+}
+
+/* REFINAMIENTO DE BADGES DE GASTOS */
+.expense-item-card .badge-guest {
+  background: rgba(188, 19, 254, 0.05) !important;
+  border: 1px solid rgba(188, 19, 254, 0.3) !important;
+  color: #d8b4fe !important; /* Morado más suave y legible */
+  font-size: 0.7rem !important;
+  padding: 0.3rem 0.6rem !important;
+}
+
+.expense-subtitle {
+  color: rgba(255, 255, 255, 0.4) !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+}
