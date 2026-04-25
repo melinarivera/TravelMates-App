@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
-  Plus, Trash2, Users, Star, UserPlus
+  Plus, Trash2, Users, Star, UserPlus, Mail
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -77,49 +77,54 @@ export default function Members() {
             </div>
           </div>
           <button className="btn-add-vibrant" onClick={() => setShowModal(true)}>
-            <Plus size={22} /> Invitar Amigo
+            <Plus size={22} /> Invitar
           </button>
         </header>
 
-        <div className="items-list fade-in-up" style={{ marginTop: '2.5rem' }}>
-          {loading ? (
-            <div className="page-loading"><div className="spinner" /></div>
-          ) : members.map(m => {
-            const displayName = m.profiles?.full_name || m.profiles?.email || m.invite_email
-            const initials = displayName.slice(0, 2).toUpperCase()
-            const isMe = m.user_id === currentUser.id
+        <div className="items-list fade-in-up" style={{ marginTop: '3rem' }}>
+          {loading ? <div className="page-loading"><div className="spinner" /></div> : (
+            members.length === 0 ? (
+              <div className="glass-card" style={{ padding: '4rem', textAlign: 'center', opacity: 0.6 }}>
+                 <Users size={48} style={{ marginBottom: '1.5rem', color: 'var(--btn-add)' }} />
+                 <p style={{ fontSize: '1.2rem' }}>Aún no hay integrantes.</p>
+              </div>
+            ) : members.map(m => {
+              const displayName = m.profiles?.full_name || m.profiles?.email || m.invite_email
+              const initials = displayName.slice(0, 2).toUpperCase()
+              const isMe = m.user_id === currentUser.id
 
-            return (
-              <div key={m.id} className="item-row glass-card member-card">
-                <div className="avatar">{initials}</div>
-                
-                <div className="member-info">
-                  <div className="member-name">{displayName} {isMe && "(Tú)"}</div>
-                  <div className="member-tags">
-                    {m.role === 'titular' ? (
-                      <span className="badge-titular">
-                        <Star size={14} fill="currentColor" /> Titular
+              return (
+                <div key={m.id} className="item-row glass-card member-card">
+                  <div className="avatar">{initials}</div>
+                  
+                  <div className="member-info">
+                    <div className="member-name">{displayName} {isMe && "(Tú)"}</div>
+                    <div className="member-tags">
+                      {m.role === 'titular' ? (
+                        <span className="badge-titular">
+                          <Star size={14} fill="currentColor" /> Titular
+                        </span>
+                      ) : (
+                        <span className="badge-guest">Invitado</span>
+                      )}
+                      
+                      <span className={`badge-ok ${m.status !== 'accepted' ? 'badge-pending' : ''}`}>
+                        {m.status === 'accepted' ? 'Aceptado' : 'Pendiente'}
                       </span>
-                    ) : (
-                      <span className="badge-guest">Invitado</span>
+                    </div>
+                  </div>
+                  
+                  <div className="member-actions">
+                    {isTitular && !isMe && (
+                      <button className="btn-delete-vibrant" onClick={() => removeMember(m.id)}>
+                        <Trash2 size={20} />
+                      </button>
                     )}
-                    
-                    <span className={`badge-ok ${m.status !== 'accepted' ? 'badge-pending' : ''}`}>
-                      {m.status === 'accepted' ? 'Aceptado' : 'Pendiente'}
-                    </span>
                   </div>
                 </div>
-                
-                <div className="member-actions">
-                  {isTitular && !isMe && (
-                    <button className="btn-delete-vibrant" onClick={() => removeMember(m.id)}>
-                      <Trash2 size={20} />
-                    </button>
-                  )}
-                </div>
-              </div>
-            )
-          })}
+              )
+            })
+          )}
         </div>
       </div>
 
@@ -128,13 +133,26 @@ export default function Members() {
           <form onSubmit={inviteMember} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">Email de tu amigo</label>
-              <div className="form-input-with-icon">
-                <UserPlus size={20} style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: '#00ff88' }} />
-                <input type="email" className="form-input" style={{ paddingLeft: '3.5rem' }} required value={email} onChange={e => setEmail(e.target.value)} placeholder="email@ejemplo.com" />
+              <div className="form-input-container">
+                <Mail className="form-input-icon" size={20} />
+                <input 
+                  type="email" 
+                  className="form-input" 
+                  required 
+                  value={email} 
+                  onChange={e => setEmail(e.target.value)} 
+                  placeholder="email@ejemplo.com" 
+                />
               </div>
             </div>
-            <button type="submit" className="btn-add-vibrant" disabled={inviting} style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }}>
-              Enviar Invitación
+
+            <button 
+              type="submit" 
+              className="btn-add-vibrant" 
+              disabled={inviting} 
+              style={{ width: '100%', marginTop: '1.5rem', height: '60px', fontSize: '1.1rem', justifyContent: 'center' }}
+            >
+              <UserPlus size={22} /> Enviar Invitación
             </button>
           </form>
         </Modal>
