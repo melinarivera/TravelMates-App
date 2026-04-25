@@ -99,42 +99,47 @@ export default function TripHub() {
       <Navbar />
 
       <header className="hub-hero-header" style={{ 
-        backgroundImage: trip?.cover_url ? `linear-gradient(to bottom, rgba(5,7,10,0.5), rgba(5,7,10,1)), url(${trip.cover_url})` : 'none',
+        backgroundImage: trip?.cover_url ? `linear-gradient(to bottom, rgba(5,7,10,0.6), rgba(5,7,10,1)), url(${trip.cover_url})` : 'none',
         backgroundColor: '#050710'
       }}>
-        {!trip?.cover_url && (
-          <div className="hero-placeholder-icon">
-             <Plane size={140} color="var(--primary)" opacity="0.1" />
-          </div>
-        )}
         <div className="container">
           <div className="hub-hero-inner fade-in-up">
-            <button className="btn btn-secondary btn-sm" style={{ width: 'fit-content' }} onClick={() => navigate('/')}>
-              <ArrowLeft size={18} /> Mis viajes
-            </button>
+            
+            {/* FILA SUPERIOR: BACK Y STATUS SEPARADOS */}
+            <div className="hub-top-nav">
+              <button className="btn btn-secondary btn-sm" onClick={() => navigate('/')}>
+                <ArrowLeft size={18} /> Mis viajes
+              </button>
+              <span className="trip-card-status-badge" style={{ color: statusInfo.color, borderColor: statusInfo.color }}>
+                {statusInfo.label}
+              </span>
+            </div>
             
             <div className="hub-title-section">
               {editingName && isTitular ? (
-                <div style={{ display: 'flex', gap: '0.5rem' }}>
-                  <input type="text" className="form-input" style={{ fontSize: '2.5rem', fontWeight: 800 }} value={newName} onChange={e => setNewName(e.target.value)} autoFocus />
-                  <button className="btn-edit-neon" onClick={updateName}><Check size={20} /></button>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <input type="text" className="form-input" style={{ fontSize: '2.5rem', fontWeight: 800, width: '100%' }} value={newName} onChange={e => setNewName(e.target.value)} autoFocus />
+                  <button className="btn-edit-neon" onClick={updateName}><Check size={22} /></button>
                 </div>
               ) : (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+                <div className="hub-title-row">
                   <h1 className="hub-trip-name text-gradient">{trip?.name}</h1>
-                  {isTitular && <button className="btn-edit-neon" onClick={() => setEditingName(true)}><Edit3 size={20} /></button>}
+                  {isTitular && (
+                    <button className="btn-edit-neon" onClick={() => setEditingName(true)}>
+                      <Edit3 size={22} />
+                    </button>
+                  )}
                 </div>
               )}
               
-              <div className="hub-meta-row" style={{ marginTop: '1.5rem' }}>
-                <div className="hub-meta-item"><MapPin size={22} color="var(--primary)" /> {trip?.destination}</div>
-                <div className="hub-meta-item"><Users size={22} color="var(--sun)" /> {memberCount} viajeros</div>
-                <span className="trip-card-status-badge" style={{ color: statusInfo.color, borderColor: statusInfo.color }}>{statusInfo.label}</span>
+              <div className="hub-meta-row">
+                <div className="hub-meta-item"><MapPin size={22} color="#00d4ff" /> {trip?.destination}</div>
+                <div className="hub-meta-item"><Users size={22} color="#39ff14" /> {memberCount} viajeros</div>
               </div>
             </div>
 
             {isTitular && (
-              <button className="btn btn-secondary btn-sm" onClick={() => document.getElementById('cover-file').click()}>
+              <button className="btn btn-secondary btn-sm" style={{ width: 'fit-content' }} onClick={() => document.getElementById('cover-file').click()}>
                 <Camera size={16} /> Cambiar portada
               </button>
             )}
@@ -144,7 +149,6 @@ export default function TripHub() {
       </header>
 
       <div className="container hub-body">
-        {/* MODULOS PRINCIPALES */}
         <div className="hub-modules">
           {HUB_MODULES.map(mod => (
             <Link key={mod.key} to={`/trip/${tripId}/${mod.key}`} className="hub-module-card glass-card">
@@ -160,8 +164,7 @@ export default function TripHub() {
           ))}
         </div>
 
-        {/* CANAL DE COMUNICACIÓN (Reemplaza al Chat) */}
-        <div className="glass-card fade-in-up delay-1" style={{ padding: '3rem', textAlign: 'center' }}>
+        <div className="glass-card fade-in-up delay-1" style={{ padding: '3rem', textAlign: 'center', marginTop: '3rem' }}>
           <div className="hero-icon-glow" style={{ margin: '0 auto 1.5rem', width: '80px', height: '80px' }}>
              <MessageCircle size={32} color="white" />
           </div>
@@ -169,25 +172,18 @@ export default function TripHub() {
           
           {editingLink && isTitular ? (
             <div style={{ maxWidth: '500px', margin: '0 auto', display: 'flex', gap: '0.5rem' }}>
-               <input 
-                 type="url" 
-                 className="form-input" 
-                 placeholder="Enlace de WhatsApp o Telegram" 
-                 value={newLink} 
-                 onChange={e => setNewLink(e.target.value)} 
-               />
+               <input type="url" className="form-input" placeholder="Enlace de WhatsApp o Telegram" value={newLink} onChange={e => setNewLink(e.target.value)} />
                <button className="btn-edit-neon" onClick={updateGroupLink}><Check size={20} /></button>
                <button className="btn-delete-vibrant" onClick={() => setEditingLink(false)}><X size={20} /></button>
             </div>
           ) : (
             <div style={{ maxWidth: '600px', margin: '0 auto' }}>
               <p className="hub-module-desc" style={{ fontSize: '1.1rem', marginBottom: '2.5rem' }}>
-                Únete al grupo externo para coordinar detalles rápidos con el resto de viajeros.
+                Únete al grupo externo para coordinar detalles con los viajeros.
               </p>
-              
               {trip?.description ? (
                 <div style={{ display: 'flex', justifyContent: 'center', gap: '1rem', flexWrap: 'wrap' }}>
-                  <a href={trip.description} target="_blank" rel="noreferrer" className="btn btn-primary btn-lg">
+                  <a href={trip.description} target="_blank" rel="noreferrer" className="btn-entrar" style={{ textDecoration: 'none' }}>
                     <ExternalLink size={20} /> Unirse al Grupo
                   </a>
                   {isTitular && (
@@ -198,13 +194,9 @@ export default function TripHub() {
                 </div>
               ) : (
                 <div style={{ background: 'rgba(255,255,255,0.02)', padding: '2rem', borderRadius: '16px', border: '1px dashed var(--glass-border)' }}>
-                   <p style={{ color: 'var(--text-muted)', margin: 0 }}>
-                     {isTitular 
-                       ? 'Aún no has configurado un enlace para el grupo.' 
-                       : 'El titular aún no ha configurado el enlace del grupo.'}
-                   </p>
+                   <p style={{ color: 'var(--text-muted)', margin: 0 }}>Sin enlace configurado.</p>
                    {isTitular && (
-                     <button className="btn btn-primary btn-sm" style={{ marginTop: '1rem' }} onClick={() => setEditingLink(true)}>
+                     <button className="btn-add-vibrant" style={{ marginTop: '1rem', padding: '0.6rem 1.2rem' }} onClick={() => setEditingLink(true)}>
                        Configurar Enlace
                      </button>
                    )}
