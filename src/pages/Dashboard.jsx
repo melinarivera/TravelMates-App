@@ -134,7 +134,6 @@ export default function Dashboard() {
             <div className="dashboard-greeting">
               <span className="dashboard-wave">👋</span>
               <div>
-                <h1 className="dashboard-title">¡Hola, aventurero!</h1>
                 <p className="dashboard-subtitle">Tus próximas aventuras te están esperando</p>
               </div>
             </div>
