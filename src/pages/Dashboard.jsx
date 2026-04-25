@@ -6,14 +6,14 @@ import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import {
   Plus, Plane, MapPin, Calendar, Users,
-  Clock, ChevronRight, Search, Globe
+  Clock, ChevronRight, Search, Globe, Check
 } from 'lucide-react'
 import './Dashboard.css'
 
 const STATUS_MAP = {
-  planning: { label: 'Planificando', badge: 'badge-planning', emoji: '🗓️', grad: 'var(--grad-planning)' },
-  active:   { label: 'En curso',     badge: 'badge-active',   emoji: '✈️', grad: 'var(--grad-active)' },
-  done:     { label: 'Finalizado',   badge: 'badge-done',     emoji: '🏁', grad: 'var(--grad-done)' },
+  planning: { label: 'Planificando', icon: <Clock size={20} />, badge: 'badge-sun', grad: 'var(--grad-itinerary)' },
+  active:   { label: 'En curso',     icon: <Plane size={20} />, badge: 'badge-sky', grad: 'var(--grad-primary)' },
+  done:     { label: 'Finalizado',   icon: <Check size={20} />, badge: 'badge-slate', grad: 'var(--grad-map)' },
 }
 
 export default function Dashboard() {
@@ -335,7 +335,7 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
       id={`trip-card-${trip.id}`}
     >
       <div className="trip-card-cover" style={{ background: status.grad }}>
-        <div className="trip-card-emoji">{status.emoji}</div>
+        <div className="trip-card-icon">{status.icon}</div>
         <div className={`badge ${status.badge} trip-card-badge`}>
           {isInvitation ? 'Nueva invitación' : status.label}
         </div>
