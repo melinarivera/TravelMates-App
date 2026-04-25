@@ -6,8 +6,7 @@ import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
   Plus, Trash2, Edit3, Calendar, Clock, MapPin, 
-  Check, X, ThumbsUp, ThumbsDown, DollarSign,
-  Utensils, Map, Plane, Coffee, Camera, Music, ShoppingBag, Home
+  ThumbsUp, ThumbsDown, Utensils, Plane, Camera, Home, ShoppingBag, Music, Coffee
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -55,26 +54,21 @@ export default function Itinerary() {
     setSaving(true)
     const payload = { ...form, trip_id: tripId, user_id: user.id }
     
-    let err
     if (editActivity) {
-      const { error } = await supabase.from('itinerary_activities').update(payload).eq('id', editActivity.id)
-      err = error
+      await supabase.from('itinerary_activities').update(payload).eq('id', editActivity.id)
     } else {
-      const { error } = await supabase.from('itinerary_activities').insert(payload)
-      err = error
+      await supabase.from('itinerary_activities').insert(payload)
     }
 
-    if (!err) {
-      setShowModal(false)
-      setForm({ day_date: '', time: '', title: '', location: '', description: '', type: 'activity', source: 'manual' })
-      setEditActivity(null)
-      fetchData()
-    }
+    setShowModal(false)
+    setForm({ day_date: '', time: '', title: '', location: '', description: '', type: 'activity', source: 'manual' })
+    setEditActivity(null)
+    fetchData()
     setSaving(false)
   }
 
   async function deleteActivity(id) {
-    if (!confirm('¿Eliminar actividad?')) return
+    if (!confirm('¿Eliminar?')) return
     await supabase.from('itinerary_activities').delete().eq('id', id)
     fetchData()
   }
@@ -88,45 +82,34 @@ export default function Itinerary() {
     fetchData()
   }
 
-  async function approveActivity(id) {
-    await supabase.from('itinerary_activities').update({ source: 'manual' }).eq('id', id)
-    fetchData()
-  }
-
   const isTitular = myRole === 'titular'
 
   return (
     <div className="module-page">
-      <Navbar tripName={tripName} />
+      <Navbar />
       
       <div className="container module-body">
-        <header className="module-header fade-in-up">
+        <header className="module-header">
           <div className="module-title-group">
             <div className="module-icon-box">
-              <Calendar size={32} />
+              <Calendar size={24} />
             </div>
             <div>
               <h1 className="module-title text-gradient">Itinerario</h1>
-              <p className="module-subtitle">Planifica paso a paso</p>
+              <p className="module-subtitle">{days.length} días planeados</p>
             </div>
           </div>
-          <button className="btn btn-primary" onClick={() => { setEditActivity(null); setShowModal(true) }}>
-            <Plus size={18} /> Proponer actividad
+          <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+            <Plus size={18} /> Nuevo
           </button>
         </header>
 
         {loading ? <div className="spinner" /> : (
           <div className="itinerary-days">
-            {days.length === 0 ? (
-              <div className="empty-state glass-card">
-                 <Calendar size={48} opacity="0.2" />
-                 <p>No hay actividades planeadas aún.</p>
-              </div>
-            ) : days.map(([date, acts]) => (
+            {days.map(([date, acts]) => (
               <section key={date} className="itinerary-day fade-in-up">
                 <h2 className="itinerary-day-title">
-                  <Clock size={20} />
-                  {date === 'Sin fecha' ? date : new Date(date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                  {date === 'Sin fecha' ? date : new Date(date).toLocaleDateString('es-ES', { weekday: 'short', day: 'numeric', month: 'short' })}
                 </h2>
                 
                 <div className="items-list">
@@ -134,37 +117,24 @@ export default function Itinerary() {
                     <div key={act.id} className="activity-card glass-card">
                       <div className="activity-time">{act.time || '--:--'}</div>
                       <div className="activity-info">
-                        <div className="activity-title">{act.title}</div>
+                        <div className="activity-title" style={{ fontSize: '1rem', fontWeight: 700 }}>{act.title}</div>
                         <div className="activity-meta">
-                          {act.location && <span><MapPin size={12} /> {act.location}</span>}
-                          <span className="badge badge-accent">{act.type}</span>
+                          {act.location && <span style={{ fontSize: '0.8rem', opacity: 0.7 }}><MapPin size={10} /> {act.location}</span>}
+                          <span className="badge" style={{ background: 'rgba(255,255,255,0.05)', fontSize: '0.65rem' }}>{act.type}</span>
                         </div>
                       </div>
                       
                       <div className="activity-actions">
-                         <div className="vote-section" style={{ display: 'flex', gap: '0.25rem' }}>
-                            <button className="btn btn-ghost btn-icon btn-sm" onClick={() => vote(act.id, 'up')}>
+                         <div className="vote-section" style={{ display: 'flex', gap: '2px' }}>
+                            <button className="btn btn-ghost btn-icon btn-sm" onClick={() => vote(act.id, 'up')} style={{ padding: '4px' }}>
                               <ThumbsUp size={14} />
-                              <span style={{ fontSize: '0.8rem' }}>{act.activity_votes?.filter(v => v.vote === 'up').length || 0}</span>
-                            </button>
-                            <button className="btn btn-ghost btn-icon btn-sm" onClick={() => vote(act.id, 'down')}>
-                              <ThumbsDown size={14} />
-                              <span style={{ fontSize: '0.8rem' }}>{act.activity_votes?.filter(v => v.vote === 'down').length || 0}</span>
+                              <span style={{ fontSize: '0.75rem' }}>{act.activity_votes?.filter(v => v.vote === 'up').length || 0}</span>
                             </button>
                          </div>
-
                          {isTitular && (
-                           <>
-                             {act.source === 'voting' && (
-                               <button className="btn btn-primary btn-sm" onClick={() => approveActivity(act.id)}>Aprobar</button>
-                             )}
-                             <button className="btn btn-ghost btn-icon btn-sm" onClick={() => { setEditActivity(act); setForm(act); setShowModal(true); }}>
-                               <Edit3 size={16} />
-                             </button>
-                             <button className="btn btn-ghost btn-icon btn-sm" onClick={() => deleteActivity(act.id)} style={{ color: 'var(--coral)' }}>
-                               <Trash2 size={16} />
-                             </button>
-                           </>
+                           <button className="btn btn-ghost btn-icon btn-sm" onClick={() => deleteActivity(act.id)} style={{ color: 'var(--coral)', padding: '4px' }}>
+                             <Trash2 size={14} />
+                           </button>
                          )}
                       </div>
                     </div>
@@ -176,12 +146,16 @@ export default function Itinerary() {
         )}
       </div>
 
+      <button className="fab-module show-mobile-only" onClick={() => setShowModal(true)}>
+        <Plus size={28} />
+      </button>
+
       {showModal && (
-        <Modal title={editActivity ? 'Editar actividad' : 'Proponer actividad'} onClose={() => setShowModal(false)}>
+        <Modal title="Actividad" onClose={() => setShowModal(false)}>
           <form onSubmit={saveActivity} className="create-trip-form">
              <div className="form-group">
-               <label className="form-label">Título *</label>
-               <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+               <label className="form-label">Título</label>
+               <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Ej. Visita al Museo" />
              </div>
              <div className="grid-2">
                <div className="form-group">
@@ -194,22 +168,17 @@ export default function Itinerary() {
                </div>
              </div>
              <div className="form-group">
-               <label className="form-label">Ubicación</label>
-               <input type="text" className="form-input" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} />
-             </div>
-             <div className="form-group">
-                <label className="form-label">Tipo</label>
+                <label className="form-label">Categoría</label>
                 <select className="form-input" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
                   <option value="activity">Actividad</option>
-                  <option value="food">Comida / Restaurante</option>
+                  <option value="food">Comida</option>
                   <option value="transport">Transporte</option>
                   <option value="accommodation">Alojamiento</option>
-                  <option value="shopping">Compras</option>
                 </select>
              </div>
              <div className="modal-actions">
-               <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button>
-               <button type="submit" className="btn btn-primary" disabled={saving}>Guardar</button>
+               <button type="button" className="btn btn-ghost" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Cerrar</button>
+               <button type="submit" className="btn btn-primary" disabled={saving} style={{ flex: 2 }}>Guardar</button>
              </div>
           </form>
         </Modal>
