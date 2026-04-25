@@ -6,7 +6,7 @@ import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
   Plus, Trash2, Map as MapIcon, MapPin, 
-  Navigation, Search
+  Navigation, Search, Tag, Link as LinkIcon
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -122,25 +122,37 @@ export default function MapPOI() {
           <form onSubmit={addPOI} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">Nombre del sitio</label>
-              <input type="text" className="form-input" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Ej: Torre Eiffel..." />
+              <div className="form-input-container">
+                <MapPin className="form-input-icon" size={20} />
+                <input type="text" className="form-input" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Ej: Torre Eiffel..." />
+              </div>
             </div>
+
             <div className="form-group">
-              <label className="form-label">¿Qué es?</label>
-              <select className="form-input" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
-                <option value="Museo">Museo 🖼️</option>
-                <option value="Restaurante">Restaurante 🍽️</option>
-                <option value="Monumento">Monumento 🗽</option>
-                <option value="Parque">Parque 🌳</option>
-                <option value="Tienda">Tienda 🛍️</option>
-                <option value="Otro">Otro ✨</option>
-              </select>
+              <label className="form-label">¿Qué tipo de sitio es?</label>
+              <div className="form-input-container">
+                <Tag className="form-input-icon" size={20} />
+                <select className="form-input" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
+                  <option value="Museo">Museo 🖼️</option>
+                  <option value="Restaurante">Restaurante 🍽️</option>
+                  <option value="Monumento">Monumento 🗽</option>
+                  <option value="Parque">Parque 🌳</option>
+                  <option value="Tienda">Tienda 🛍️</option>
+                  <option value="Otro">Otro ✨</option>
+                </select>
+              </div>
             </div>
+
             <div className="form-group">
-              <label className="form-label">Enlace de Maps</label>
-              <input type="url" className="form-input" value={form.maps_url} onChange={e => setForm(f => ({ ...f, maps_url: e.target.value }))} placeholder="Pega el link aquí..." />
+              <label className="form-label">Enlace de Google Maps</label>
+              <div className="form-input-container">
+                <LinkIcon className="form-input-icon" size={20} />
+                <input type="url" className="form-input" value={form.maps_url} onChange={e => setForm(f => ({ ...f, maps_url: e.target.value }))} placeholder="Pega el link de Maps aquí..." />
+              </div>
             </div>
-            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1.5rem', justifyContent: 'center' }}>
-              Añadir al Mapa
+
+            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1rem', height: '60px', fontSize: '1.1rem', justifyContent: 'center' }}>
+              <Plus size={22} /> Añadir al Mapa
             </button>
           </form>
         </Modal>
