@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Plane, Calendar, DollarSign, Map, MessageCircle, Shield, Globe } from 'lucide-react'
+import { Plane, Calendar, DollarSign, MessageCircle, Shield } from 'lucide-react'
 import './AuthPage.css'
 
 export default function AuthPage() {
@@ -19,7 +19,6 @@ export default function AuthPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
-
     try {
       if (mode === 'register') {
         const { error } = await signUp(email, password, { full_name: name })
@@ -40,43 +39,47 @@ export default function AuthPage() {
   return (
     <div className="auth-page">
       <div className="container auth-container">
-        {/* Lado Izquierdo: Branding y Features (La "Landing") */}
-        <div className="auth-brand fade-in-up">
-          <div className="auth-logo-badge">
-            <Plane size={32} />
+        
+        {/* Lado Branding (Landing) */}
+        <div className="auth-brand">
+          <div className="auth-logo-group">
+            <div className="auth-logo-icon">
+              <Plane size={32} color="white" />
+            </div>
+            <h1 className="auth-brand-title">TravelMates</h1>
           </div>
-          <h1 className="auth-brand-title">TravelMates</h1>
+          
           <p className="auth-brand-sub">
-            Organiza viajes grupales sin dramas. Itinerarios, gastos compartidos y chat, todo en un solo lugar.
+            La forma más sencilla y profesional de organizar viajes con amigos.
           </p>
 
           <div className="auth-features">
             <div className="auth-feature">
               <div className="auth-feature-icon"><Calendar size={20} /></div>
               <div>
-                <strong>Planificación Inteligente</strong>
-                <p>Propón actividades y deja que el grupo vote.</p>
+                <strong>Itinerarios Grupales</strong>
+                <p>Propón y vota actividades en conjunto.</p>
               </div>
             </div>
             <div className="auth-feature">
               <div className="auth-feature-icon"><DollarSign size={20} /></div>
               <div>
-                <strong>Control de Gastos</strong>
-                <p>Divide cuentas y salda deudas fácilmente.</p>
+                <strong>Cuentas Claras</strong>
+                <p>Divide gastos y salda deudas sin dramas.</p>
               </div>
             </div>
             <div className="auth-feature">
               <div className="auth-feature-icon"><MessageCircle size={20} /></div>
               <div>
-                <strong>Chat en Tiempo Real</strong>
-                <p>Mantente conectado con tus compañeros de viaje.</p>
+                <strong>Todo Conectado</strong>
+                <p>Información centralizada y fácil de compartir.</p>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Lado Derecho: Formulario Glass */}
-        <div className="auth-form-panel glass-card fade-in-up delay-1">
+        {/* Lado Formulario */}
+        <div className="auth-form-panel glass-card">
           <div className="auth-tabs">
             <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => setMode('login')}>
               Entrar
@@ -88,10 +91,10 @@ export default function AuthPage() {
 
           <div className="auth-header">
             <h2 className="auth-form-title">
-              {mode === 'login' ? '¡Bienvenido!' : 'Crea tu cuenta'}
+              {mode === 'login' ? '¡Hola de nuevo!' : 'Crea tu cuenta'}
             </h2>
             <p className="auth-form-sub">
-              {mode === 'login' ? 'Accede a tus planes de viaje' : 'Únete a la aventura hoy mismo'}
+              {mode === 'login' ? 'Ingresa para ver tus viajes' : 'Únete a miles de viajeros'}
             </p>
           </div>
 
@@ -104,7 +107,7 @@ export default function AuthPage() {
           <form onSubmit={handleSubmit} className="auth-form">
             {mode === 'register' && (
               <div className="form-group">
-                <label className="form-label">Nombre y Apellido</label>
+                <label className="form-label">Nombre Apellido</label>
                 <input type="text" className="form-input" placeholder="Nombre Apellido" value={name} onChange={e => setName(e.target.value)} required />
               </div>
             )}
@@ -120,15 +123,16 @@ export default function AuthPage() {
             </div>
 
             <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
-              {loading ? <div className="spinner" /> : (mode === 'login' ? 'Iniciar Sesión' : 'Registrarse')}
+              {loading ? <div className="spinner" /> : (mode === 'login' ? 'Entrar' : 'Comenzar')}
             </button>
           </form>
 
           <div className="auth-footer">
             <Shield size={14} />
-            <span>Tus datos están seguros con TravelMates</span>
+            <span>Plataforma 100% Segura</span>
           </div>
         </div>
+
       </div>
     </div>
   )

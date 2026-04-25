@@ -1,8 +1,12 @@
-/* MODULE PAGES – MOBILE APP OPTIMIZED */
+/* MODULE PAGES – CLEAN & SPACIOUS DESIGN */
+
+.module-body {
+  padding-top: 3rem;
+  padding-bottom: 6rem;
+}
 
 .module-header {
-  margin-top: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 3.5rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -11,97 +15,116 @@
 .module-title-group {
   display: flex;
   align-items: center;
-  gap: 1rem;
+  gap: 1.5rem;
 }
 
 .module-icon-box {
-  width: 50px;
-  height: 50px;
-  background: var(--bg-card);
+  width: 60px;
+  height: 60px;
+  background: var(--glass-bg);
   border: 1px solid var(--glass-border);
-  border-radius: 14px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: var(--primary);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
 }
 
-.module-title { font-size: 1.75rem; margin: 0; }
-.module-subtitle { color: var(--text-muted); font-size: 0.9rem; margin-top: 0.1rem; }
-
-/* FLOATING ACTION BUTTON FOR MODULES */
-@media (max-width: 768px) {
-  .module-header .btn-primary { display: none; } /* Hide normal button on mobile */
-  
-  .fab-module {
-    position: fixed;
-    bottom: 90px; /* Por encima del Bottom Nav */
-    right: 20px;
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 8px 25px var(--primary-glow);
-    z-index: 1001;
-    border: none;
-  }
+.module-title { 
+  font-size: 2.25rem; 
+  margin: 0; 
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.02em;
 }
 
-/* STATS CARDS MÓVIL */
-.expenses-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1rem;
-  margin-bottom: 2rem;
+.module-subtitle { 
+  color: var(--text-muted); 
+  font-size: 1rem; 
+  margin-top: 0.3rem; 
 }
 
-@media (max-width: 768px) {
-  .stat-card {
-    padding: 1rem;
-  }
-  .stat-value { font-size: 1.25rem; }
-  .stat-label { font-size: 0.7rem; }
+/* UNIFICACIÓN DE BOTONES "AÑADIR" */
+.btn-add-desktop {
+  /* Estilo premium único */
+  background: var(--grad-main);
+  color: white;
+  padding: 0.8rem 1.8rem;
+  border-radius: 14px;
+  font-weight: 700;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
 }
 
-/* ITEMS LIST */
+.fab-module {
+  position: fixed;
+  bottom: 100px;
+  right: 25px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--grad-main);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
+  z-index: 1001;
+  border: none;
+  cursor: pointer;
+}
+
+/* LISTADOS MÁS LIMPIOS */
 .items-list {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
+  gap: 1.25rem;
 }
 
 .item-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 1rem;
+  padding: 1.5rem 2rem;
+  transition: all 0.2s ease;
 }
 
-@media (max-width: 768px) {
-  .expense-desc { font-size: 1rem; }
-  .expense-amount { font-size: 1.1rem; }
+.item-row:hover {
+  border-color: var(--primary);
+  background: rgba(255,255,255,0.05);
 }
 
-/* ITINERARIO MÓVIL */
-.itinerary-day-title {
-  font-size: 1.1rem;
-  margin: 2rem 0 1rem;
-  padding-left: 0.5rem;
-  border-left: 3px solid var(--primary);
-}
-
-.activity-card {
+/* STATS */
+.expenses-stats {
   display: grid;
-  grid-template-columns: 60px 1fr auto;
-  gap: 1rem;
-  padding: 1rem;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 3.5rem;
+}
+
+.stat-card {
+  padding: 2rem;
+  text-align: center;
+}
+
+.stat-value {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
 }
 
 @media (max-width: 768px) {
-  .activity-time { font-size: 0.9rem; }
-  .activity-title { font-size: 1rem; }
+  .module-body { padding-top: 1.5rem; }
+  .module-header { margin-bottom: 2.5rem; }
+  .module-title { font-size: 1.75rem; }
+  .stat-card { padding: 1.5rem; }
+  .stat-value { font-size: 1.5rem; }
+  .item-row { padding: 1.25rem; }
 }
