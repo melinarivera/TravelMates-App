@@ -11,9 +11,9 @@ import {
 import './Dashboard.css'
 
 const STATUS_MAP = {
-  planning: { label: 'Planificando', color: 'var(--badge-ok)' },
-  active:   { label: 'En curso',     color: 'var(--btn-add)' },
-  done:     { label: 'Finalizado',   color: 'var(--text-muted)' },
+  planning: { label: 'PLANIFICANDO', color: 'var(--badge-titular)', bg: 'rgba(251, 191, 36, 0.2)' },
+  active:   { label: 'EN CURSO',     color: 'var(--btn-add)', bg: 'rgba(16, 185, 129, 0.2)' },
+  done:     { label: 'FINALIZADO',   color: 'var(--text-muted)', bg: 'rgba(255, 255, 255, 0.1)' },
 }
 
 export default function Dashboard() {
@@ -30,7 +30,7 @@ export default function Dashboard() {
   }, [])
 
   async function fetchTrips() {
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('trips')
       .select('*, trip_members!inner(*)')
       .eq('trip_members.user_id', user.id)
@@ -71,13 +71,16 @@ export default function Dashboard() {
   }
 
   async function deleteTrip(id, ownerId) {
-    if (ownerId !== user.id) {
-      alert('Solo el titular puede eliminar el viaje')
-      return
-    }
+    if (ownerId !== user.id) return
     if (!confirm('¿Seguro que quieres eliminar este viaje?')) return
     await supabase.from('trips').delete().eq('id', id)
     fetchTrips()
+  }
+
+  const formatDate = (dateStr) => {
+    if (!dateStr) return ''
+    const d = new Date(dateStr)
+    return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'numeric', year: 'numeric' })
   }
 
   return (
@@ -90,7 +93,8 @@ export default function Dashboard() {
             <h1 className="dashboard-title text-gradient">Mis Viajes</h1>
             <p className="dashboard-subtitle">Gestiona tus próximas aventuras</p>
           </div>
-          <button className="btn btn-add-vibrant" onClick={() => setShowModal(true)}>
+          {/* BOTÓN VERDE FORZADO */}
+          <button className="btn-add-vibrant" onClick={() => setShowModal(true)}>
             <Plus size={22} /> Crear Nuevo Viaje
           </button>
         </header>
@@ -103,13 +107,12 @@ export default function Dashboard() {
               <div className="empty-state-card glass-card fade-in-up">
                 <div className="hero-icon-glow"><Globe size={40} color="white" /></div>
                 <h3>¿A dónde vamos?</h3>
-                <p>Empieza tu aventura hoy mismo!</p>
-                <button className="btn btn-add-vibrant" style={{ marginTop: '2rem' }} onClick={() => setShowModal(true)}>
+                <button className="btn-add-vibrant" style={{ marginTop: '2rem' }} onClick={() => setShowModal(true)}>
                   <Plus size={20} /> Crear mi primer viaje
                 </button>
               </div>
             ) : trips.map(trip => {
-              const statusInfo = STATUS_MAP[trip.status] || STATUS_MAP.planning
+              const status = STATUS_MAP[trip.status] || STATUS_MAP.planning
               return (
                 <div key={trip.id} className="trip-card glass-card fade-in-up">
                   <div className="trip-card-cover">
@@ -120,8 +123,13 @@ export default function Dashboard() {
                         <Plane size={60} color="rgba(255,255,255,0.15)" />
                       </div>
                     )}
-                    <div className="trip-card-status-badge" style={{ color: statusInfo.color, borderColor: statusInfo.color }}>
-                      {statusInfo.label}
+                    <div className="trip-card-status-badge" style={{ 
+                      color: status.color, 
+                      borderColor: status.color,
+                      background: status.bg,
+                      boxShadow: `0 0 15px ${status.color}44`
+                    }}>
+                      {status.label}
                     </div>
                   </div>
                   
@@ -129,12 +137,15 @@ export default function Dashboard() {
                     <h3 className="trip-card-name">{trip.name}</h3>
                     <div className="trip-card-meta">
                       <div className="trip-meta-item"><MapPin size={18} /> {trip.destination}</div>
-                      <div className="trip-meta-item"><Calendar size={18} /> {new Date(trip.start_date).toLocaleDateString()}</div>
+                      <div className="trip-meta-item">
+                        <Calendar size={18} /> 
+                        {formatDate(trip.start_date)} - {formatDate(trip.end_date)}
+                      </div>
                     </div>
                   </div>
 
                   <div className="trip-card-footer">
-                    <button className="btn btn-entrar" onClick={() => navigate(`/trip/${trip.id}`)}>
+                    <button className="btn-entrar" onClick={() => navigate(`/trip/${trip.id}`)}>
                       Entrar <ChevronRight size={18} />
                     </button>
                     {trip.owner_id === user.id && (
@@ -159,23 +170,21 @@ export default function Dashboard() {
             </div>
             <div className="form-group">
               <label className="form-label">Destino</label>
-              <input type="text" className="form-input" required value={newTrip.destination} onChange={e => setNewTrip(t => ({ ...t, destination: e.target.value }))} placeholder="Ciudad, País..." />
+              <input type="text" className="form-input" required value={newTrip.destination} onChange={e => setNewTrip(t => ({ ...t, destination: e.target.value }))} />
             </div>
             <div className="grid-2">
               <div className="form-group">
-                <label className="form-label">Fecha Inicio</label>
+                <label className="form-label">Inicio</label>
                 <input type="date" className="form-input" required value={newTrip.start_date} onChange={e => setNewTrip(t => ({ ...t, start_date: e.target.value }))} />
               </div>
               <div className="form-group">
-                <label className="form-label">Fecha Fin</label>
+                <label className="form-label">Fin</label>
                 <input type="date" className="form-input" required value={newTrip.end_date} onChange={e => setNewTrip(t => ({ ...t, end_date: e.target.value }))} />
               </div>
             </div>
-            <div className="modal-actions">
-              <button type="submit" className="btn btn-add-vibrant" disabled={saving} style={{ width: '100%', justifyContent: 'center' }}>
-                <Plus size={20} /> Crear Viaje Verde
-              </button>
-            </div>
+            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1.5rem', justifyContent: 'center' }}>
+              Crear Viaje Verde
+            </button>
           </form>
         </Modal>
       )}
