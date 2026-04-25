@@ -76,6 +76,25 @@
   font-weight: 600;
 }
 
+.hub-meta-item-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hub-add-member-quick {
+  color: var(--coral) !important;
+  background: rgba(255,107,107,0.1) !important;
+  border-radius: var(--radius-full) !important;
+  padding: 0.4rem !important;
+  transition: all var(--trans-fast) !important;
+}
+.hub-add-member-quick:hover {
+  background: var(--coral) !important;
+  color: var(--white) !important;
+  transform: scale(1.1);
+}
+
 .hub-trip-desc {
   color: var(--gray-600);
   font-size: 0.9rem;
