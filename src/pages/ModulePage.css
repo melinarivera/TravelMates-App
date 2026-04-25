@@ -322,3 +322,61 @@
   font-size: 0.85rem !important;
   font-weight: 500 !important;
 }
+
+/* REDISEÑO DE TARJETAS DE GASTOS ESTILO CRISTAL-NEÓN */
+
+.stat-card-premium {
+  background: rgba(255, 255, 255, 0.03) !important;
+  backdrop-filter: blur(20px) !important;
+  border-radius: 24px !important;
+  padding: 1.8rem !important;
+  position: relative;
+  overflow: hidden;
+  transition: 0.3s;
+}
+
+.stat-card-total {
+  border: 1px solid rgba(188, 19, 254, 0.5) !important;
+  box-shadow: 0 10px 30px rgba(188, 19, 254, 0.15) !important;
+}
+
+.stat-card-perperson {
+  border: 1px solid rgba(57, 255, 20, 0.5) !important;
+  box-shadow: 0 10px 30px rgba(57, 255, 20, 0.15) !important;
+}
+
+.stat-card-value {
+  font-size: 2.2rem !important;
+  text-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+}
+
+.stat-card-total .stat-card-value {
+  color: #bc13fe !important; /* Morado Neón */
+}
+
+.stat-card-perperson .stat-card-value {
+  color: #39ff14 !important; /* Verde Neón */
+}
+
+.stat-card-label {
+  color: rgba(255, 255, 255, 0.5) !important;
+  letter-spacing: 1px !important;
+}
+
+.stat-card-icon {
+  opacity: 0.08 !important;
+  color: white !important;
+}
+
+/* REFINAMIENTO DE TABS */
+.segmented-control {
+  background: rgba(255, 255, 255, 0.02) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.segment-btn.active {
+  background: rgba(188, 19, 254, 0.1) !important;
+  border: 1px solid #bc13fe !important;
+  color: white !important;
+  box-shadow: 0 5px 20px rgba(188, 19, 254, 0.3) !important;
+}
