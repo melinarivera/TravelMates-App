@@ -491,3 +491,81 @@
     align-self: flex-end;
   }
 }
+
+/* ESTILOS DE MAPA / POI PREMIUM */
+
+.poi-card {
+  border-left: 5px solid #00f2ff !important; /* Cian Neón */
+  padding: 1.5rem 2rem !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.2rem !important;
+}
+
+.poi-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.poi-title-box {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.poi-name {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.poi-address {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.4);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.poi-badge {
+  background: rgba(0, 242, 255, 0.1) !important;
+  color: #00f2ff !important;
+  border: 1px solid rgba(0, 242, 255, 0.3) !important;
+  padding: 0.3rem 0.8rem !important;
+  border-radius: 10px !important;
+  font-size: 0.7rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+}
+
+.poi-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.btn-open-maps {
+  background: rgba(57, 255, 20, 0.1) !important;
+  border: 1px solid rgba(57, 255, 20, 0.3) !important;
+  color: #39ff14 !important;
+  padding: 0.6rem 1.2rem !important;
+  border-radius: 14px !important;
+  font-size: 0.85rem !important;
+  font-weight: 800 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  transition: 0.3s !important;
+  text-decoration: none !important;
+}
+
+.btn-open-maps:hover {
+  background: rgba(57, 255, 20, 0.2) !important;
+  box-shadow: 0 0 15px rgba(57, 255, 20, 0.2);
+}
