@@ -1,111 +1,87 @@
-.dashboard-page {
-  padding-bottom: 2rem;
-}
+/* DASHBOARD PREMIUM DESIGN */
 
 .dashboard-hero {
-  padding: 3rem 0 2rem;
-}
-
-.dashboard-greeting {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.hero-icon-glow {
-  width: 60px;
-  height: 60px;
-  background: var(--grad-main);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 8px 25px var(--primary-glow);
-}
-
-.dashboard-title {
-  font-size: 2rem;
-  margin: 0;
-}
-
-.dashboard-subtitle {
-  color: var(--text-muted);
-  font-size: 1rem;
-  margin-top: 0.25rem;
+  padding: 4rem 0 3rem;
 }
 
 .dashboard-hero-content {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
+  margin-bottom: 2.5rem;
 }
 
-/* SEARCH MOBILE APP STYLE */
+.hero-icon-glow {
+  width: 70px;
+  height: 70px;
+  background: var(--grad-main);
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 30px var(--primary-glow);
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-title {
+  font-size: 3rem;
+  margin: 0;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+}
+
+.dashboard-subtitle {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+/* SEARCH */
 .dashboard-search {
+  max-width: 600px;
   position: relative;
-  margin-top: 2rem;
-  width: 100%;
 }
 
 .dashboard-search-input {
   width: 100%;
-  padding: 0.9rem 1rem 0.9rem 3rem;
-  background: rgba(255,255,255,0.05);
+  padding: 1rem 1.5rem 1rem 3.5rem;
+  background: rgba(255,255,255,0.03);
   border: 1px solid var(--glass-border);
-  border-radius: 14px;
+  border-radius: 16px;
   color: white;
-  box-sizing: border-box;
+  font-size: 1.1rem;
+  transition: 0.2s;
 }
 
-/* FLOATING ACTION BUTTON (MOBILE) */
-@media (max-width: 768px) {
-  .btn-new-trip-desktop { display: none; }
-  
-  .fab-mobile {
-    position: fixed;
-    bottom: 24px;
-    right: 24px;
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    background: var(--primary);
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 30px var(--primary-glow);
-    border: none;
-    z-index: 1001;
-  }
+.dashboard-search-input:focus {
+  background: rgba(255,255,255,0.06);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
 
 /* TRIPS GRID */
 .trips-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 3rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-.dashboard-section-title {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  font-size: 1.25rem;
-  margin: 2.5rem 0 1rem;
-  font-weight: 700;
-}
-
-/* CARDS */
 .trip-card {
   padding: 0;
   overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.trip-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--primary);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.3);
 }
 
 .trip-card-cover {
-  height: 160px;
+  height: 200px;
   position: relative;
 }
 
@@ -116,26 +92,18 @@
 }
 
 .trip-card-body {
-  padding: 1rem;
+  padding: 1.5rem;
 }
 
 .trip-card-name {
-  font-size: 1.2rem;
-  margin: 0 0 0.4rem;
-  color: white;
-}
-
-.trip-card-meta {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  color: var(--text-muted);
-  font-size: 0.85rem;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin: 0 0 0.5rem;
 }
 
 .trip-card-footer {
-  margin-top: 1.25rem;
-  padding-top: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
   border-top: 1px solid rgba(255,255,255,0.05);
   display: flex;
   justify-content: space-between;
@@ -143,8 +111,25 @@
 }
 
 @media (max-width: 768px) {
-  .trips-grid {
-    grid-template-columns: 1fr;
-    gap: 1rem;
+  .dashboard-hero { padding: 3rem 0; text-align: center; }
+  .dashboard-hero-content { flex-direction: column; }
+  .dashboard-title { font-size: 2.2rem; }
+  .trips-grid { grid-template-columns: 1fr; }
+  
+  .fab-mobile {
+    position: fixed;
+    bottom: 30px;
+    right: 20px;
+    width: 65px;
+    height: 65px;
+    border-radius: 50%;
+    background: var(--grad-main);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px var(--primary-glow);
+    z-index: 1001;
+    border: none;
   }
 }
