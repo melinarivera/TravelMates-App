@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Plane, Mail, Lock, User, ArrowRight, Calendar, DollarSign, Map, MessageCircle } from 'lucide-react'
+import { Plane, Mail, Lock, User, Calendar, DollarSign, Map, MessageCircle } from 'lucide-react'
 import './AuthPage.css'
 
 export default function AuthPage() {
   const { user, signIn, signUp } = useAuth()
-  const [mode, setMode] = useState('login') // 'login' | 'register'
+  const [mode, setMode] = useState('login')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
@@ -25,13 +25,13 @@ export default function AuthPage() {
         const { error } = await signUp(email, password, { full_name: name })
         if (error) throw error
         setMode('login')
-        setError('✅ ¡Cuenta creada! Ya puedes entrar con tus datos.')
+        setError('¡Cuenta creada! Ya puedes entrar con tus datos.')
       } else {
         const { error } = await signIn(email, password)
         if (error) throw error
       }
     } catch (err) {
-      setError(err.message || 'Algo salió mal. Inténtalo de nuevo.')
+      setError(err.message || 'Algo salió mal.')
     } finally {
       setLoading(false)
     }
@@ -39,12 +39,7 @@ export default function AuthPage() {
 
   return (
     <div className="auth-page">
-      <div className="auth-blob auth-blob-1" />
-      <div className="auth-blob auth-blob-2" />
-      <div className="auth-blob auth-blob-3" />
-
       <div className="auth-container">
-        {/* Left panel – Branding & Explanation */}
         <div className="auth-brand">
           <div className="auth-brand-logo">
             <Plane size={32} />
@@ -84,34 +79,21 @@ export default function AuthPage() {
           </div>
         </div>
 
-        {/* Right panel – Form */}
-        <div className="auth-form-panel glass">
+        <div className="auth-form-panel glass-card">
           <div className="auth-tabs">
-            <button
-              className={`auth-tab ${mode === 'login' ? 'active' : ''}`}
-              onClick={() => { setMode('login'); setError('') }}
-            >
+            <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError('') }}>
               Iniciar Sesión
             </button>
-            <button
-              className={`auth-tab ${mode === 'register' ? 'active' : ''}`}
-              onClick={() => { setMode('register'); setError('') }}
-            >
+            <button className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => { setMode('register'); setError('') }}>
               Registrarse
             </button>
           </div>
 
-          <div className="auth-form-header">
-            <h2 className="auth-form-title">
-              {mode === 'login' ? '¡Bienvenido!' : 'Comienza tu aventura'}
-            </h2>
-            <p className="auth-form-sub">
-              {mode === 'login' ? 'Accede a tus planes de viaje' : 'Crea tu cuenta gratis en un minuto'}
-            </p>
-          </div>
+          <h2 className="auth-form-title">{mode === 'login' ? '¡Bienvenido!' : 'Crea tu cuenta'}</h2>
+          <p className="auth-form-sub">{mode === 'login' ? 'Accede a tus planes de viaje' : 'Comienza tu aventura hoy mismo'}</p>
 
           {error && (
-            <div className={`auth-alert ${error.startsWith('✅') ? 'auth-alert-success' : 'auth-alert-error'}`}>
+            <div className={`auth-alert ${error.includes('!') ? 'auth-alert-success' : 'auth-alert-error'}`}>
               {error}
             </div>
           )}
@@ -120,61 +102,33 @@ export default function AuthPage() {
             {mode === 'register' && (
               <div className="form-group fade-in-up">
                 <label className="form-label">Nombre completo</label>
-                <div className="form-input-icon">
+                <div className="form-input-with-icon">
                   <User size={18} className="input-icon" />
-                  <input
-                    type="text"
-                    className="form-input"
-                    placeholder="Ej. Melina Rivera"
-                    value={name}
-                    onChange={e => setName(e.target.value)}
-                    required
-                  />
+                  <input type="text" className="form-input" placeholder="Ej. Melina Rivera" value={name} onChange={e => setName(e.target.value)} required />
                 </div>
               </div>
             )}
 
             <div className="form-group">
               <label className="form-label">Correo electrónico</label>
-              <div className="form-input-icon">
+              <div className="form-input-with-icon">
                 <Mail size={18} className="input-icon" />
-                <input
-                  type="email"
-                  className="form-input"
-                  placeholder="tu@email.com"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  required
-                />
+                <input type="email" className="form-input" placeholder="tu@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
             </div>
 
             <div className="form-group">
               <label className="form-label">Contraseña</label>
-              <div className="form-input-icon">
+              <div className="form-input-with-icon">
                 <Lock size={18} className="input-icon" />
-                <input
-                  type="password"
-                  className="form-input"
-                  placeholder="Mínimo 6 caracteres"
-                  value={password}
-                  onChange={e => setPassword(e.target.value)}
-                  required
-                  minLength={6}
-                />
+                <input type="password" className="form-input" placeholder="Mínimo 6 caracteres" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary btn-lg w-full" disabled={loading}>
-              {loading ? <div className="spinner" /> : (
-                mode === 'login' ? 'Entrar' : 'Crear Cuenta'
-              )}
+            <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%' }}>
+              {loading ? <div className="spinner" /> : (mode === 'login' ? 'Entrar' : 'Registrarse')}
             </button>
           </form>
-
-          <p className="auth-footer-note">
-            Organiza tus viajes de forma profesional con <strong>TravelMates</strong>.
-          </p>
         </div>
       </div>
     </div>
