@@ -11,9 +11,9 @@ import {
 import './TripHub.css'
 
 const STATUS_OPTIONS = [
-  { value: 'planning', label: 'Planificando', color: 'var(--sun)' },
-  { value: 'active',   label: 'En curso',     color: 'var(--primary)' },
-  { value: 'done',     label: 'Finalizado',   color: 'var(--text-muted)' },
+  { value: 'planning', label: 'PLANIFICANDO', color: '#00d4ff' },
+  { value: 'active',   label: 'EN CURSO',     color: '#39ff14' },
+  { value: 'done',     label: 'FINALIZADO',   color: '#fff' },
 ]
 
 const HUB_MODULES = [
@@ -122,14 +122,14 @@ export default function TripHub() {
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
                   <h1 className="hub-trip-name text-gradient">{trip?.name}</h1>
-                  {isTitular && <button className="btn btn-ghost btn-icon" onClick={() => setEditingName(true)}><Edit3 size={24} /></button>}
+                  {isTitular && <button className="btn-edit-neon" onClick={() => setEditingName(true)}><Edit3 size={20} /></button>}
                 </div>
               )}
               
               <div className="hub-meta-row" style={{ marginTop: '1.5rem' }}>
                 <div className="hub-meta-item"><MapPin size={22} color="var(--primary)" /> {trip?.destination}</div>
                 <div className="hub-meta-item"><Users size={22} color="var(--sun)" /> {memberCount} viajeros</div>
-                <span className="badge" style={{ color: statusInfo.color, borderColor: statusInfo.color, padding: '0.5rem 1rem' }}>{statusInfo.label}</span>
+                <span className="trip-card-status-badge" style={{ color: statusInfo.color, borderColor: statusInfo.color }}>{statusInfo.label}</span>
               </div>
             </div>
 
