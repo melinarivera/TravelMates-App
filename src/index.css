@@ -156,4 +156,9 @@ body::after {
 @media (max-width: 768px) {
   .container { padding: 0 1rem; }
   .glass-card { padding: 1.5rem; border-radius: 20px; }
+  .hide-mobile { display: none !important; }
+}
+
+@media (min-width: 769px) {
+  .show-mobile-only { display: none !important; }
 }
