@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Plane, Calendar, DollarSign, MessageCircle, Shield, Eye, EyeOff } from 'lucide-react'
+import { Plane, Calendar, DollarSign, MessageCircle, Shield, Eye, EyeOff, X } from 'lucide-react'
 import './AuthPage.css'
 
 export default function AuthPage() {
@@ -11,6 +11,10 @@ export default function AuthPage() {
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
   const [showPassword, setShowPassword] = useState(false)
+  const [showPWA, setShowPWA] = useState(() => {
+    // Solo mostrar si no lo ha cerrado antes (opcional, pero buena práctica)
+    return localStorage.getItem('pwaPromptClosed') !== 'true'
+  })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -201,6 +205,55 @@ export default function AuthPage() {
         </div>
 
       </div>
+
+      {showPWA && (
+        <div className="pwa-bubble fade-in-up" style={{
+          position: 'fixed',
+          bottom: '20px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: 'rgba(20, 20, 35, 0.85)',
+          backdropFilter: 'blur(20px)',
+          WebkitBackdropFilter: 'blur(20px)',
+          border: '1px solid rgba(188, 19, 254, 0.3)',
+          borderRadius: '20px',
+          padding: '1rem 1.5rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.5)',
+          zIndex: 1000,
+          width: '90%',
+          maxWidth: '400px'
+        }}>
+          <div style={{ flex: 1, fontSize: '0.85rem', color: 'rgba(255,255,255,0.9)', lineHeight: 1.5 }}>
+            <strong style={{ color: '#bc13fe', display: 'block', marginBottom: '0.3rem', fontSize: '0.95rem' }}>¡Instala TravelMates! 🚀</strong>
+            En <b>iOS</b>: Toca "Compartir" y luego "Añadir a inicio".<br/>
+            En <b>Android</b>: Toca el menú (⋮) y "Añadir a inicio".
+          </div>
+          <button 
+            onClick={() => {
+              setShowPWA(false)
+              localStorage.setItem('pwaPromptClosed', 'true')
+            }}
+            style={{
+              background: 'rgba(255,255,255,0.1)',
+              border: 'none',
+              borderRadius: '50%',
+              width: '32px',
+              height: '32px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              color: 'white',
+              cursor: 'pointer',
+              flexShrink: 0
+            }}
+          >
+            <X size={18} />
+          </button>
+        </div>
+      )}
     </div>
   )
 }
