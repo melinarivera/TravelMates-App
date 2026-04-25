@@ -62,6 +62,8 @@ export default function TripHub() {
   const [chatMsg, setChatMsg] = useState('')
   const [sendingMsg, setSendingMsg] = useState(false)
   const [memberCount, setMemberCount] = useState(0)
+  const [showCoverModal, setShowCoverModal] = useState(false)
+  const [newCover, setNewCover] = useState('')
 
   useEffect(() => {
     fetchTrip()
@@ -79,7 +81,11 @@ export default function TripHub() {
 
   async function fetchTrip() {
     const { data } = await supabase.from('trips').select('*').eq('id', tripId).single()
-    if (data) { setTrip(data); setNewName(data.name) }
+    if (data) { 
+      setTrip(data); 
+      setNewName(data.name);
+      setNewCover(data.cover_url || '');
+    }
     const { data: mem } = await supabase
       .from('trip_members')
       .select('role')
@@ -137,6 +143,12 @@ export default function TripHub() {
     setEditingName(false)
   }
 
+  async function updateCover() {
+    await supabase.from('trips').update({ cover_url: newCover }).eq('id', tripId)
+    setTrip(t => ({ ...t, cover_url: newCover }))
+    setShowCoverModal(false)
+  }
+
   async function sendMessage(e) {
     e.preventDefault()
     if (!chatMsg.trim()) return
@@ -164,98 +176,57 @@ export default function TripHub() {
     <div className="hub-page">
       <Navbar tripName={trip?.name} />
 
-      <div className="container hub-body">
-        {/* Back */}
-        <button className="btn btn-ghost hub-back" onClick={() => navigate('/')}>
-          <ArrowLeft size={18} /> Mis viajes
-        </button>
-
-        {/* Trip header */}
-        <div className="hub-header glass fade-in-up">
-          <div className="hub-header-left">
-            {editingName && isTitular ? (
-              <div className="hub-name-edit">
-                <input
-                  type="text"
-                  className="form-input hub-name-input"
-                  value={newName}
-                  onChange={e => setNewName(e.target.value)}
-                  onKeyDown={e => { if (e.key === 'Enter') updateName() }}
-                  autoFocus
-                />
-                <button className="btn btn-sky btn-sm" onClick={updateName}><Check size={16} /></button>
-                <button className="btn btn-ghost btn-sm" onClick={() => setEditingName(false)}><X size={16} /></button>
-              </div>
-            ) : (
-              <div className="hub-name-row">
-                <h1 className="hub-trip-name">{trip?.name}</h1>
-                {isTitular && (
-                  <button className="btn btn-ghost btn-icon" onClick={() => setEditingName(true)} title="Editar nombre">
-                    <Edit3 size={16} />
-                  </button>
-                )}
-              </div>
-            )}
-
-            <div className="hub-trip-meta">
-              {trip?.destination && <span className="hub-meta-item"><MapPin size={14} />{trip.destination}</span>}
-              {trip?.start_date && (
-                <span className="hub-meta-item">
-                  <Calendar size={14} />
-                  {new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}
-                  {trip.end_date && ` – ${new Date(trip.end_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}`}
-                </span>
+      <div className="hub-hero-header" style={{ 
+        backgroundImage: trip?.cover_url ? `linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.7)), url(${trip.cover_url})` : 'var(--grad-hero)'
+      }}>
+        <div className="container">
+          <div className="hub-hero-inner fade-in-up">
+            <button className="btn btn-ghost hub-back-white" onClick={() => navigate('/')}>
+              <ArrowLeft size={18} /> Mis viajes
+            </button>
+            
+            <div className="hub-title-section">
+              {editingName && isTitular ? (
+                <div className="hub-name-edit">
+                  <input
+                    type="text"
+                    className="form-input hub-name-input"
+                    value={newName}
+                    onChange={e => setNewName(e.target.value)}
+                    onKeyDown={e => { if (e.key === 'Enter') updateName() }}
+                    autoFocus
+                  />
+                  <button className="btn btn-sky btn-sm" onClick={updateName}><Check size={16} /></button>
+                  <button className="btn btn-ghost btn-sm" onClick={() => setEditingName(false)}><X size={16} /></button>
+                </div>
+              ) : (
+                <div className="hub-name-row">
+                  <h1 className="hub-trip-name-white">{trip?.name}</h1>
+                  {isTitular && (
+                    <button className="btn btn-ghost-white btn-icon" onClick={() => setEditingName(true)} title="Editar nombre">
+                      <Edit3 size={18} />
+                    </button>
+                  )}
+                </div>
               )}
-              <div className="hub-meta-item-group">
-                <span className="hub-meta-item"><Users size={14} />{memberCount} integrantes</span>
-                {isTitular && (
-                  <button 
-                    className="btn btn-ghost btn-icon btn-sm hub-add-member-quick" 
-                    onClick={() => navigate(`/trip/${tripId}/members`)}
-                    title="Añadir integrantes"
-                  >
-                    <Plus size={16} />
-                  </button>
-                )}
+              
+              <div className="hub-meta-white">
+                {trip?.destination && <span><MapPin size={16} />{trip.destination}</span>}
+                <div className="divider-v" />
+                <span><Users size={16} />{memberCount} integrantes</span>
               </div>
             </div>
 
-            {trip?.description && <p className="hub-trip-desc">{trip.description}</p>}
-          </div>
-
-          {/* Status */}
-          <div className="hub-status-section">
-            <span className="hub-status-label">Estado del viaje</span>
-            {editingStatus && isTitular ? (
-              <div className="hub-status-options">
-                {STATUS_OPTIONS.map(s => (
-                  <button
-                    key={s.value}
-                    className={`hub-status-option ${trip?.status === s.value ? 'active' : ''}`}
-                    onClick={() => updateStatus(s.value)}
-                    style={{ '--status-color': s.color }}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-                <button className="btn btn-ghost btn-sm" onClick={() => setEditingStatus(false)}><X size={14} /></button>
-              </div>
-            ) : (
-              <div
-                className="hub-status-display"
-                onClick={() => isTitular && setEditingStatus(true)}
-                style={{ cursor: isTitular ? 'pointer' : 'default' }}
-                title={isTitular ? 'Cambiar estado' : ''}
-              >
-                <span className="hub-status-pill" style={{ background: `${statusInfo.color}22`, color: statusInfo.color }}>
-                  {statusInfo.label}
-                </span>
-                {isTitular && <Edit3 size={14} style={{ color: 'var(--gray-400)' }} />}
-              </div>
+            {isTitular && (
+              <button className="btn btn-ghost-white hub-edit-cover" onClick={() => setShowCoverModal(true)}>
+                <Edit3 size={16} /> Cambiar portada
+              </button>
             )}
-            <span className="hub-role-tag">{isTitular ? 'Titular' : 'Invitado'}</span>
           </div>
         </div>
+      </div>
+
+      <div className="container hub-body">
 
         {/* Module cards */}
         <div className="hub-modules fade-in-up delay-1">
@@ -328,6 +299,25 @@ export default function TripHub() {
           </form>
         </div>
       </div>
+
+      {showCoverModal && (
+        <Modal title="Cambiar portada" onClose={() => setShowCoverModal(false)}>
+          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+            <label className="form-label">URL de Imagen</label>
+            <input
+              type="text"
+              className="form-input"
+              placeholder="https://..."
+              value={newCover}
+              onChange={e => setNewCover(e.target.value)}
+            />
+          </div>
+          <div className="modal-actions">
+            <button className="btn btn-ghost" onClick={() => setShowCoverModal(false)}>Cancelar</button>
+            <button className="btn btn-primary" onClick={updateCover}>Guardar</button>
+          </div>
+        </Modal>
+      )}
     </div>
   )
 }
