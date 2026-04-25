@@ -344,6 +344,7 @@
   .expense-stat { padding: 1rem; }
   .member-card, .expense-item, .activity-card, .poi-card { padding: 0.85rem 1rem; }
   .poi-actions, .activity-actions { flex-wrap: wrap; justify-content: flex-end; }
+  .hide-mobile { display: none; }
 }
 
 @media (max-width: 768px) {
