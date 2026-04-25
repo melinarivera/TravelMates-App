@@ -87,15 +87,17 @@ export default function Itinerary() {
     setShowModal(true)
   }
 
-  const TYPE_COLORS = { activity: 'var(--sky)', food: 'var(--coral)', transport: 'var(--plum)', accommodation: 'var(--mint)' }
-  const TYPE_EMOJI  = { activity: '🎯', food: '🍽️', transport: '🚗', accommodation: '🏨' }
+  const TYPE_COLORS = { activity: 'var(--accent)', food: 'var(--sun)', transport: 'var(--slate)', accommodation: 'var(--mint)' }
+  const TYPE_ICONS  = { activity: <Calendar size={18} />, food: <DollarSign size={18} />, transport: <MapPin size={18} />, accommodation: <Plus size={18} /> }
 
   return (
     <div className="module-page">
       <Navbar tripName={tripName} />
       <div className="container module-body">
         <div className="module-header fade-in-up">
-          <div className="module-header-icon" style={{ background: 'var(--grad-itinerary)' }}>🗓️</div>
+          <div className="module-header-icon" style={{ background: 'var(--grad-itinerary)' }}>
+            <Calendar size={32} color="white" />
+          </div>
           <div>
             <h1 className="module-title">Itinerario</h1>
             <p className="module-subtitle">{days.length} días planificados</p>
@@ -113,7 +115,7 @@ export default function Itinerary() {
           </div>
         ) : days.length === 0 ? (
           <div className="empty-state fade-in-up">
-            <div className="empty-state-icon">🗓️</div>
+            <div className="empty-state-icon"><Calendar size={40} /></div>
             <h3 className="empty-state-title">Itinerario vacío</h3>
             <p className="empty-state-text">
               {isTitular ? 'Añade las primeras actividades del viaje' : 'El titular añadirá las actividades pronto'}
@@ -146,14 +148,13 @@ export default function Itinerary() {
 
                 <div className="itinerary-activities">
                   {activities.map(act => {
-                    const color = TYPE_COLORS[act.type] || 'var(--sky)'
-                    const emoji = TYPE_EMOJI[act.type] || '🎯'
+                    const icon = TYPE_ICONS[act.type] || <Calendar size={18} />
                     return (
                       <div key={act.id} className="activity-card glass">
                         <div className="activity-type-dot" style={{ background: color }} />
                         <div className="activity-body">
                           <div className="activity-top">
-                            <span className="activity-emoji">{emoji}</span>
+                            <span className="activity-emoji" style={{ color }}>{icon}</span>
                             <div className="activity-info">
                               <div className="activity-title">{act.title}</div>
                               <div className="activity-meta">
@@ -174,7 +175,7 @@ export default function Itinerary() {
                                 <Edit3 size={15} />
                               </button>
                               <button className="btn btn-ghost btn-icon btn-sm" onClick={() => deleteActivity(act.id)}>
-                                <Trash2 size={15} style={{ color: 'var(--coral)' }} />
+                                <Trash2 size={15} style={{ color: 'var(--accent)' }} />
                               </button>
                             </>
                           )}
@@ -196,7 +197,7 @@ export default function Itinerary() {
       </div>
 
       {showModal && (
-        <Modal title={editActivity ? '✏️ Editar actividad' : '🎯 Nueva actividad'} onClose={() => { setShowModal(false); setEditActivity(null) }}>
+        <Modal title={editActivity ? 'Editar Actividad' : 'Nueva Actividad'} onClose={() => { setShowModal(false); setEditActivity(null) }}>
           <form onSubmit={saveActivity} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
             <div className="form-group">
               <label className="form-label" htmlFor="act-title">Título *</label>
@@ -224,10 +225,10 @@ export default function Itinerary() {
               <div className="form-group">
                 <label className="form-label" htmlFor="act-type">Tipo</label>
                 <select id="act-type" className="form-select" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
-                  <option value="activity">🎯 Actividad</option>
-                  <option value="food">🍽️ Comida</option>
-                  <option value="transport">🚗 Transporte</option>
-                  <option value="accommodation">🏨 Alojamiento</option>
+                  <option value="activity">Actividad</option>
+                  <option value="food">Comida</option>
+                  <option value="transport">Transporte</option>
+                  <option value="accommodation">Alojamiento</option>
                 </select>
               </div>
             </div>
@@ -239,7 +240,7 @@ export default function Itinerary() {
             <div className="modal-actions">
               <button type="button" className="btn btn-ghost" onClick={() => { setShowModal(false); setEditActivity(null) }}>Cancelar</button>
               <button type="submit" className="btn btn-primary" disabled={saving} id="confirm-activity-btn">
-                {saving ? <div className="spinner" style={{ borderTopColor: 'white', borderColor: 'rgba(255,255,255,0.3)' }} /> : <><Check size={16} /> {editActivity ? 'Guardar' : 'Añadir'}</>}
+                {saving ? <div className="spinner" /> : <><Check size={16} /> {editActivity ? 'Guardar Cambios' : 'Añadir Actividad'}</>}
               </button>
             </div>
           </form>

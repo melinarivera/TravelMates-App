@@ -230,7 +230,7 @@ export default function TripHub() {
                 style={{ cursor: isTitular ? 'pointer' : 'default' }}
                 title={isTitular ? 'Cambiar estado' : ''}
               >
-                <span className="hub-status-pill" style={{ background: `${statusInfo.color}33`, color: statusInfo.color === '#FFE66D' ? '#8B6914' : statusInfo.color }}>
+                <span className="hub-status-pill" style={{ background: `${statusInfo.color}22`, color: statusInfo.color }}>
                   {statusInfo.label}
                 </span>
                 {isTitular && <Edit3 size={14} style={{ color: 'var(--gray-400)' }} />}
@@ -271,8 +271,8 @@ export default function TripHub() {
           <div className="hub-chat-messages" id="chat-messages">
             {messages.length === 0 ? (
               <div className="chat-empty">
-                <span>💬</span>
-                <p>¡Empieza la conversación!</p>
+                <MessageCircle size={32} />
+                <p>Aún no hay mensajes. ¡Di hola!</p>
               </div>
             ) : (
               messages.map(msg => {

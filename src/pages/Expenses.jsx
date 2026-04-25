@@ -83,8 +83,8 @@ export default function Expenses() {
   })
 
   const CATEGORY_COLORS = {
-    'Alojamiento': '#4ECDC4', 'Transporte': '#A855F7', 'Comida': '#FF6B6B',
-    'Actividades': '#6BCB77', 'Compras': '#FFE66D', 'Otros': '#8898B3'
+    'Alojamiento': '#4f46e5', 'Transporte': '#64748b', 'Comida': '#1e293b',
+    'Actividades': '#059669', 'Compras': '#d97706', 'Otros': '#94a3b8'
   }
 
   return (
@@ -92,7 +92,9 @@ export default function Expenses() {
       <Navbar tripName={tripName} />
       <div className="container module-body">
         <div className="module-header fade-in-up">
-          <div className="module-header-icon" style={{ background: 'var(--grad-expenses)' }}>💸</div>
+          <div className="module-header-icon" style={{ background: 'var(--grad-expenses)' }}>
+            <DollarSign size={32} color="white" />
+          </div>
           <div>
             <h1 className="module-title">Gastos</h1>
             <p className="module-subtitle">{expenses.length} gastos registrados</p>
@@ -105,7 +107,7 @@ export default function Expenses() {
         {/* Stats */}
         <div className="expenses-stats fade-in-up delay-1">
           <div className="expense-stat glass">
-            <DollarSign size={22} style={{ color: 'var(--coral)' }} />
+            <DollarSign size={22} style={{ color: 'var(--primary)' }} />
             <div>
               <div className="expense-stat-value">{total.toFixed(2)}€</div>
               <div className="expense-stat-label">Total gastado</div>
@@ -135,7 +137,9 @@ export default function Expenses() {
         {/* Balance panel */}
         {showBalance && (
           <div className="balance-panel glass fade-in-up">
-            <h3 style={{ marginBottom: '1rem', fontSize: '1rem' }}>💰 Liquidación de gastos</h3>
+            <h3 style={{ marginBottom: '1rem', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <DollarSign size={18} /> Resumen de Saldos
+            </h3>
             {Object.entries(balances).map(([uid, b]) => {
               const net = b.paid - b.owes
               return (
@@ -159,7 +163,7 @@ export default function Expenses() {
           </div>
         ) : expenses.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state-icon">💸</div>
+            <div className="empty-state-icon"><DollarSign size={40} /></div>
             <h3 className="empty-state-title">Sin gastos aún</h3>
             <p className="empty-state-text">Añade el primer gasto del viaje</p>
           </div>
@@ -183,7 +187,7 @@ export default function Expenses() {
                   <div className="expense-amount">{parseFloat(exp.amount).toFixed(2)}€</div>
                   {exp.user_id === user.id && (
                     <button className="btn btn-ghost btn-icon" onClick={() => deleteExpense(exp.id)}>
-                      <Trash2 size={16} style={{ color: 'var(--coral)' }} />
+                      <Trash2 size={16} style={{ color: 'var(--accent)' }} />
                     </button>
                   )}
                 </div>
@@ -227,7 +231,7 @@ export default function Expenses() {
             <div className="modal-actions">
               <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button>
               <button type="submit" className="btn btn-primary" disabled={creating} id="confirm-expense-btn">
-                {creating ? <div className="spinner" style={{ borderTopColor: 'white', borderColor: 'rgba(255,255,255,0.3)' }} /> : <><Plus size={16} /> Guardar</>}
+                {creating ? <div className="spinner" /> : <><Plus size={16} /> Guardar Gasto</>}
               </button>
             </div>
           </form>

@@ -253,7 +253,7 @@ export default function Dashboard() {
                 id="trip-name"
                 type="text"
                 className="form-input"
-                placeholder="Verano en la Costa ☀️"
+                placeholder="Ej. Verano en la Montaña"
                 value={form.name}
                 onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                 required
@@ -337,7 +337,7 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
       <div className="trip-card-cover" style={{ background: status.grad }}>
         <div className="trip-card-icon">{status.icon}</div>
         <div className={`badge ${status.badge} trip-card-badge`}>
-          {isInvitation ? 'Nueva invitación' : status.label}
+          {isInvitation ? 'Nueva Invitación' : status.label}
         </div>
       </div>
       <div className="trip-card-body">
@@ -349,10 +349,14 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
         
         {isInvitation ? (
           <div className="invitation-actions">
-            <p className="invitation-text">¿Te unes a este viaje?</p>
+            <p className="invitation-text">Has sido invitado a este viaje</p>
             <div className="invitation-buttons">
-              <button className="btn btn-primary btn-sm" onClick={onAccept}>¡Claro! ✈️</button>
-              <button className="btn btn-ghost btn-sm" onClick={onReject}>Ahora no</button>
+              <button className="btn btn-primary btn-sm" onClick={onAccept}>
+                <Check size={14} /> Aceptar
+              </button>
+              <button className="btn btn-ghost btn-sm" onClick={onReject}>
+                <XCircle size={14} /> Declinar
+              </button>
             </div>
           </div>
         ) : (

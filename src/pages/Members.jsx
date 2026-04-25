@@ -14,8 +14,8 @@ const ROLE_MAP = {
 
 const STATUS_MAP = {
   accepted: { label: 'Aceptado', icon: <CheckCircle size={14} />, color: 'var(--mint)' },
-  pending:  { label: 'Pendiente', icon: <Clock size={14} />,      color: 'var(--sun-dk)' },
-  rejected: { label: 'Rechazado', icon: <XCircle size={14} />,    color: 'var(--coral)' },
+  pending:  { label: 'Pendiente', icon: <Clock size={14} />,      color: 'var(--sun)' },
+  rejected: { label: 'Rechazado', icon: <XCircle size={14} />,    color: 'var(--accent)' },
 }
 
 export default function Members() {
@@ -42,7 +42,7 @@ export default function Members() {
 
       const { data, error: memErr } = await supabase
         .from('trip_members')
-        .select('*, profile:profiles(full_name, avatar_url)')
+        .select('*, profile:profiles(full_name, avatar_url, email)')
         .eq('trip_id', tripId)
         .order('created_at')
 
@@ -150,6 +150,7 @@ export default function Members() {
               const role = ROLE_MAP[member.role] || ROLE_MAP.invitado
               const status = STATUS_MAP[member.status] || STATUS_MAP.pending
               const initials = member.profile?.full_name?.slice(0, 2).toUpperCase()
+                || member.profile?.email?.slice(0, 2).toUpperCase()
                 || member.invite_email?.slice(0, 2).toUpperCase()
                 || '??'
               const isMe = member.user_id === user.id
@@ -159,7 +160,7 @@ export default function Members() {
                   <div className="avatar avatar-lg">{initials}</div>
                   <div className="member-info">
                     <div className="member-name">
-                      {member.profile?.full_name || member.invite_email || 'Invitado pendiente'}
+                      {member.profile?.full_name || member.profile?.email || member.invite_email || 'Usuario sin nombre'}
                       {isMe && <span className="member-you-tag">Tú</span>}
                     </div>
                     <div className="member-tags">
@@ -211,7 +212,7 @@ export default function Members() {
             <div className="modal-actions">
               <button type="button" className="btn btn-ghost" onClick={() => setShowInvite(false)}>Cancelar</button>
               <button type="submit" className="btn btn-primary" disabled={inviting} id="confirm-invite-btn">
-                {inviting ? <div className="spinner" style={{ borderTopColor: 'white', borderColor: 'rgba(255,255,255,0.3)' }} /> : <><UserPlus size={16} /> Invitar</>}
+                {inviting ? <div className="spinner" /> : <><UserPlus size={16} /> Invitar</>}
               </button>
             </div>
           </form>

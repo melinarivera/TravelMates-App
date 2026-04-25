@@ -8,10 +8,7 @@ import { Plus, MapPin, Trash2, Star, Navigation, ExternalLink } from 'lucide-rea
 import './ModulePage.css'
 
 const POI_TYPES = ['Restaurante', 'Museo', 'Playa', 'Parque', 'Hotel', 'Compras', 'Transporte', 'Otro']
-const TYPE_EMOJI = {
-  'Restaurante': '🍽️', 'Museo': '🏛️', 'Playa': '🏖️', 'Parque': '🌳',
-  'Hotel': '🏨', 'Compras': '🛍️', 'Transporte': '🚉', 'Otro': '📍'
-}
+const POI_TYPES = ['Restaurante', 'Museo', 'Playa', 'Parque', 'Hotel', 'Compras', 'Transporte', 'Otro']
 
 export default function MapPOI() {
   const { tripId } = useParams()
@@ -71,7 +68,9 @@ export default function MapPOI() {
       <Navbar tripName={tripName} />
       <div className="container module-body">
         <div className="module-header fade-in-up">
-          <div className="module-header-icon" style={{ background: 'var(--grad-map)' }}>🗺️</div>
+          <div className="module-header-icon" style={{ background: 'var(--grad-map)' }}>
+            <MapPin size={32} color="white" />
+          </div>
           <div>
             <h1 className="module-title">Mapa & Puntos de Interés</h1>
             <p className="module-subtitle">{pois.length} lugares guardados</p>
@@ -84,7 +83,7 @@ export default function MapPOI() {
         {/* Map embed placeholder */}
         <div className="map-embed-card glass fade-in-up delay-1">
           <div className="map-embed-placeholder">
-            <div className="map-compass">🧭</div>
+            <div className="map-compass"><Navigation size={32} /></div>
             <div>
               <p style={{ fontWeight: 700, color: 'var(--gray-700)' }}>Mapa interactivo</p>
               <p style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>
@@ -112,7 +111,7 @@ export default function MapPOI() {
               className={`chip ${filterType === t ? 'active' : ''}`}
               onClick={() => setFilterType(t)}
             >
-              {TYPE_EMOJI[t] || '🗂️'} {t}
+              {t}
             </button>
           ))}
         </div>
@@ -124,7 +123,7 @@ export default function MapPOI() {
           </div>
         ) : filtered.length === 0 ? (
           <div className="empty-state">
-            <div className="empty-state-icon">📍</div>
+            <div className="empty-state-icon"><MapPin size={40} /></div>
             <h3 className="empty-state-title">Sin lugares añadidos</h3>
             <p className="empty-state-text">Todos los integrantes pueden sugerir puntos de interés</p>
           </div>
@@ -132,7 +131,7 @@ export default function MapPOI() {
           <div className="pois-list fade-in-up delay-3">
             {filtered.map((poi, i) => (
               <div key={poi.id} className={`poi-card glass fade-in-up delay-${Math.min(i+1, 5)}`}>
-                <div className="poi-emoji">{TYPE_EMOJI[poi.type] || '📍'}</div>
+                <div className="poi-emoji"><MapPin size={24} /></div>
                 <div className="poi-info">
                   <div className="poi-name">{poi.name}</div>
                   <div className="poi-meta">
@@ -159,7 +158,7 @@ export default function MapPOI() {
                   )}
                   {(isTitular || poi.user_id === user.id) && (
                     <button className="btn btn-ghost btn-icon btn-sm" onClick={() => deletePOI(poi.id)}>
-                      <Trash2 size={15} style={{ color: 'var(--coral)' }} />
+                      <Trash2 size={15} style={{ color: 'var(--accent)' }} />
                     </button>
                   )}
                 </div>
@@ -215,7 +214,7 @@ export default function MapPOI() {
             <div className="modal-actions">
               <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button>
               <button type="submit" className="btn btn-primary" disabled={saving} id="confirm-poi-btn">
-                {saving ? <div className="spinner" style={{ borderTopColor: 'white', borderColor: 'rgba(255,255,255,0.3)' }} /> : <><Plus size={16} /> Añadir</>}
+                {saving ? <div className="spinner" /> : <><Plus size={16} /> Guardar Lugar</>}
               </button>
             </div>
           </form>
