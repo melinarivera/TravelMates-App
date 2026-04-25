@@ -8,11 +8,12 @@ import {
   Settings, ArrowLeft, Edit3, Check, X, Send,
   ChevronRight, Clock, MapPin, Plus
 } from 'lucide-react'
+import Modal from '../components/ui/Modal'
 import './TripHub.css'
 
 const STATUS_OPTIONS = [
-  { value: 'planning', label: 'Planificando', color: 'var(--primary)' },
-  { value: 'active',   label: 'En curso',     color: 'var(--mint)' },
+  { value: 'planning', label: 'Planificando', color: 'var(--sun)' },
+  { value: 'active',   label: 'En curso',     color: 'var(--sky)' },
   { value: 'done',     label: 'Finalizado',   color: 'var(--slate)' },
 ]
 
@@ -72,7 +73,6 @@ export default function TripHub() {
     const sub = supabase
       .channel(`chat:${tripId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `trip_id=eq.${tripId}` }, (payload) => {
-        // Optimistically fetch to get the profile name or just refresh
         fetchChat()
       })
       .subscribe()
@@ -105,29 +105,14 @@ export default function TripHub() {
   }
 
   async function fetchChat() {
-    // We fetch messages and profiles separately if join fails, or use a simpler join
     const { data, error } = await supabase
       .from('chat_messages')
-      .select(`
-        *,
-        profiles:user_id (full_name)
-      `)
+      .select('*, profiles:user_id (full_name)')
       .eq('trip_id', tripId)
       .order('created_at', { ascending: true })
       .limit(50)
     
-    if (error) {
-      console.error('Chat error:', error)
-      // Fallback to basic select
-      const { data: basicData } = await supabase
-        .from('chat_messages')
-        .select('*')
-        .eq('trip_id', tripId)
-        .order('created_at', { ascending: true })
-      if (basicData) setMessages(basicData)
-    } else {
-      setMessages(data || [])
-    }
+    if (!error) setMessages(data || [])
   }
 
   async function updateStatus(status) {
@@ -210,8 +195,50 @@ export default function TripHub() {
                 </div>
               )}
               
+              <div className="hub-meta-white">
+                {trip?.destination && <span><MapPin size={16} />{trip.destination}</span>}
+                <div className="divider-v" />
+                <span><Users size={16} />{memberCount} integrantes</span>
+                <div className="divider-v" />
+                <div className="hub-status-inline">
+                  {editingStatus && isTitular ? (
+                    <div className="hub-status-options-mini">
+                      {STATUS_OPTIONS.map(s => (
+                        <button
+                          key={s.value}
+                          className={`mini-status-pill ${trip?.status === s.value ? 'active' : ''}`}
+                          onClick={() => updateStatus(s.value)}
+                          style={{ '--status-color': s.color }}
+                        >
+                          {s.label}
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    <div
+                      className="hub-status-display-white"
+                      onClick={() => isTitular && setEditingStatus(true)}
+                      style={{ cursor: isTitular ? 'pointer' : 'default' }}
+                    >
+                      <span className="badge" style={{ background: `${statusInfo.color}44`, color: 'white', border: '1px solid rgba(255,255,255,0.3)' }}>
+                        {statusInfo.label}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
 
-        {/* Module cards */}
+            {isTitular && (
+              <button className="btn btn-ghost-white hub-edit-cover" onClick={() => setShowCoverModal(true)}>
+                <Edit3 size={16} /> Cambiar portada
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="container hub-body">
         <div className="hub-modules fade-in-up delay-1">
           {HUB_MODULES.map((mod, i) => (
             <Link
@@ -232,10 +259,9 @@ export default function TripHub() {
           ))}
         </div>
 
-        {/* Chat section */}
         <div className="hub-chat glass fade-in-up delay-3">
           <div className="hub-chat-header">
-            <MessageCircle size={20} style={{ color: 'var(--coral)' }} />
+            <MessageCircle size={20} style={{ color: 'var(--accent)' }} />
             <h2 className="hub-chat-title">Chat del grupo</h2>
           </div>
 
