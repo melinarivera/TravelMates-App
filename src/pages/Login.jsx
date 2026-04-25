@@ -1,12 +1,15 @@
 import { useState } from 'react'
 import { supabase } from '../lib/supabase'
 import { useNavigate } from 'react-router-dom'
-import { Mail, Lock, User, Plane, ArrowRight } from 'lucide-react'
+import { 
+  Mail, Lock, User, Plane, ArrowRight, 
+  Calendar, DollarSign, MapPin, MessageCircle 
+} from 'lucide-react'
 import './Login.css'
 
 export default function Login() {
   const [loading, setLoading] = useState(false)
-  const [isSignUp, setIsSignUp] = useState(false)
+  const [mode, setMode] = useState('signin') // 'signin' or 'signup'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [fullName, setFullName] = useState('')
@@ -17,31 +20,22 @@ export default function Login() {
     setLoading(true)
 
     try {
-      if (isSignUp) {
-        // Sign Up
+      if (mode === 'signup') {
         const { error } = await supabase.auth.signUp({
           email,
           password,
-          options: {
-            data: {
-              full_name: fullName,
-            }
-          }
+          options: { data: { full_name: fullName } }
         })
         if (error) throw error
-        alert('¡Cuenta creada! Ya puedes entrar.')
-        setIsSignUp(false)
+        alert('¡Cuenta creada! Ya puedes iniciar sesión.')
+        setMode('signin')
       } else {
-        // Sign In
-        const { error } = await supabase.auth.signInWithPassword({
-          email,
-          password,
-        })
+        const { error } = await supabase.auth.signInWithPassword({ email, password })
         if (error) throw error
         navigate('/')
       }
     } catch (error) {
-      alert(error.error_description || error.message)
+      alert(error.message)
     } finally {
       setLoading(false)
     }
@@ -49,83 +43,113 @@ export default function Login() {
 
   return (
     <div className="login-page">
-      <div className="login-card glass fade-in-up">
-        <div className="login-header">
-          <div className="login-logo">
-            <Plane size={32} className="logo-icon" />
+      <div className="login-container fade-in-up">
+        {/* Left Side: Branding & Features */}
+        <div className="login-branding">
+          <div className="login-logo-box">
+            <Plane size={32} />
           </div>
-          <h1 className="login-title">TravelMates</h1>
-          <p className="login-subtitle">
-            {isSignUp ? 'Crea tu cuenta para empezar a viajar' : '¡Qué bueno verte de nuevo!'}
+          <h1 className="brand-title">TravelMates</h1>
+          <p className="brand-tagline">
+            La plataforma inteligente para planificar viajes en grupo sin complicaciones.
           </p>
+
+          <div className="features-list">
+            <div className="feature-item">
+              <div className="feature-icon"><Calendar size={20} /></div>
+              <span>Itinerarios colaborativos en tiempo real</span>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon"><DollarSign size={20} /></div>
+              <span>Control de gastos y presupuesto compartido</span>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon"><MapPin size={20} /></div>
+              <span>Descubre y guarda puntos de interés</span>
+            </div>
+            <div className="feature-item">
+              <div className="feature-icon"><MessageCircle size={20} /></div>
+              <span>Chat grupal integrado por cada viaje</span>
+            </div>
+          </div>
         </div>
 
-        <form onSubmit={handleAuth} className="login-form">
-          {isSignUp && (
+        {/* Right Side: Auth Form */}
+        <div className="login-auth-box glass">
+          <div className="auth-tabs">
+            <button 
+              className={`auth-tab ${mode === 'signin' ? 'active' : ''}`} 
+              onClick={() => setMode('signin')}
+            >
+              Entrar
+            </button>
+            <button 
+              className={`auth-tab ${mode === 'signup' ? 'active' : ''}`} 
+              onClick={() => setMode('signup')}
+            >
+              Registrarse
+            </button>
+          </div>
+
+          <div className="auth-header">
+            <h2>{mode === 'signin' ? '¡Bienvenido de nuevo!' : 'Únete a TravelMates'}</h2>
+            <p>{mode === 'signin' ? 'Ingresa tus credenciales para acceder.' : 'Crea tu cuenta y empieza a planificar.'}</p>
+          </div>
+
+          <form onSubmit={handleAuth} className="auth-form">
+            {mode === 'signup' && (
+              <div className="form-group">
+                <label>Nombre completo</label>
+                <div className="input-wrapper">
+                  <User size={18} className="field-icon" />
+                  <input 
+                    type="text" 
+                    placeholder="Tu nombre" 
+                    value={fullName}
+                    onChange={e => setFullName(e.target.value)}
+                    required 
+                  />
+                </div>
+              </div>
+            )}
+
             <div className="form-group">
-              <label className="form-label">Nombre completo</label>
-              <div className="form-input-icon">
-                <User size={18} className="input-icon" />
-                <input
-                  type="text"
-                  className="form-input"
-                  placeholder="Tu nombre"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  required
+              <label>Email</label>
+              <div className="input-wrapper">
+                <Mail size={18} className="field-icon" />
+                <input 
+                  type="email" 
+                  placeholder="tu@email.com" 
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  required 
                 />
               </div>
             </div>
-          )}
 
-          <div className="form-group">
-            <label className="form-label">Email</label>
-            <div className="form-input-icon">
-              <Mail size={18} className="input-icon" />
-              <input
-                type="email"
-                className="form-input"
-                placeholder="tu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
+            <div className="form-group">
+              <label>Contraseña</label>
+              <div className="input-wrapper">
+                <Lock size={18} className="field-icon" />
+                <input 
+                  type="password" 
+                  placeholder="••••••••" 
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  required 
+                />
+              </div>
             </div>
-          </div>
 
-          <div className="form-group">
-            <label className="form-label">Contraseña</label>
-            <div className="form-input-icon">
-              <Lock size={18} className="input-icon" />
-              <input
-                type="password"
-                className="form-input"
-                placeholder="••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-              />
-            </div>
-          </div>
-
-          <button className="btn btn-primary btn-lg btn-full" disabled={loading}>
-            {loading ? (
-              <div className="spinner" style={{ borderTopColor: 'white', borderColor: 'rgba(255,255,255,0.3)' }} />
-            ) : (
-              <>
-                {isSignUp ? 'Crear cuenta' : 'Entrar'} <ArrowRight size={18} />
-              </>
-            )}
-          </button>
-        </form>
-
-        <div className="login-footer">
-          <p>
-            {isSignUp ? '¿Ya tienes cuenta?' : '¿Aún no tienes cuenta?'}
-            <button className="btn-link" onClick={() => setIsSignUp(!isSignUp)}>
-              {isSignUp ? 'Inicia sesión' : 'Regístrate gratis'}
+            <button type="submit" className="btn-auth" disabled={loading}>
+              {loading ? <div className="spinner-small" /> : (
+                <>
+                  {mode === 'signin' ? 'Entrar' : 'Registrarse'}
+                  <ArrowRight size={18} />
+                </>
+              )}
             </button>
-          </p>
+          </form>
         </div>
       </div>
     </div>
