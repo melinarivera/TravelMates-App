@@ -6,7 +6,8 @@ import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import {
   Plus, Plane, MapPin, Calendar, Users,
-  Clock, ChevronRight, Search, Globe, Check, XCircle
+  Clock, ChevronRight, Search, Globe, Check,
+  Camera, Image as ImageIcon, Briefcase
 } from 'lucide-react'
 import './Dashboard.css'
 
@@ -25,6 +26,7 @@ export default function Dashboard() {
   const [search, setSearch] = useState('')
   const [form, setForm] = useState({ name: '', destination: '', start_date: '', end_date: '', description: '', cover_url: '' })
   const [creating, setCreating] = useState(false)
+  const [imagePreview, setImagePreview] = useState(null)
 
   useEffect(() => {
     fetchTrips()
@@ -39,7 +41,6 @@ export default function Dashboard() {
       .order('created_at', { foreignTable: 'trips', ascending: false })
 
     if (!error && data) {
-      // Map the data to include the membership info inside the trip object
       const mapped = data.map(d => ({
         ...d.trip,
         membership_status: d.status,
@@ -57,8 +58,18 @@ export default function Dashboard() {
       .eq('trip_id', tripId)
       .eq('user_id', user.id)
 
-    if (!error) {
-      fetchTrips()
+    if (!error) fetchTrips()
+  }
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setImagePreview(reader.result)
+        setForm(f => ({ ...f, cover_url: reader.result }))
+      }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -66,7 +77,6 @@ export default function Dashboard() {
     e.preventDefault()
     setCreating(true)
 
-    // Sanitize dates: empty strings should be null
     const tripData = {
       ...form,
       owner_id: user.id,
@@ -75,7 +85,6 @@ export default function Dashboard() {
       end_date: form.end_date || null
     }
 
-    // Insert the trip
     const { data: trip, error: tripError } = await supabase
       .from('trips')
       .insert(tripData)
@@ -84,31 +93,24 @@ export default function Dashboard() {
 
     if (tripError) {
       console.error('Error creating trip:', tripError)
-      alert(`Error al crear el viaje: ${tripError.message}\nVerifica que hayas ejecutado el SQL en Supabase.`)
+      alert(`Error: ${tripError.message}`)
       setCreating(false)
       return
     }
 
     if (trip) {
-      const { error: memberError } = await supabase.from('trip_members').insert({
+      await supabase.from('trip_members').insert({
         trip_id: trip.id,
         user_id: user.id,
         role: 'titular',
         status: 'accepted',
       })
       
-      if (memberError) {
-        console.error('Error adding member:', memberError)
-        alert(`Viaje creado, pero hubo un error al añadirte como miembro: ${memberError.message}`)
-      }
-
       setShowModal(false)
       setForm({ name: '', destination: '', start_date: '', end_date: '', description: '', cover_url: '' })
+      setImagePreview(null)
       fetchTrips()
-      // Wait a tiny bit to show success before navigating
-      setTimeout(() => {
-        navigate(`/trip/${trip.id}`)
-      }, 100)
+      navigate(`/trip/${trip.id}`)
     }
     setCreating(false)
   }
@@ -126,27 +128,23 @@ export default function Dashboard() {
     <div className="dashboard-page">
       <Navbar />
 
-      {/* Hero header */}
       <section className="dashboard-hero">
         <div className="container">
           <div className="dashboard-hero-content fade-in-up">
             <div className="dashboard-greeting">
-              <span className="dashboard-wave">👋</span>
+              <div className="hero-icon-glow">
+                <Plane size={48} color="white" />
+              </div>
               <div>
                 <h1 className="dashboard-title text-gradient">¡Hola, aventurero!</h1>
                 <p className="dashboard-subtitle">Tus próximas aventuras te están esperando</p>
               </div>
             </div>
-            <button
-              className="btn btn-primary btn-lg"
-              onClick={() => setShowModal(true)}
-              id="create-trip-btn"
-            >
+            <button className="btn btn-primary btn-lg" onClick={() => setShowModal(true)}>
               <Plus size={20} /> Nuevo viaje
             </button>
           </div>
 
-          {/* Search */}
           <div className="dashboard-search fade-in-up delay-1">
             <Search size={20} className="dashboard-search-icon" />
             <input
@@ -155,7 +153,6 @@ export default function Dashboard() {
               className="dashboard-search-input"
               value={search}
               onChange={e => setSearch(e.target.value)}
-              id="dashboard-search"
             />
           </div>
         </div>
@@ -165,22 +162,17 @@ export default function Dashboard() {
         {loading ? (
           <div className="dashboard-loading">
             {[1,2,3].map(i => (
-              <div key={i} className="trip-card-skeleton">
-                <div className="skeleton" style={{ height: 160, borderRadius: 'var(--radius-lg)' }} />
-              </div>
+              <div key={i} className="trip-card-skeleton glass-card" />
             ))}
           </div>
         ) : filtered.length === 0 ? (
           <div className="empty-state fade-in-up">
-            <div className="empty-state-icon">✈️</div>
+            <div className="empty-state-icon">
+              <Briefcase size={48} color="var(--text-muted)" />
+            </div>
             <h3 className="empty-state-title">
               {search ? 'No encontramos ese viaje' : '¡Crea tu primer viaje!'}
             </h3>
-            <p className="empty-state-text">
-              {search
-                ? 'Prueba con otro término de búsqueda'
-                : 'Planifica una aventura increíble con tu familia o amigos'}
-            </p>
             {!search && (
               <button className="btn btn-primary" onClick={() => setShowModal(true)}>
                 <Plus size={18} /> Crear viaje
@@ -192,18 +184,11 @@ export default function Dashboard() {
             {invitations.length > 0 && (
               <section className="dashboard-section fade-in-up">
                 <h2 className="dashboard-section-title">
-                  <Clock size={22} /> Invitaciones nuevas
+                  <Clock size={22} color="var(--sun)" /> Invitaciones
                 </h2>
                 <div className="trips-grid">
                   {invitations.map((trip, i) => (
-                    <TripCard 
-                      key={trip.id} 
-                      trip={trip} 
-                      index={i} 
-                      isInvitation
-                      onAccept={() => handleInvitation(trip.id, 'accepted')}
-                      onReject={() => handleInvitation(trip.id, 'rejected')}
-                    />
+                    <TripCard key={trip.id} trip={trip} index={i} isInvitation onAccept={() => handleInvitation(trip.id, 'accepted')} onReject={() => handleInvitation(trip.id, 'rejected')} />
                   ))}
                 </div>
               </section>
@@ -212,7 +197,7 @@ export default function Dashboard() {
             {myTrips.length > 0 && (
               <section className="dashboard-section fade-in-up">
                 <h2 className="dashboard-section-title">
-                  <Plane size={22} /> Mis viajes
+                  <Plane size={22} color="var(--primary)" /> Mis viajes
                 </h2>
                 <div className="trips-grid">
                   {myTrips.map((trip, i) => (
@@ -225,7 +210,7 @@ export default function Dashboard() {
             {guestTrips.length > 0 && (
               <section className="dashboard-section fade-in-up">
                 <h2 className="dashboard-section-title">
-                  <Globe size={22} /> Viajes donde participo
+                  <Globe size={22} color="var(--accent)" /> Viajes donde participo
                 </h2>
                 <div className="trips-grid">
                   {guestTrips.map((trip, i) => (
@@ -238,87 +223,50 @@ export default function Dashboard() {
         )}
       </div>
 
-      {/* Create trip modal */}
       {showModal && (
-        <Modal title="🌍 Nuevo Viaje" onClose={() => setShowModal(false)}>
+        <Modal title="Nuevo Viaje" onClose={() => setShowModal(false)}>
           <form onSubmit={createTrip} className="create-trip-form">
             <div className="form-group">
-              <label className="form-label" htmlFor="trip-name">Nombre del viaje *</label>
-              <input
-                id="trip-name"
-                type="text"
-                className="form-input"
-                placeholder="Ej. Verano en la Montaña"
-                value={form.name}
-                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
-                required
-              />
+              <label className="form-label">Nombre del viaje *</label>
+              <input type="text" className="form-input" placeholder="Ej. Verano en la Montaña" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
             </div>
             <div className="form-group">
-              <label className="form-label" htmlFor="trip-destination">Destino *</label>
-              <div className="form-input-icon">
+              <label className="form-label">Destino *</label>
+              <div className="form-input-with-icon">
                 <MapPin size={18} className="input-icon" />
-                <input
-                  id="trip-destination"
-                  type="text"
-                  className="form-input"
-                  placeholder="Barcelona, España"
-                  value={form.destination}
-                  onChange={e => setForm(f => ({ ...f, destination: e.target.value }))}
-                  required
-                />
+                <input type="text" className="form-input" placeholder="Barcelona, España" value={form.destination} onChange={e => setForm(f => ({ ...f, destination: e.target.value }))} required />
               </div>
             </div>
-            <div className="grid-2" style={{ gap: '1rem' }}>
+            
+            <div className="grid-2">
               <div className="form-group">
-                <label className="form-label" htmlFor="trip-start">Fecha inicio</label>
-                <input
-                  id="trip-start"
-                  type="date"
-                  className="form-input"
-                  value={form.start_date}
-                  onChange={e => setForm(f => ({ ...f, start_date: e.target.value }))}
-                />
+                <label className="form-label">Fecha inicio</label>
+                <input type="date" className="form-input" value={form.start_date} onChange={e => setForm(f => ({ ...f, start_date: e.target.value }))} />
               </div>
               <div className="form-group">
-                <label className="form-label" htmlFor="trip-end">Fecha fin</label>
-                <input
-                  id="trip-end"
-                  type="date"
-                  className="form-input"
-                  value={form.end_date}
-                  onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))}
-                />
+                <label className="form-label">Fecha fin</label>
+                <input type="date" className="form-input" value={form.end_date} onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))} />
               </div>
             </div>
+
             <div className="form-group">
-              <label className="form-label" htmlFor="trip-cover">URL de Imagen de Portada</label>
-              <input
-                id="trip-cover"
-                type="text"
-                className="form-input"
-                placeholder="https://images.unsplash.com/photo-..."
-                value={form.cover_url}
-                onChange={e => setForm(f => ({ ...f, cover_url: e.target.value }))}
-              />
-              <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>Pega un enlace de Unsplash para darle punch.</p>
+              <label className="form-label">Foto de portada</label>
+              <div className="file-upload-box" onClick={() => document.getElementById('file-input').click()}>
+                {imagePreview ? (
+                  <img src={imagePreview} alt="Preview" className="file-preview" />
+                ) : (
+                  <div className="file-upload-placeholder">
+                    <Camera size={32} color="var(--text-muted)" />
+                    <span>Seleccionar foto (JPG, PNG)</span>
+                  </div>
+                )}
+                <input type="file" id="file-input" hidden accept="image/*" onChange={handleFileChange} />
+              </div>
             </div>
-            <div className="form-group">
-              <label className="form-label" htmlFor="trip-desc">Descripción</label>
-              <textarea
-                id="trip-desc"
-                className="form-input form-textarea"
-                placeholder="¡Una aventura épica!"
-                value={form.description}
-                onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
-                rows={3}
-              />
-            </div>
+
             <div className="modal-actions">
-              <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)}>
-                Cancelar
-              </button>
-              <button type="submit" className="btn btn-primary" disabled={creating} id="confirm-create-trip">
+              <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button>
+              <button type="submit" className="btn btn-primary" disabled={creating}>
                 {creating ? <div className="spinner" /> : <><Plus size={18} /> Crear viaje</>}
               </button>
             </div>
@@ -336,17 +284,13 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
     : null
 
   return (
-    <div
-      className={`trip-card fade-in-up delay-${Math.min(index + 1, 5)} ${isInvitation ? 'trip-card-invitation' : ''}`}
-      onClick={isInvitation ? null : onClick}
-      id={`trip-card-${trip.id}`}
-    >
+    <div className={`trip-card glass-card fade-in-up delay-${Math.min(index + 1, 5)} ${isInvitation ? 'trip-card-invitation' : ''}`} onClick={isInvitation ? null : onClick}>
       <div className="trip-card-cover">
         {trip.cover_url ? (
           <img src={trip.cover_url} alt={trip.name} />
         ) : (
-          <div style={{ background: status.grad, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
-            {status.icon}
+          <div className="trip-card-cover-placeholder" style={{ background: status.grad }}>
+             <ImageIcon size={48} color="white" opacity="0.3" />
           </div>
         )}
         <div className={`badge ${status.badge} trip-card-badge`}>
@@ -361,31 +305,18 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
         </div>
         
         {isInvitation ? (
-          <div className="invitation-actions">
-            <div className="invitation-buttons">
-              <button className="btn btn-primary btn-sm" onClick={onAccept}>
-                Aceptar
-              </button>
-              <button className="btn btn-secondary btn-sm" onClick={onReject}>
-                Declinar
-              </button>
-            </div>
+          <div className="invitation-buttons">
+            <button className="btn btn-primary btn-sm" onClick={onAccept}>Aceptar</button>
+            <button className="btn btn-secondary btn-sm" onClick={onReject}>Declinar</button>
           </div>
         ) : (
-          <>
-            {trip.start_date && (
-              <div className="trip-card-meta">
-                <Calendar size={14} />
-                <span>{new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}</span>
-                {daysLeft > 0 && <span className="badge badge-primary" style={{ fontSize: '0.7rem' }}>en {daysLeft}d</span>}
-              </div>
-            )}
-            <div className="trip-card-footer">
-              <span className="trip-card-open">
-                Explorar <ChevronRight size={16} />
-              </span>
+          <div className="trip-card-footer">
+            <div className="trip-card-meta">
+              <Calendar size={14} />
+              <span>{trip.start_date ? new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : 'Próximamente'}</span>
             </div>
-          </>
+            <ChevronRight size={20} color="var(--primary)" />
+          </div>
         )}
       </div>
     </div>
