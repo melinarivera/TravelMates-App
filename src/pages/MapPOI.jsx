@@ -74,9 +74,11 @@ export default function MapPOI() {
             <h1 className="module-title">Mapa & Puntos de Interés</h1>
             <p className="module-subtitle">{pois.length} lugares guardados</p>
           </div>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)} style={{ marginLeft: 'auto' }} id="add-poi-btn">
-            <Plus size={18} /> Añadir lugar
-          </button>
+          {isTitular && (
+            <button className="btn btn-primary" onClick={() => setShowModal(true)} style={{ marginLeft: 'auto' }} id="add-poi-btn">
+              <Plus size={18} /> Añadir lugar
+            </button>
+          )}
         </div>
 
         {/* Map embed placeholder */}
@@ -155,7 +157,7 @@ export default function MapPOI() {
                       <Navigation size={14} />
                     </a>
                   )}
-                  {(isTitular || poi.user_id === user.id) && (
+                  {isTitular && (
                     <button className="btn btn-ghost btn-icon btn-sm" onClick={() => deletePOI(poi.id)}>
                       <Trash2 size={15} style={{ color: 'var(--accent)' }} />
                     </button>
