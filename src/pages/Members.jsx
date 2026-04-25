@@ -116,7 +116,7 @@ export default function Members() {
       <div className="container module-body">
         <div className="module-header fade-in-up">
           <div className="module-header-icon" style={{ background: 'var(--grad-members)' }}>
-            👥
+            <Users size={32} color="white" />
           </div>
           <div>
             <h1 className="module-title">Integrantes</h1>

@@ -11,9 +11,9 @@ import {
 import './TripHub.css'
 
 const STATUS_OPTIONS = [
-  { value: 'planning', label: '🗓️ Planificando', color: '#FFE66D' },
-  { value: 'active',   label: '✈️ En curso',     color: '#6BCB77' },
-  { value: 'done',     label: '🏁 Finalizado',   color: '#8898B3' },
+  { value: 'planning', label: 'Planificando', color: 'var(--primary)' },
+  { value: 'active',   label: 'En curso',     color: 'var(--mint)' },
+  { value: 'done',     label: 'Finalizado',   color: 'var(--slate)' },
 ]
 
 const HUB_MODULES = [
@@ -23,7 +23,6 @@ const HUB_MODULES = [
     desc: 'Gestiona quién viaja contigo',
     icon: <Users size={28} />,
     grad: 'var(--grad-members)',
-    emoji: '👥',
   },
   {
     key: 'expenses',
@@ -31,7 +30,6 @@ const HUB_MODULES = [
     desc: 'Divide y controla el presupuesto',
     icon: <DollarSign size={28} />,
     grad: 'var(--grad-expenses)',
-    emoji: '💸',
   },
   {
     key: 'itinerary',
@@ -39,7 +37,6 @@ const HUB_MODULES = [
     desc: 'Planifica día a día',
     icon: <Calendar size={28} />,
     grad: 'var(--grad-itinerary)',
-    emoji: '🗓️',
   },
   {
     key: 'map',
@@ -47,7 +44,6 @@ const HUB_MODULES = [
     desc: 'Puntos de interés del viaje',
     icon: <Map size={28} />,
     grad: 'var(--grad-map)',
-    emoji: '🗺️',
   },
 ]
 
@@ -240,7 +236,7 @@ export default function TripHub() {
                 {isTitular && <Edit3 size={14} style={{ color: 'var(--gray-400)' }} />}
               </div>
             )}
-            <span className="hub-role-tag">{isTitular ? '👑 Titular' : '🧳 Invitado'}</span>
+            <span className="hub-role-tag">{isTitular ? 'Titular' : 'Invitado'}</span>
           </div>
         </div>
 
