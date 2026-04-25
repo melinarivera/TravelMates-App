@@ -12,6 +12,7 @@ const CATEGORIES = ['Alojamiento', 'Transporte', 'Comida', 'Actividades', 'Compr
 export default function Expenses() {
   const { tripId } = useParams()
   const { user } = useAuth()
+  const [myRole, setMyRole] = useState('invitado')
   const [expenses, setExpenses] = useState([])
   const [members, setMembers] = useState([])
   const [tripName, setTripName] = useState('')
@@ -29,9 +30,13 @@ export default function Expenses() {
 
     const { data: mems } = await supabase
       .from('trip_members')
-      .select('user_id, profile:profiles(full_name)')
+      .select('user_id, role, profile:profiles(full_name, email)')
       .eq('trip_id', tripId)
-    if (mems) setMembers(mems)
+    if (mems) {
+      setMembers(mems)
+      const myMem = mems.find(m => m.user_id === user.id)
+      if (myMem) setMyRole(myMem.role)
+    }
 
     const { data: exps } = await supabase
       .from('expenses')
@@ -68,11 +73,15 @@ export default function Expenses() {
     fetchData()
   }
 
+  const isTitular = myRole === 'titular'
   const total = expenses.reduce((s, e) => s + (e.amount || 0), 0)
 
   // Balance calculation
   const balances = {}
-  members.forEach(m => { balances[m.user_id] = { paid: 0, owes: 0, name: m.profile?.full_name || m.user_id.slice(0,8) } })
+  members.forEach(m => {
+    const displayName = m.profile?.full_name || m.profile?.email || m.user_id.slice(0,8)
+    balances[m.user_id] = { paid: 0, owes: 0, name: displayName }
+  })
   expenses.forEach(exp => {
     if (balances[exp.paid_by]) balances[exp.paid_by].paid += exp.amount
     const splitCount = (exp.split_with || []).length || 1
@@ -99,9 +108,11 @@ export default function Expenses() {
             <h1 className="module-title">Gastos</h1>
             <p className="module-subtitle">{expenses.length} gastos registrados</p>
           </div>
-          <button className="btn btn-primary" onClick={() => setShowModal(true)} style={{ marginLeft: 'auto' }} id="add-expense-btn">
-            <Plus size={18} /> Añadir gasto
-          </button>
+          {isTitular && (
+            <button className="btn btn-primary" onClick={() => setShowModal(true)} style={{ marginLeft: 'auto' }} id="add-expense-btn">
+              <Plus size={18} /> Añadir gasto
+            </button>
+          )}
         </div>
 
         {/* Stats */}
@@ -180,12 +191,12 @@ export default function Expenses() {
                     <div className="expense-meta">
                       <span className="badge" style={{ background: `${color}22`, color }}>{exp.category}</span>
                       <span style={{ fontSize: '0.8rem', color: 'var(--gray-400)' }}>
-                        pagado por {payer?.profile?.full_name || 'alguien'}
+                        pagado por {payer?.profile?.full_name || payer?.profile?.email || 'alguien'}
                       </span>
                     </div>
                   </div>
                   <div className="expense-amount">{parseFloat(exp.amount).toFixed(2)}€</div>
-                  {exp.user_id === user.id && (
+                  {isTitular && (
                     <button className="btn btn-ghost btn-icon" onClick={() => deleteExpense(exp.id)}>
                       <Trash2 size={16} style={{ color: 'var(--accent)' }} />
                     </button>
@@ -224,7 +235,9 @@ export default function Expenses() {
               <select id="exp-paid" className="form-select"
                 value={form.paid_by} onChange={e => setForm(f => ({ ...f, paid_by: e.target.value }))}>
                 {members.map(m => (
-                  <option key={m.user_id} value={m.user_id}>{m.profile?.full_name || m.user_id.slice(0,8)}</option>
+                  <option key={m.user_id} value={m.user_id}>
+                    {m.profile?.full_name || m.profile?.email || m.user_id.slice(0,8)}
+                  </option>
                 ))}
               </select>
             </div>
