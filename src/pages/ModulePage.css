@@ -660,3 +660,17 @@ select.form-input {
   border-color: #00f2ff !important;
   box-shadow: 0 0 20px rgba(0, 242, 255, 0.15) !important;
 }
+
+/* AJUSTE DE GRIDS EN MODALES */
+.grid-2 {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 2rem !important; /* Más espacio entre columnas y filas */
+}
+
+@media (max-width: 600px) {
+  .grid-2 {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important; /* Espacio vertical cuando se apilan */
+  }
+}
