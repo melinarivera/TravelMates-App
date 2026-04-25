@@ -1,110 +1,111 @@
 .dashboard-page {
-  padding-bottom: 5rem;
+  padding-bottom: 2rem;
 }
 
 .dashboard-hero {
-  padding: 4rem 0 3rem;
+  padding: 3rem 0 2rem;
 }
 
 .dashboard-greeting {
   display: flex;
   align-items: center;
-  gap: 1.5rem;
-  margin-bottom: 2.5rem;
+  gap: 1rem;
 }
 
 .hero-icon-glow {
-  width: 80px;
-  height: 80px;
+  width: 60px;
+  height: 60px;
   background: var(--grad-main);
-  border-radius: 20px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 30px var(--primary-glow);
+  box-shadow: 0 8px 25px var(--primary-glow);
 }
 
 .dashboard-title {
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: 2rem;
   margin: 0;
-  line-height: 1.1;
 }
 
 .dashboard-subtitle {
   color: var(--text-muted);
-  font-size: 1.1rem;
-  margin-top: 0.5rem;
+  font-size: 1rem;
+  margin-top: 0.25rem;
 }
 
 .dashboard-hero-content {
   display: flex;
   justify-content: space-between;
-  align-items: flex-end;
-  gap: 2rem;
+  align-items: center;
   flex-wrap: wrap;
+  gap: 1.5rem;
 }
 
+/* SEARCH MOBILE APP STYLE */
 .dashboard-search {
   position: relative;
-  margin-top: 3rem;
-  max-width: 500px;
-}
-
-.dashboard-search-icon {
-  position: absolute;
-  left: 1.25rem;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--text-muted);
+  margin-top: 2rem;
+  width: 100%;
 }
 
 .dashboard-search-input {
   width: 100%;
-  padding: 1rem 1rem 1rem 3.5rem;
-  background: rgba(255,255,255,0.03);
+  padding: 0.9rem 1rem 0.9rem 3rem;
+  background: rgba(255,255,255,0.05);
   border: 1px solid var(--glass-border);
-  border-radius: 18px;
+  border-radius: 14px;
   color: white;
-  font-size: 1rem;
-  transition: all 0.3s;
-}
-.dashboard-search-input:focus {
-  background: rgba(255,255,255,0.06);
-  border-color: var(--primary);
-  box-shadow: 0 0 0 4px var(--primary-glow);
-  outline: none;
+  box-sizing: border-box;
 }
 
-/* GRIDS */
+/* FLOATING ACTION BUTTON (MOBILE) */
+@media (max-width: 768px) {
+  .btn-new-trip-desktop { display: none; }
+  
+  .fab-mobile {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: var(--primary);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 30px var(--primary-glow);
+    border: none;
+    z-index: 1001;
+  }
+}
+
+/* TRIPS GRID */
 .trips-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 2rem;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 3rem;
 }
 
 .dashboard-section-title {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.4rem;
-  margin: 3rem 0 1.5rem;
+  font-size: 1.25rem;
+  margin: 2.5rem 0 1rem;
+  font-weight: 700;
 }
 
 /* CARDS */
 .trip-card {
-  height: 100%;
   padding: 0;
   overflow: hidden;
-  transition: transform 0.4s var(--ease-spring), box-shadow 0.4s;
-  cursor: pointer;
-}
-.trip-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.7);
 }
 
 .trip-card-cover {
-  height: 180px;
+  height: 160px;
   position: relative;
 }
 
@@ -114,81 +115,36 @@
   object-fit: cover;
 }
 
-.trip-card-cover-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .trip-card-body {
-  padding: 1.5rem;
+  padding: 1rem;
 }
 
 .trip-card-name {
-  font-size: 1.3rem;
-  margin: 0 0 0.5rem;
+  font-size: 1.2rem;
+  margin: 0 0 0.4rem;
   color: white;
 }
 
 .trip-card-meta {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   color: var(--text-muted);
-  font-size: 0.9rem;
+  font-size: 0.85rem;
 }
 
 .trip-card-footer {
-  margin-top: 1.5rem;
+  margin-top: 1.25rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgba(255,255,255,0.05);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-top: 1px solid rgba(255,255,255,0.05);
-  padding-top: 1rem;
-}
-
-/* FILE UPLOAD BOX */
-.file-upload-box {
-  width: 100%;
-  height: 150px;
-  border: 2px dashed var(--glass-border);
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  overflow: hidden;
-  transition: all 0.2s;
-  background: rgba(255,255,255,0.02);
-}
-.file-upload-box:hover {
-  border-color: var(--primary);
-  background: rgba(255,255,255,0.04);
-}
-
-.file-upload-placeholder {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-}
-
-.file-preview {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 @media (max-width: 768px) {
-  .dashboard-hero-content {
-    flex-direction: column;
-    align-items: flex-start;
-  }
   .trips-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
   }
 }
