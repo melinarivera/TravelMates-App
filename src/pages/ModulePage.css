@@ -29,6 +29,42 @@
   gap: 0.5rem;
 }
 
+/* BOTONES VIBRANTES (VERDE AÑADIR) */
+.btn-add-vibrant {
+  background: var(--btn-add) !important;
+  color: white !important;
+  font-weight: 800 !important;
+  border-radius: 12px !important;
+  padding: 0.8rem 1.6rem !important;
+  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4) !important;
+  border: none !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.95rem;
+}
+
+.btn-add-vibrant:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5) !important;
+}
+
+/* BADGES VIBRANTES PARA ESTADOS */
+.trip-card-status-badge {
+  padding: 0.4rem 1rem !important;
+  border-radius: 50px !important;
+  font-size: 0.65rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
 /* BOTÓN ENTRAR DASHBOARD (PREMIUM) */
 .btn-entrar {
   background: var(--grad-main) !important;
@@ -39,6 +75,9 @@
   border: none !important;
   box-shadow: 0 8px 20px var(--primary-glow) !important;
   transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 .btn-entrar:hover {
