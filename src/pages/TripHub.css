@@ -61,16 +61,13 @@
   font-size: 1.2rem;
 }
 
-/* MODULES GRID - GLASS CARDS */
-.hub-body {
-  padding: 4rem 0 15rem;
+/* OCULTAR MÓDULOS PORQUE YA ESTÁN EN EL NAVBAR */
+.hub-modules {
+  display: none !important;
 }
 
-.hub-modules {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 2rem;
-  margin-bottom: 5rem;
+.hub-body {
+  padding: 2rem 0 10rem;
 }
 
 .hub-module-card {
