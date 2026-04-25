@@ -94,7 +94,7 @@ export default function MapPOI() {
                       </a>
                     )}
                     {isTitular && (
-                      <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={() => deletePOI(poi.id)}>
+                      <button className="btn-delete-vibrant" onClick={() => deletePOI(poi.id)}>
                         <Trash2 size={20} />
                       </button>
                     )}
