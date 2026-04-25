@@ -1,139 +1,26 @@
-/* TRIP HUB COMPLETE REDESIGN - PREMIUM & ORGANIZED */
+/* SOLO AJUSTES DE VISIBILIDAD CANAL DEL GRUPO */
 
-.hub-hero-header {
-  position: relative;
-  min-height: 480px;
-  display: flex;
-  align-items: center;
-  padding: 5rem 0;
-  background-size: cover;
-  background-position: center;
+.hub-channel-card {
+  margin-top: 5rem;
+  padding: 3rem !important;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 28px;
 }
 
-.hub-hero-inner {
-  display: flex;
-  flex-direction: column;
-  gap: 3rem;
+.hub-channel-desc {
+  color: #e2e8f0 !important; /* Blanco grisáceo muy legible */
+  font-size: 1.1rem !important;
+  margin-bottom: 2rem !important;
+  display: block !important;
+  opacity: 1 !important;
 }
 
-.hub-top-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-}
-
-.hub-title-section {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-
-.hub-title-row {
-  display: flex;
-  align-items: center;
-  gap: 2rem;
-  flex-wrap: wrap;
-}
-
-.hub-trip-name {
-  font-size: 4rem;
-  font-weight: 900;
-  margin: 0;
-  line-height: 1;
-}
-
-.hub-meta-row {
-  display: flex;
-  gap: 2.5rem;
-  flex-wrap: wrap;
-  align-items: center;
-}
-
-.hub-meta-item {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  font-weight: 700;
-  color: white;
-  font-size: 1.2rem;
-}
-
-/* MODULES GRID - RESTORED & IMPROVED */
-.hub-body {
-  padding: 4rem 0 10rem;
-}
-
-.hub-modules {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 2rem;
-  margin-bottom: 4rem;
-}
-
-.hub-module-card {
-  display: flex;
-  align-items: center;
-  gap: 1.5rem;
-  padding: 2rem;
-  text-decoration: none;
-  transition: all 0.3s ease;
-  position: relative;
-  overflow: hidden;
-}
-
-.hub-module-card:hover {
-  transform: translateY(-5px);
-  border-color: var(--primary);
-  background: rgba(255,255,255,0.05);
-}
-
-.hub-module-icon {
-  width: 70px;
-  height: 70px;
-  border-radius: 18px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  flex-shrink: 0;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
-}
-
-.hub-module-content {
-  flex: 1;
-}
-
-.hub-module-title {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: white;
-  margin: 0 0 0.4rem;
-  font-family: 'Outfit', sans-serif;
-}
-
-.hub-module-desc {
-  font-size: 0.95rem;
-  color: var(--text-muted);
-  margin: 0;
-}
-
-.hub-module-arrow {
-  color: rgba(255,255,255,0.2);
-  transition: 0.3s;
-}
-
-.hub-module-card:hover .hub-module-arrow {
-  color: white;
-  transform: translateX(5px);
-}
-
-/* MOBILE RESPONSIVE */
-@media (max-width: 768px) {
-  .hub-hero-header { min-height: 400px; padding: 3rem 0; }
-  .hub-trip-name { font-size: 2.8rem; }
-  .hub-modules { grid-template-columns: 1fr; gap: 1.5rem; }
-  .hub-module-card { padding: 1.5rem; }
-  .hub-module-icon { width: 60px; height: 60px; }
-  .hub-module-title { font-size: 1.25rem; }
+.hub-channel-actions {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 1.5rem !important;
+  margin-top: 2rem !important;
+  visibility: visible !important;
 }

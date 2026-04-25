@@ -142,7 +142,7 @@ export default function TripHub() {
         </div>
       </header>
 
-      <div className="container hub-body">
+      <div className="container hub-body" style={{ paddingBottom: '150px' }}>
         <div className="hub-modules">
           {HUB_MODULES.map(mod => (
             <Link key={mod.key} to={`/trip/${tripId}/${mod.key}`} className="hub-module-card glass-card">
@@ -158,46 +158,43 @@ export default function TripHub() {
           ))}
         </div>
 
-        {/* CANAL DEL GRUPO - UNIFICADO Y SCROLLABLE */}
-        <div className="hub-channel-card fade-in-up delay-1">
-          <div className="hub-channel-icon-box">
-             <MessageCircle size={36} color="white" />
-          </div>
-          <h2 className="hub-module-title" style={{ fontSize: '2.2rem', marginBottom: '1rem' }}>Canal del Grupo</h2>
-          <p className="hub-module-desc" style={{ fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto 2.5rem' }}>
-            Únete al canal oficial para coordinar los detalles finales de tu aventura.
+        {/* SECCIÓN CANAL DEL GRUPO - VISIBILIDAD CORREGIDA */}
+        <div className="hub-channel-card">
+          <h2 className="hub-module-title" style={{ fontSize: '2.2rem', marginBottom: '1.5rem' }}>Canal del Grupo</h2>
+          <p className="hub-channel-desc">
+            Únete al canal oficial para coordinar los detalles finales de tu aventura con el resto del grupo.
           </p>
 
-          {editingLink && isTitular ? (
-            <div style={{ maxWidth: '500px', margin: '0 auto', display: 'flex', gap: '0.8rem' }}>
-               <input type="url" className="form-input" placeholder="Enlace de WhatsApp o Telegram" value={newLink} onChange={e => setNewLink(e.target.value)} />
-               <button className="btn-edit-neon" onClick={updateGroupLink}><Check size={22} /></button>
-               <button className="btn-delete-vibrant" onClick={() => setEditingLink(false)}><X size={22} /></button>
-            </div>
-          ) : (
-            <div className="hub-channel-actions">
-              {trip?.description ? (
-                <>
-                  <a href={trip.description} target="_blank" rel="noreferrer" className="btn-join-group">
-                    <ExternalLink size={22} /> Unirse al Canal
+          <div className="hub-channel-actions">
+            {editingLink && isTitular ? (
+              <div style={{ maxWidth: '500px', margin: '0 auto', display: 'flex', gap: '0.8rem' }}>
+                 <input type="url" className="form-input" placeholder="Enlace de WhatsApp o Telegram" value={newLink} onChange={e => setNewLink(e.target.value)} />
+                 <button className="btn-edit-neon" onClick={updateGroupLink}><Check size={22} /></button>
+                 <button className="btn-delete-vibrant" onClick={() => setEditingLink(false)}><X size={22} /></button>
+              </div>
+            ) : (
+              trip?.description ? (
+                <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
+                  <a href={trip.description} target="_blank" rel="noreferrer" className="btn-entrar" style={{ textDecoration: 'none' }}>
+                    <ExternalLink size={20} /> Unirse al Canal
                   </a>
                   {isTitular && (
-                    <button className="btn btn-add-vibrant" style={{ padding: '0.8rem 1.5rem' }} onClick={() => setEditingLink(true)}>
+                    <button className="btn-add-vibrant" style={{ padding: '0.8rem 1.5rem' }} onClick={() => setEditingLink(true)}>
                       <LinkIcon size={20} /> Cambiar enlace
                     </button>
                   )}
-                </>
+                </div>
               ) : (
                 isTitular ? (
                   <button className="btn-add-vibrant" onClick={() => setEditingLink(true)}>
                     <LinkIcon size={20} /> Configurar Enlace de Grupo
                   </button>
                 ) : (
-                  <p style={{ color: 'var(--text-muted)', fontStyle: 'italic' }}>Enlace no disponible aún.</p>
+                  <p className="hub-channel-desc" style={{ fontStyle: 'italic', opacity: 0.7 }}>El titular aún no ha configurado el enlace.</p>
                 )
-              )}
-            </div>
-          )}
+              )
+            )}
+          </div>
         </div>
       </div>
     </div>
