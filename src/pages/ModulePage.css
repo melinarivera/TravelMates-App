@@ -380,3 +380,9 @@
   color: white !important;
   box-shadow: 0 5px 20px rgba(188, 19, 254, 0.3) !important;
 }
+
+/* AJUSTE DE ESPACIADO EN GASTOS */
+.expenses-stats {
+  margin-top: 2.5rem !important; /* Más espacio entre el botón y las cards */
+  margin-bottom: 3.5rem !important;
+}
