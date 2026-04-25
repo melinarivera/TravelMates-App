@@ -193,3 +193,112 @@
   box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   border: 2px solid rgba(255,255,255,0.1);
 }
+
+/* ESTILOS DE GASTOS PREMIUM */
+
+.expenses-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 3rem;
+}
+
+.stat-card-premium {
+  padding: 2rem;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+  transition: 0.3s;
+}
+
+.stat-card-total {
+  background: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.stat-card-perperson {
+  background: linear-gradient(135deg, #0ea5e9 0%, #2dd4bf 100%);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.stat-card-value {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: white;
+  letter-spacing: -1px;
+}
+
+.stat-card-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.8);
+  text-transform: uppercase;
+}
+
+.stat-card-icon {
+  position: absolute;
+  right: -10px;
+  bottom: -10px;
+  opacity: 0.15;
+  transform: rotate(-15deg);
+}
+
+/* TABS SEGMENTED CONTROL */
+.segmented-control {
+  background: rgba(255,255,255,0.05);
+  padding: 0.5rem;
+  border-radius: 18px;
+  display: flex;
+  gap: 0.5rem;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.segment-btn {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  background: transparent;
+  color: #94a3b8;
+  font-weight: 700;
+  border-radius: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.8rem;
+  transition: 0.3s;
+}
+
+.segment-btn.active {
+  background: var(--grad-main);
+  color: white;
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.3);
+}
+
+/* CARDS DE GASTOS */
+.expense-item-card {
+  padding: 1.5rem 2rem !important;
+  margin-bottom: 1.2rem !important;
+}
+
+.expense-price {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: white;
+  font-family: 'Outfit', sans-serif;
+}
+
+.expense-subtitle {
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .expenses-stats { grid-template-columns: 1fr; }
+  .stat-card-value { font-size: 1.8rem; }
+}
