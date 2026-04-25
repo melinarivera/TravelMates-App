@@ -1,15 +1,16 @@
 import { useState } from 'react'
 import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { Plane, Calendar, DollarSign, MessageCircle, Shield } from 'lucide-react'
+import { Plane, Calendar, DollarSign, MessageCircle, Shield, Eye, EyeOff } from 'lucide-react'
 import './AuthPage.css'
 
 export default function AuthPage() {
-  const { user, signIn, signUp } = useAuth()
-  const [mode, setMode] = useState('login')
+  const { user, signIn, signUp, resetPassword } = useAuth()
+  const [mode, setMode] = useState('login') // 'login', 'register', 'reset'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [name, setName] = useState('')
+  const [showPassword, setShowPassword] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -25,6 +26,10 @@ export default function AuthPage() {
         if (error) throw error
         setMode('login')
         setError('¡Cuenta creada! Ya puedes entrar.')
+      } else if (mode === 'reset') {
+        const { error } = await resetPassword(email)
+        if (error) throw error
+        setError('¡Te hemos enviado un correo para restablecer tu contraseña! Revisa tu bandeja de entrada.')
       } else {
         const { error } = await signIn(email, password)
         if (error) throw error
@@ -81,7 +86,7 @@ export default function AuthPage() {
         {/* Lado Formulario */}
         <div className="auth-form-panel glass-card">
           <div className="auth-tabs">
-            <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => setMode('login')}>
+            <button className={`auth-tab ${mode === 'login' || mode === 'reset' ? 'active' : ''}`} onClick={() => setMode('login')}>
               Iniciar Sesión
             </button>
             <button className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => setMode('register')}>
@@ -91,10 +96,10 @@ export default function AuthPage() {
 
           <div className="auth-header">
             <h2 className="auth-form-title">
-              {mode === 'login' ? '¡Hola de nuevo!' : 'Crea tu cuenta'}
+              {mode === 'login' ? '¡Hola de nuevo!' : mode === 'register' ? 'Crea tu cuenta' : 'Recuperar contraseña'}
             </h2>
             <p className="auth-form-sub">
-              {mode === 'login' ? 'Ingresa para ver tus viajes' : 'Únete a miles de viajeros'}
+              {mode === 'login' ? 'Ingresa para ver tus viajes' : mode === 'register' ? 'Únete a miles de viajeros' : 'Te enviaremos un enlace de recuperación'}
             </p>
           </div>
 
@@ -117,14 +122,65 @@ export default function AuthPage() {
               <input type="email" className="form-input" placeholder="email@hola.com" value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
 
-            <div className="form-group">
-              <label className="form-label">Contraseña</label>
-              <input type="password" className="form-input" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
-            </div>
+            {mode !== 'reset' && (
+              <div className="form-group">
+                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.6rem' }}>
+                  <label className="form-label" style={{ marginBottom: 0 }}>Contraseña</label>
+                  {mode === 'login' && (
+                    <span 
+                      style={{ fontSize: '0.85rem', color: '#bc13fe', cursor: 'pointer', fontWeight: 500 }}
+                      onClick={() => setMode('reset')}
+                    >
+                      ¿Olvidaste tu contraseña?
+                    </span>
+                  )}
+                </div>
+                <div style={{ position: 'relative' }}>
+                  <input 
+                    type={showPassword ? "text" : "password"} 
+                    className="form-input" 
+                    placeholder="••••••••" 
+                    value={password} 
+                    onChange={e => setPassword(e.target.value)} 
+                    required 
+                    minLength={6} 
+                    style={{ paddingRight: '45px' }}
+                  />
+                  <button 
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{ 
+                      position: 'absolute', 
+                      right: '12px', 
+                      top: '50%', 
+                      transform: 'translateY(-50%)', 
+                      background: 'none', 
+                      border: 'none', 
+                      color: 'rgba(255,255,255,0.4)', 
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      padding: '4px'
+                    }}
+                  >
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
+              </div>
+            )}
 
             <button type="submit" className="btn-add-vibrant" disabled={loading} style={{ width: '100%', marginTop: '1.5rem', height: '55px', fontSize: '1.1rem', justifyContent: 'center' }}>
-              {loading ? <div className="spinner" /> : (mode === 'login' ? 'Iniciar Sesión' : 'Comenzar')}
+              {loading ? <div className="spinner" /> : (mode === 'login' ? 'Iniciar Sesión' : mode === 'register' ? 'Comenzar' : 'Enviar Enlace')}
             </button>
+            
+            {mode === 'reset' && (
+              <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+                <span style={{ fontSize: '0.9rem', color: 'rgba(255,255,255,0.6)', cursor: 'pointer' }} onClick={() => setMode('login')}>
+                  Volver a Iniciar Sesión
+                </span>
+              </div>
+            )}
           </form>
 
           <div className="auth-footer" style={{ flexDirection: 'column', gap: '0.8rem', marginTop: '2rem', borderTop: '1px solid rgba(255,255,255,0.05)', paddingTop: '1.5rem' }}>
