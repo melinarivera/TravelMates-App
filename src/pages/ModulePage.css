@@ -1,95 +1,47 @@
-/* SISTEMA DE COLORES VIBRANTES - TRAVELMATES PREMIUM */
+/* SISTEMA DE BOTONES DE ACCIÓN ROJOS (UNIFICADOS) */
 
-:root {
-  --btn-add:      #10b981; /* Verde Vibrante */
-  --btn-logout:   #ef4444; /* Rojo Salir */
-  --btn-delete:   #f43f5e; /* Rojo Papelera */
-  --badge-titular:#fbbf24; /* Amarillo Estrella */
-  --badge-guest:  #6366f1; /* Azul Invitado */
-  --badge-ok:     #0ea5e9; /* Cyan Aceptado */
+.btn-delete-vibrant, .btn-logout-vibrant {
+  width: 42px !important;
+  height: 42px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+  color: #ef4444 !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  border-radius: 12px !important;
+  transition: all 0.2s ease !important;
+  cursor: pointer !important;
+  padding: 0 !important;
 }
 
-/* BOTÓN AÑADIR VIBRANTE (ARRIBA) */
-.btn-add-vibrant {
-  background: var(--btn-add) !important;
+.btn-delete-vibrant:hover, .btn-logout-vibrant:hover {
+  background: #ef4444 !important;
   color: white !important;
-  font-weight: 800 !important;
-  border-radius: 12px !important;
-  padding: 0.6rem 1.2rem !important;
-  box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4) !important;
-  border: none !important;
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.3);
+}
+
+/* FIX ESPECIFICO PARA INTEGRANTES Y GASTOS */
+.member-actions, .expense-actions, .activity-actions {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  transition: 0.2s;
 }
 
-.btn-add-vibrant:hover {
-  transform: scale(1.05);
-  filter: brightness(1.1);
-}
-
-/* BOTÓN SALIR ROJO */
-.btn-logout-vibrant {
-  background: rgba(239, 68, 68, 0.1) !important;
-  color: var(--btn-logout) !important;
-  border: 1px solid rgba(239, 68, 68, 0.3) !important;
-  padding: 0.5rem !important;
-  border-radius: 10px !important;
-}
-
-.btn-logout-vibrant:hover {
-  background: var(--btn-logout) !important;
+/* BOTÓN ENTRAR DASHBOARD (PREMIUM) */
+.btn-entrar {
+  background: var(--grad-main) !important;
   color: white !important;
-}
-
-/* BOTÓN BORRAR ROJO */
-.btn-delete-vibrant {
-  color: var(--btn-delete) !important;
+  padding: 0.7rem 1.6rem !important;
+  border-radius: 12px !important;
+  font-weight: 700 !important;
+  border: none !important;
+  box-shadow: 0 8px 20px var(--primary-glow) !important;
   transition: 0.2s;
 }
 
-.btn-delete-vibrant:hover {
-  transform: scale(1.2);
-  filter: drop-shadow(0 0 5px var(--btn-delete));
-}
-
-/* INSIGNIAS (BADGES) TIPO BOTÓN */
-.badge-premium {
-  padding: 0.5rem 1rem !important;
-  border-radius: 50px !important;
-  font-weight: 800 !important;
-  font-size: 0.7rem !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  gap: 0.4rem !important;
-  border: none !important;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2) !important;
-  text-transform: uppercase !important;
-}
-
-.badge-titular { background: var(--badge-titular) !important; color: #000 !important; }
-.badge-guest   { background: var(--badge-guest) !important; color: #fff !important; }
-.badge-ok      { background: var(--badge-ok) !important; color: #fff !important; }
-
-/* CENTRADO DE AVIÓN DASHBOARD */
-.trip-card-cover-placeholder {
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
-}
-
-/* AJUSTES DASHBOARD MÓVIL */
-@media (max-width: 768px) {
-  .module-header {
-    flex-direction: column !important;
-    gap: 1.5rem !important;
-    text-align: center;
-  }
-  
-  .btn-add-vibrant {
-    width: 100%;
-    justify-content: center;
-  }
+.btn-entrar:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.1);
 }
