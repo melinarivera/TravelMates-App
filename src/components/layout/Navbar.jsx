@@ -2,7 +2,7 @@ import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { 
   Home, Users, DollarSign, Calendar, Map, 
-  LogOut, Plane, Menu, X 
+  LogOut, Plane 
 } from 'lucide-react'
 import './Navbar.css'
 
@@ -25,6 +25,7 @@ export default function Navbar() {
   ]
 
   const handleLogout = async () => {
+    if (!confirm('¿Seguro que quieres salir?')) return
     await signOut()
     navigate('/auth')
   }
@@ -54,7 +55,7 @@ export default function Navbar() {
           ))}
         </div>
 
-        {/* Usuario y Salir (Desktop) */}
+        {/* Acciones (Desktop) */}
         <div className="navbar-actions hide-mobile">
           <div className="navbar-user">
             <div className="avatar avatar-sm">
@@ -62,7 +63,7 @@ export default function Navbar() {
             </div>
             <span className="user-email">{user?.email?.split('@')[0]}</span>
           </div>
-          <button className="btn-logout-header" onClick={handleLogout} title="Cerrar Sesión">
+          <button className="btn-logout-vibrant" onClick={handleLogout}>
             <LogOut size={18} />
           </button>
         </div>
@@ -80,17 +81,17 @@ export default function Navbar() {
                 <span>{link.label}</span>
               </Link>
             ))}
-            <button className="navbar-link-mobile" onClick={handleLogout} style={{ border: 'none', background: 'transparent' }}>
+            <button className="navbar-link-mobile" onClick={handleLogout} style={{ border: 'none', background: 'transparent', color: 'var(--btn-logout)' }}>
               <LogOut size={24} />
-              <span>Salir</span>
+              <span style={{ color: 'var(--btn-logout)' }}>Salir</span>
             </button>
           </div>
         )}
 
         {/* Botón Salir Móvil (Dashboard) */}
         {!isTripPage && (
-          <button className="show-mobile-only btn-ghost" onClick={handleLogout} style={{ color: 'var(--text-muted)' }}>
-            <LogOut size={24} />
+          <button className="show-mobile-only btn-logout-vibrant" onClick={handleLogout}>
+            <LogOut size={22} />
           </button>
         )}
       </div>
