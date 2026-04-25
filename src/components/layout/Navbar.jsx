@@ -1,99 +1,98 @@
-import { Link, useLocation, useNavigate, useParams } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
-import {
-  Home, Users, DollarSign, Map, Calendar,
-  LogOut, Plane
+import { 
+  Home, Users, DollarSign, Calendar, Map, 
+  LogOut, Plane, Menu, X 
 } from 'lucide-react'
 import './Navbar.css'
 
-const tripLinks = [
-  { to: '', label: 'Inicio', icon: <Home size={20} /> },
-  { to: '/members', label: 'Integrantes', icon: <Users size={20} /> },
-  { to: '/expenses', label: 'Gastos', icon: <DollarSign size={20} /> },
-  { to: '/itinerary', label: 'Itinerario', icon: <Calendar size={20} /> },
-  { to: '/map', label: 'Mapa', icon: <Map size={20} /> },
-]
-
 export default function Navbar() {
   const { user, signOut } = useAuth()
-  const { tripId } = useParams()
   const location = useLocation()
   const navigate = useNavigate()
 
-  const isTripPage = Boolean(tripId)
-  const basePath = isTripPage ? `/trip/${tripId}` : ''
+  const isTripPage = location.pathname.includes('/trip/')
+  const tripId = isTripPage ? location.pathname.split('/')[2] : null
 
-  const handleSignOut = async () => {
+  const navLinks = isTripPage ? [
+    { to: `/trip/${tripId}`, label: 'Inicio', icon: <Home size={20} />, id: 'home' },
+    { to: `/trip/${tripId}/members`, label: 'Integrantes', icon: <Users size={20} />, id: 'members' },
+    { to: `/trip/${tripId}/expenses`, label: 'Gastos', icon: <DollarSign size={20} />, id: 'expenses' },
+    { to: `/trip/${tripId}/itinerary`, label: 'Itinerario', icon: <Calendar size={20} />, id: 'itinerary' },
+    { to: `/trip/${tripId}/map`, label: 'Mapa', icon: <Map size={20} />, id: 'map' },
+  ] : [
+    { to: '/', label: 'Mis Viajes', icon: <Plane size={20} />, id: 'dashboard' },
+  ]
+
+  const handleLogout = async () => {
     await signOut()
     navigate('/auth')
   }
 
-  const initials = user?.email?.slice(0, 2).toUpperCase() || 'TM'
-
   return (
-    <nav className={`navbar ${isTripPage ? 'navbar-trip-active' : 'navbar-dashboard'}`}>
+    <nav className={`navbar ${isTripPage ? 'navbar-trip-active' : ''}`}>
       <div className="navbar-inner">
-        {/* Logo (Oculto en móvil dentro de un viaje para dar paso al Bottom Nav) */}
+        
         <Link to="/" className="navbar-logo">
-          <div className="navbar-logo-icon">
-            <Plane size={18} color="white" />
+          <div className="navbar-logo-badge">
+            <Plane size={20} color="white" />
           </div>
-          <span>TravelMates</span>
+          <span className="hide-mobile">TravelMates</span>
         </Link>
 
-        {/* NAVEGACIÓN DESKTOP */}
-        {isTripPage && (
-          <div className="navbar-links hide-mobile">
-            {tripLinks.map(link => {
-              const href = `${basePath}${link.to}`
-              const active = location.pathname === href
-              return (
-                <Link key={link.to} to={href} className={`navbar-link ${active ? 'active' : ''}`}>
-                  {link.icon}
-                  <span>{link.label}</span>
-                </Link>
-              )
-            })}
-          </div>
-        )}
+        {/* Links Desktop */}
+        <div className="navbar-links hide-mobile">
+          {navLinks.map(link => (
+            <Link 
+              key={link.id} 
+              to={link.to} 
+              className={`navbar-link ${location.pathname === link.to ? 'active' : ''}`}
+            >
+              {link.icon}
+              <span>{link.label}</span>
+            </Link>
+          ))}
+        </div>
 
-        {/* NAVEGACIÓN MOBILE (BARRA INFERIOR) */}
-        {isTripPage && (
-          <div className="navbar-links-mobile show-mobile-only" style={{ display: 'none' }}>
-            {tripLinks.map(link => {
-              const href = `${basePath}${link.to}`
-              const active = location.pathname === href
-              return (
-                <Link key={link.to} to={href} className={`navbar-link-mobile ${active ? 'active' : ''}`}>
-                  {link.icon}
-                  <span>{link.label}</span>
-                </Link>
-              )
-            })}
-            <button onClick={handleSignOut} className="navbar-link-mobile" style={{ background: 'none', border: 'none' }}>
-               <LogOut size={20} color="var(--coral)" />
-               <span>Salir</span>
-            </button>
+        {/* Usuario y Salir (Desktop) */}
+        <div className="navbar-actions hide-mobile">
+          <div className="navbar-user">
+            <div className="avatar avatar-sm">
+              {user?.email?.slice(0, 2).toUpperCase()}
+            </div>
+            <span className="user-email">{user?.email?.split('@')[0]}</span>
           </div>
-        )}
-
-        {/* ACCIONES SUPERIORES (Dashboard o Desktop Trip) */}
-        <div className="navbar-actions">
-          <div className="navbar-user hide-mobile">
-            <div className="avatar">{initials}</div>
-            <span>{user?.email?.split('@')[0]}</span>
-          </div>
-          
-          {!isTripPage && (
-            <button className="btn-logout-mobile-top show-mobile-only" onClick={handleSignOut}>
-              <LogOut size={18} />
-            </button>
-          )}
-
-          <button className="btn btn-ghost navbar-logout-desktop hide-mobile" onClick={handleSignOut}>
+          <button className="btn-logout-header" onClick={handleLogout} title="Cerrar Sesión">
             <LogOut size={18} />
           </button>
         </div>
+
+        {/* Navegación Móvil (Bottom Bar) */}
+        {isTripPage && (
+          <div className="navbar-links-mobile show-mobile-only">
+            {navLinks.map(link => (
+              <Link 
+                key={link.id} 
+                to={link.to} 
+                className={`navbar-link-mobile ${location.pathname === link.to ? 'active' : ''}`}
+              >
+                {link.icon}
+                <span>{link.label}</span>
+              </Link>
+            ))}
+            <button className="navbar-link-mobile" onClick={handleLogout} style={{ border: 'none', background: 'transparent' }}>
+              <LogOut size={24} />
+              <span>Salir</span>
+            </button>
+          </div>
+        )}
+
+        {/* Botón Salir Móvil (Dashboard) */}
+        {!isTripPage && (
+          <button className="show-mobile-only btn-ghost" onClick={handleLogout} style={{ color: 'var(--text-muted)' }}>
+            <LogOut size={24} />
+          </button>
+        )}
       </div>
     </nav>
   )

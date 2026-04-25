@@ -71,7 +71,7 @@ export default function Members() {
         <header className="module-header fade-in-up">
           <div className="module-title-group">
             <div className="module-icon-box">
-              <Users size={28} />
+              <Users size={32} />
             </div>
             <div>
               <h1 className="module-title">Integrantes</h1>
@@ -84,38 +84,46 @@ export default function Members() {
         </header>
 
         <div className="items-list fade-in-up">
-          {members.map(m => (
-            <div key={m.id} className="item-row glass-card" style={{ padding: '2rem', display: 'flex', alignItems: 'center', gap: '2rem' }}>
-              <div className="avatar" style={{ width: '60px', height: '60px', fontSize: '1.2rem' }}>
-                {(m.profiles?.full_name || m.profiles?.email || m.invite_email || '?').slice(0, 1).toUpperCase()}
-              </div>
-              
-              <div style={{ flex: 1 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.4rem' }}>
-                   <span style={{ fontWeight: 800, fontSize: '1.3rem', color: 'white' }}>
-                     {m.profiles?.full_name || m.profiles?.email || m.invite_email}
-                   </span>
-                   <div style={{ display: 'flex', gap: '0.5rem' }}>
-                      <span className={`badge ${m.role === 'titular' ? 'badge-sun' : 'badge-slate'}`} style={{ border: 'none', padding: '0.3rem 0.8rem' }}>
+          {members.map(m => {
+            const displayName = m.profiles?.full_name || m.profiles?.email || m.invite_email
+            const initials = displayName.slice(0, 2).toUpperCase()
+            const isMe = m.user_id === currentUser.id
+
+            return (
+              <div key={m.id} className="item-row glass-card member-card">
+                <div className="member-avatar avatar">
+                  {initials}
+                </div>
+                
+                <div className="member-info">
+                  <div className="member-top">
+                    <span className="member-name">{displayName}</span>
+                    <div className="member-tags">
+                      <span className={`badge ${m.role === 'titular' ? 'badge-sun' : 'badge-slate'}`}>
                         {m.role === 'titular' ? <><Star size={12} /> Titular</> : 'Invitado'}
                       </span>
-                      <span className={`badge ${m.status === 'accepted' ? 'badge-sky' : 'badge-slate'}`} style={{ border: 'none', padding: '0.3rem 0.8rem' }}>
+                      <span className={`badge ${m.status === 'accepted' ? 'badge-sky' : 'badge-slate'}`}>
                         {m.status === 'accepted' ? 'Aceptado' : 'Pendiente'}
                       </span>
-                   </div>
+                      {isMe && <span className="badge badge-mint">Tú</span>}
+                    </div>
+                  </div>
+                  <div className="member-email">
+                    <Mail size={14} /> 
+                    <span>{m.profiles?.email || m.invite_email}</span>
+                  </div>
                 </div>
-                <div style={{ fontSize: '0.95rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                   <Mail size={14} /> {m.profiles?.email || m.invite_email}
+                
+                <div className="member-actions">
+                  {isTitular && !isMe && (
+                    <button className="btn btn-ghost btn-icon btn-sm btn-delete-member" onClick={() => removeMember(m.id)}>
+                      <Trash2 size={20} />
+                    </button>
+                  )}
                 </div>
               </div>
-              
-              {isTitular && m.user_id !== currentUser.id && (
-                <button className="btn btn-ghost btn-icon" onClick={() => removeMember(m.id)} style={{ color: 'var(--coral)' }}>
-                  <Trash2 size={20} />
-                </button>
-              )}
-            </div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
@@ -128,9 +136,9 @@ export default function Members() {
           <form onSubmit={inviteMember} className="create-trip-form">
             <div className="form-group" style={{ marginBottom: '2rem' }}>
               <label className="form-label">Correo electrónico</label>
-              <input type="email" className="form-input" required value={email} onChange={e => setEmail(e.target.value)} placeholder="amigo@ejemplo.com" />
-              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '1rem' }}>
-                Tu amigo recibirá una invitación y podrá unirse al viaje cuando inicie sesión.
+              <input type="email" className="form-input" required value={email} onChange={e => setEmail(e.target.value)} placeholder="email@hola.com" />
+              <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginTop: '1.25rem', lineHeight: '1.5' }}>
+                Tu amigo recibirá una invitación y podrá unirse al viaje cuando inicie sesión con este correo.
               </p>
             </div>
             <div className="modal-actions">

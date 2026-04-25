@@ -1,130 +1,125 @@
-/* MODULE PAGES – CLEAN & SPACIOUS DESIGN */
+/* MODULE PAGES - REFINED SPACING & RESPONSIVE */
 
 .module-body {
   padding-top: 3rem;
-  padding-bottom: 6rem;
+  padding-bottom: 8rem;
 }
 
 .module-header {
-  margin-bottom: 3.5rem;
+  margin-bottom: 4rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 2rem;
 }
 
-.module-title-group {
-  display: flex;
+/* MEMBER CARD SPECIFIC */
+.member-card {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
-  gap: 1.5rem;
+  gap: 2rem;
+  padding: 2.5rem;
 }
 
-.module-icon-box {
-  width: 60px;
-  height: 60px;
-  background: var(--glass-bg);
-  border: 1px solid var(--glass-border);
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--primary);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-}
-
-.module-title { 
-  font-size: 2.25rem; 
-  margin: 0; 
-  font-family: 'Outfit', sans-serif;
-  letter-spacing: -0.02em;
-}
-
-.module-subtitle { 
-  color: var(--text-muted); 
-  font-size: 1rem; 
-  margin-top: 0.3rem; 
-}
-
-/* UNIFICACIÓN DE BOTONES "AÑADIR" */
-.btn-add-desktop {
-  /* Estilo premium único */
-  background: var(--grad-main);
-  color: white;
-  padding: 0.8rem 1.8rem;
-  border-radius: 14px;
-  font-weight: 700;
-  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-}
-
-.fab-module {
-  position: fixed;
-  bottom: 100px;
-  right: 25px;
+.member-avatar {
   width: 64px;
   height: 64px;
-  border-radius: 50%;
   background: var(--grad-main);
-  color: white;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5);
-  z-index: 1001;
-  border: none;
-  cursor: pointer;
+  font-size: 1.25rem;
+  font-weight: 800;
+  border: 3px solid rgba(255,255,255,0.1);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
 }
 
-/* LISTADOS MÁS LIMPIOS */
-.items-list {
+.member-info {
   display: flex;
   flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0; /* Para que el texto se corte si es necesario */
+}
+
+.member-top {
+  display: flex;
+  align-items: center;
   gap: 1.25rem;
+  flex-wrap: wrap;
 }
 
-.item-row {
-  padding: 1.5rem 2rem;
-  transition: all 0.2s ease;
-}
-
-.item-row:hover {
-  border-color: var(--primary);
-  background: rgba(255,255,255,0.05);
-}
-
-/* STATS */
-.expenses-stats {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 1.5rem;
-  margin-bottom: 3.5rem;
-}
-
-.stat-card {
-  padding: 2rem;
-  text-align: center;
-}
-
-.stat-value {
-  display: block;
-  font-size: 2rem;
+.member-name {
+  font-size: 1.4rem;
   font-weight: 800;
   color: white;
-  font-family: 'Outfit', sans-serif;
-  margin-bottom: 0.5rem;
+  word-break: break-all;
 }
 
-.stat-label {
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+.member-tags {
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.badge {
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
   font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
 }
 
+.badge-sun   { background: rgba(251, 191, 36, 0.15); color: var(--sun); }
+.badge-sky   { background: rgba(14, 165, 233, 0.15); color: var(--accent); }
+.badge-slate { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
+.badge-mint  { background: rgba(16, 185, 129, 0.15); color: var(--mint); }
+
+.member-email {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  opacity: 0.8;
+}
+
+.member-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.btn-delete-member {
+  color: var(--coral) !important;
+  opacity: 0.5;
+  transition: 0.2s;
+}
+
+.btn-delete-member:hover {
+  opacity: 1;
+  background: rgba(244, 63, 94, 0.1) !important;
+}
+
+/* RESPONSIVE MODULE */
 @media (max-width: 768px) {
   .module-body { padding-top: 1.5rem; }
   .module-header { margin-bottom: 2.5rem; }
-  .module-title { font-size: 1.75rem; }
-  .stat-card { padding: 1.5rem; }
-  .stat-value { font-size: 1.5rem; }
-  .item-row { padding: 1.25rem; }
+  .member-card { 
+    grid-template-columns: 1fr; 
+    gap: 1.5rem; 
+    padding: 1.75rem;
+    text-align: center;
+  }
+  .member-avatar { margin: 0 auto; }
+  .member-top { justify-content: center; flex-direction: column; gap: 0.75rem; }
+  .member-tags { justify-content: center; }
+  .member-email { justify-content: center; font-size: 0.85rem; }
+  .member-actions { justify-content: center; margin-top: 0.5rem; }
+  .member-name { font-size: 1.2rem; }
 }

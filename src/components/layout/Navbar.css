@@ -1,24 +1,24 @@
-/* NAVBAR PREMIUM REDESIGN */
+/* NAVBAR PREMIUM REDESIGN - ALIGNED */
 
 .navbar {
   position: sticky;
   top: 0;
   width: 100%;
   z-index: 1000;
-  background: rgba(8, 10, 15, 0.7);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
+  background: rgba(13, 17, 23, 0.8);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
   border-bottom: 1px solid var(--glass-border);
 }
 
 .navbar-inner {
-  height: 72px;
+  height: 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  max-width: 1300px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 2rem;
+  padding: 0 2.5rem;
 }
 
 .navbar-logo {
@@ -30,16 +30,18 @@
   font-weight: 800;
   font-size: 1.5rem;
   color: white;
+  flex-shrink: 0;
 }
 
 .navbar-logo-badge {
-  width: 36px;
-  height: 36px;
+  width: 38px;
+  height: 38px;
   background: var(--grad-main);
-  border-radius: 10px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
+  box-shadow: 0 5px 15px var(--primary-glow);
 }
 
 /* NAVEGACIÓN DESKTOP */
@@ -47,21 +49,22 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  background: rgba(255,255,255,0.04);
+  background: rgba(255,255,255,0.03);
   padding: 0.4rem;
-  border-radius: 16px;
+  border-radius: 18px;
+  border: 1px solid var(--glass-border);
 }
 
 .navbar-link {
   display: flex;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 12px;
+  padding: 0.7rem 1.4rem;
+  border-radius: 14px;
   color: var(--text-muted);
   font-weight: 600;
   font-size: 0.9rem;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   text-decoration: none;
 }
 
@@ -73,53 +76,68 @@
 .navbar-link.active {
   background: var(--primary);
   color: white;
-  box-shadow: 0 4px 15px var(--primary-glow);
+  box-shadow: 0 5px 15px var(--primary-glow);
+}
+
+/* ACCIONES USUARIO */
+.navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
 }
 
 .navbar-user {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  font-weight: 600;
-  color: white;
+  gap: 0.8rem;
+  padding: 0.4rem 0.8rem;
+  background: rgba(255,255,255,0.03);
+  border-radius: 14px;
+  border: 1px solid var(--glass-border);
 }
 
-.avatar {
-  width: 38px;
-  height: 38px;
-  background: var(--grad-main);
-  border-radius: 50%;
+.user-email {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.btn-logout-header {
+  width: 42px;
+  height: 42px;
+  background: rgba(244, 63, 94, 0.1);
+  border: 1px solid rgba(244, 63, 94, 0.2);
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.8rem;
-  font-weight: 800;
-  border: 2px solid rgba(255,255,255,0.1);
+  color: var(--coral);
+  cursor: pointer;
+  transition: 0.2s;
 }
 
-/* BARRA INFERIOR MÓVIL (TIPO APP PREMIUM) */
+.btn-logout-header:hover {
+  background: var(--coral);
+  color: white;
+  transform: scale(1.05);
+}
+
+/* BARRA INFERIOR MÓVIL */
 @media (max-width: 768px) {
-  .navbar-inner { height: 64px; padding: 0 1.2rem; }
-  .navbar-links { display: none; }
+  .navbar-inner { height: 70px; padding: 0 1.5rem; }
   
   .navbar-trip-active {
     position: fixed;
     bottom: 0;
     top: auto;
-    background: rgba(13, 17, 23, 0.95);
+    background: rgba(8, 10, 15, 0.98);
     border-bottom: none;
     border-top: 1px solid var(--glass-border);
     padding-bottom: env(safe-area-inset-bottom);
-  }
-
-  .navbar-trip-active .navbar-inner {
-    height: 75px;
-    justify-content: space-around;
-  }
-
-  .navbar-trip-active .navbar-logo, 
-  .navbar-trip-active .navbar-user {
-    display: none;
   }
 
   .navbar-links-mobile {
@@ -133,21 +151,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 6px;
+    gap: 4px;
     color: var(--text-muted);
     text-decoration: none;
     font-size: 0.65rem;
     font-weight: 700;
-    transition: 0.2s;
+    flex: 1;
   }
 
   .navbar-link-mobile.active {
     color: var(--primary);
-    transform: translateY(-5px);
   }
 
   .navbar-link-mobile svg {
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
+    margin-bottom: 2px;
   }
 }
