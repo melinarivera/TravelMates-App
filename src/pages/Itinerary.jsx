@@ -30,7 +30,7 @@ export default function Itinerary() {
 
     const { data: acts } = await supabase
       .from('itinerary_activities')
-      .select('*')
+      .select('*, activity_votes(vote)')
       .eq('trip_id', tripId)
       .order('day_date')
       .order('time')
@@ -71,8 +71,11 @@ export default function Itinerary() {
   }
 
   async function vote(actId, vote) {
-    // Upsert vote
     await supabase.from('activity_votes').upsert({ activity_id: actId, user_id: user.id, vote })
+    fetchData()
+  }
+  async function approveActivity(id) {
+    await supabase.from('itinerary_activities').update({ source: 'manual' }).eq('id', id)
     fetchData()
   }
 
@@ -177,12 +180,21 @@ export default function Itinerary() {
                               </button>
                             </>
                           )}
-                          <button className="vote-btn vote-up" onClick={() => vote(act.id, 'up')} title="Me gusta">
-                            <ThumbsUp size={14} />
-                          </button>
-                          <button className="vote-btn vote-down" onClick={() => vote(act.id, 'down')} title="No me gusta">
-                            <ThumbsDown size={14} />
-                          </button>
+                          <div className="vote-section">
+                            <button className="vote-btn vote-up" onClick={() => vote(act.id, 'up')} title="Me gusta">
+                              <ThumbsUp size={14} />
+                              <span className="vote-count">{act.activity_votes?.filter(v => v.vote === 'up').length || 0}</span>
+                            </button>
+                            <button className="vote-btn vote-down" onClick={() => vote(act.id, 'down')} title="No me gusta">
+                              <ThumbsDown size={14} />
+                              <span className="vote-count">{act.activity_votes?.filter(v => v.vote === 'down').length || 0}</span>
+                            </button>
+                          </div>
+                          {isTitular && act.source === 'voting' && (
+                            <button className="btn btn-primary btn-sm" onClick={() => approveActivity(act.id)}>
+                              Aprobar
+                            </button>
+                          )}
                         </div>
                       </div>
                     )
