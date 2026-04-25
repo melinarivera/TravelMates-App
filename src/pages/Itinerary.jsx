@@ -5,8 +5,7 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
-  Plus, Trash2, Calendar, MapPin, 
-  ThumbsUp, ThumbsDown
+  Plus, Trash2, Calendar, MapPin, ThumbsUp, ThumbsDown, Clock
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -15,22 +14,15 @@ export default function Itinerary() {
   const { user } = useAuth()
   const [days, setDays] = useState([])
   const [myRole, setMyRole] = useState('invitado')
-  const [tripName, setTripName] = useState('')
   const [loading, setLoading] = useState(true)
   const [showModal, setShowModal] = useState(false)
-  const [editActivity, setEditActivity] = useState(null)
   const [form, setForm] = useState({ day_date: '', time: '', title: '', location: '', description: '', type: 'activity', source: 'manual' })
   const [saving, setSaving] = useState(false)
 
   useEffect(() => { fetchData() }, [tripId])
 
   async function fetchData() {
-    const { data: trip } = await supabase.from('trips').select('name').eq('id', tripId).single()
-    if (trip) setTripName(trip.name)
-
-    const { data: mem } = await supabase.from('trip_members').select('role').eq('trip_id', tripId).eq('user_id', user.id).single()
-    if (mem) setMyRole(mem.role)
-
+    setLoading(true)
     const { data: acts } = await supabase
       .from('itinerary_activities')
       .select('*, activity_votes(vote)')
@@ -46,19 +38,17 @@ export default function Itinerary() {
       }, {})
       setDays(Object.entries(grouped).sort())
     }
+    const { data: mem } = await supabase.from('trip_members').select('role').eq('trip_id', tripId).eq('user_id', user.id).single()
+    if (mem) setMyRole(mem.role)
     setLoading(false)
   }
 
   async function saveActivity(e) {
     e.preventDefault()
     setSaving(true)
-    const payload = { ...form, trip_id: tripId, user_id: user.id }
-    if (editActivity) await supabase.from('itinerary_activities').update(payload).eq('id', editActivity.id)
-    else await supabase.from('itinerary_activities').insert(payload)
-
+    await supabase.from('itinerary_activities').insert({ ...form, trip_id: tripId, user_id: user.id })
     setShowModal(false)
     setForm({ day_date: '', time: '', title: '', location: '', description: '', type: 'activity', source: 'manual' })
-    setEditActivity(null)
     fetchData()
     setSaving(false)
   }
@@ -79,16 +69,13 @@ export default function Itinerary() {
   return (
     <div className="module-page">
       <Navbar />
-      
       <div className="container module-body">
         <header className="module-header fade-in-up">
           <div className="module-title-group">
-            <div className="module-icon-box">
-              <Calendar size={28} />
-            </div>
+            <div className="module-icon-box"><Calendar size={28} /></div>
             <div>
               <h1 className="module-title">Itinerario</h1>
-              <p className="module-subtitle">Cronograma paso a paso</p>
+              <p className="module-subtitle">Planes confirmados y propuestas</p>
             </div>
           </div>
           <button className="btn btn-add-desktop hide-mobile" onClick={() => setShowModal(true)}>
@@ -97,43 +84,31 @@ export default function Itinerary() {
         </header>
 
         {loading ? <div className="spinner" /> : (
-          <div className="itinerary-days">
-            {days.length === 0 ? (
-              <div className="empty-state glass-card" style={{ padding: '4rem' }}>
-                 <p>Aún no hay actividades planeadas.</p>
-              </div>
-            ) : days.map(([date, acts]) => (
-              <section key={date} className="itinerary-day fade-in-up" style={{ marginBottom: '4rem' }}>
+          <div className="itinerary-list">
+            {days.map(([date, acts]) => (
+              <section key={date} className="itinerary-day-section fade-in-up">
                 <h2 className="itinerary-day-title">
-                  {date === 'Sin fecha' ? date : new Date(date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}
+                  {date === 'Sin fecha' ? date : new Date(date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' })}
                 </h2>
-                
                 <div className="items-list">
                   {acts.map(act => (
-                    <div key={act.id} className="activity-card glass-card" style={{ padding: '1.5rem 2rem', display: 'grid', gridTemplateColumns: '80px 1fr auto', alignItems: 'center' }}>
-                      <div className="activity-time" style={{ fontSize: '1.2rem', fontWeight: 800 }}>{act.time || '--:--'}</div>
-                      <div className="activity-info">
-                        <div className="activity-title" style={{ fontSize: '1.3rem', fontWeight: 700 }}>{act.title}</div>
-                        <div className="activity-meta" style={{ marginTop: '0.4rem' }}>
-                          {act.location && <span style={{ opacity: 0.7, fontSize: '0.9rem' }}><MapPin size={14} /> {act.location}</span>}
-                          <span className="badge" style={{ background: 'rgba(255,255,255,0.05)', marginLeft: '1rem' }}>{act.type}</span>
-                        </div>
+                    <div key={act.id} className="activity-card glass-card">
+                      <div className="activity-time">
+                        <Clock size={16} /> {act.time || 'Pendiente'}
                       </div>
-                      
-                      <div className="activity-actions" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                         <div style={{ display: 'flex', gap: '0.2rem' }}>
-                            <button className="btn btn-ghost btn-icon btn-sm" onClick={() => vote(act.id, 'up')}>
-                              <ThumbsUp size={18} />
-                              <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>{act.activity_votes?.filter(v => v.vote === 'up').length || 0}</span>
-                            </button>
-                            <button className="btn btn-ghost btn-icon btn-sm" onClick={() => vote(act.id, 'down')}>
-                              <ThumbsDown size={18} />
-                              <span style={{ fontSize: '0.9rem', fontWeight: 700 }}>{act.activity_votes?.filter(v => v.vote === 'down').length || 0}</span>
+                      <div className="activity-content">
+                        <h3 className="activity-title">{act.title}</h3>
+                        {act.location && <p className="activity-loc"><MapPin size={14} /> {act.location}</p>}
+                      </div>
+                      <div className="activity-actions">
+                         <div className="vote-btns">
+                            <button className="btn btn-ghost btn-sm" onClick={() => vote(act.id, 'up')}>
+                              <ThumbsUp size={16} /> <span>{act.activity_votes?.filter(v => v.vote === 'up').length || 0}</span>
                             </button>
                          </div>
                          {isTitular && (
-                           <button className="btn btn-ghost btn-icon btn-sm" onClick={() => deleteActivity(act.id)} style={{ color: 'var(--coral)' }}>
-                             <Trash2 size={18} />
+                           <button className="btn btn-ghost btn-sm" onClick={() => deleteActivity(act.id)} style={{ color: 'var(--coral)' }}>
+                             <Trash2 size={16} />
                            </button>
                          )}
                       </div>
@@ -146,7 +121,6 @@ export default function Itinerary() {
         )}
       </div>
 
-      {/* FAB Mobile Only */}
       <button className="fab-module show-mobile-only" onClick={() => setShowModal(true)}>
         <Plus size={32} />
       </button>
@@ -154,28 +128,24 @@ export default function Itinerary() {
       {showModal && (
         <Modal title="Nueva Actividad" onClose={() => setShowModal(false)}>
           <form onSubmit={saveActivity} className="create-trip-form">
-             <div className="form-group">
-               <label className="form-label">¿Qué quieres hacer?</label>
-               <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Ej. Museo, Cena, Excursión..." />
-             </div>
-             <div className="grid-2">
-               <div className="form-group">
-                 <label className="form-label">Fecha</label>
-                 <input type="date" className="form-input" value={form.day_date} onChange={e => setForm(f => ({ ...f, day_date: e.target.value }))} />
-               </div>
-               <div className="form-group">
-                 <label className="form-label">Hora aproximada</label>
-                 <input type="time" className="form-input" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
-               </div>
-             </div>
-             <div className="form-group">
-               <label className="form-label">Lugar</label>
-               <input type="text" className="form-input" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Dirección o nombre del sitio" />
-             </div>
-             <div className="modal-actions">
-               <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setShowModal(false)}>Cerrar</button>
-               <button type="submit" className="btn btn-primary" disabled={saving} style={{ flex: 2 }}>Proponer</button>
-             </div>
+            <div className="form-group">
+              <label className="form-label">Título</label>
+              <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+            </div>
+            <div className="grid-2">
+              <div className="form-group">
+                <label className="form-label">Fecha</label>
+                <input type="date" className="form-input" value={form.day_date} onChange={e => setForm(f => ({ ...f, day_date: e.target.value }))} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">Hora</label>
+                <input type="time" className="form-input" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
+              </div>
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cerrar</button>
+              <button type="submit" className="btn btn-primary" disabled={saving}>Guardar</button>
+            </div>
           </form>
         </Modal>
       )}

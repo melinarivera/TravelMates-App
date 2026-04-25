@@ -1,125 +1,72 @@
-/* MODULE PAGES - REFINED SPACING & RESPONSIVE */
+/* GLOBAL FAB & UTILITIES FIX */
 
-.module-body {
-  padding-top: 3rem;
-  padding-bottom: 8rem;
+.fab-module {
+  position: fixed !important;
+  bottom: 95px !important; /* Por encima del navbar móvil */
+  right: 25px !important;
+  width: 64px !important;
+  height: 64px !important;
+  border-radius: 50% !important;
+  background: var(--grad-main) !important;
+  color: white !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-shadow: 0 12px 30px rgba(99, 102, 241, 0.5) !important;
+  z-index: 9999 !important; /* SUPERIOR A TODO */
+  border: none !important;
+  cursor: pointer !important;
 }
 
-.module-header {
-  margin-bottom: 4rem;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 2rem;
+.fab-module svg {
+  width: 30px !important;
+  height: 30px !important;
 }
 
-/* MEMBER CARD SPECIFIC */
-.member-card {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 2rem;
-  padding: 2.5rem;
+@media (min-width: 769px) {
+  .fab-module { display: none !important; }
 }
 
-.member-avatar {
-  width: 64px;
-  height: 64px;
-  background: var(--grad-main);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.25rem;
-  font-weight: 800;
-  border: 3px solid rgba(255,255,255,0.1);
-  box-shadow: 0 8px 20px rgba(0,0,0,0.2);
-}
-
-.member-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  min-width: 0; /* Para que el texto se corte si es necesario */
-}
-
-.member-top {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  flex-wrap: wrap;
-}
-
-.member-name {
-  font-size: 1.4rem;
-  font-weight: 800;
-  color: white;
-  word-break: break-all;
-}
-
-.member-tags {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-}
-
-.badge {
-  padding: 0.4rem 0.8rem;
-  border-radius: 8px;
-  font-size: 0.75rem;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-}
-
-.badge-sun   { background: rgba(251, 191, 36, 0.15); color: var(--sun); }
-.badge-sky   { background: rgba(14, 165, 233, 0.15); color: var(--accent); }
-.badge-slate { background: rgba(255, 255, 255, 0.05); color: var(--text-muted); }
-.badge-mint  { background: rgba(16, 185, 129, 0.15); color: var(--mint); }
-
-.member-email {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  opacity: 0.8;
-}
-
-.member-actions {
-  display: flex;
-  gap: 1rem;
-}
-
-.btn-delete-member {
-  color: var(--coral) !important;
-  opacity: 0.5;
-  transition: 0.2s;
-}
-
-.btn-delete-member:hover {
-  opacity: 1;
-  background: rgba(244, 63, 94, 0.1) !important;
-}
-
-/* RESPONSIVE MODULE */
+/* ITINERARIO MÓVIL - REDISEÑO TOTAL */
 @media (max-width: 768px) {
-  .module-body { padding-top: 1.5rem; }
-  .module-header { margin-bottom: 2.5rem; }
-  .member-card { 
-    grid-template-columns: 1fr; 
-    gap: 1.5rem; 
-    padding: 1.75rem;
+  .itinerary-day-title {
+    font-size: 1.5rem !important;
+    margin-top: 3rem !important;
+    margin-bottom: 1.5rem !important;
     text-align: center;
   }
-  .member-avatar { margin: 0 auto; }
-  .member-top { justify-content: center; flex-direction: column; gap: 0.75rem; }
-  .member-tags { justify-content: center; }
-  .member-email { justify-content: center; font-size: 0.85rem; }
-  .member-actions { justify-content: center; margin-top: 0.5rem; }
-  .member-name { font-size: 1.2rem; }
+
+  .activity-card {
+    grid-template-columns: 1fr !important; /* Stack vertical */
+    text-align: center;
+    padding: 2rem !important;
+    gap: 1rem !important;
+  }
+
+  .activity-time {
+    background: var(--grad-main);
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0.4rem 1.2rem;
+    border-radius: 20px;
+    font-size: 1rem !important;
+  }
+
+  .activity-title {
+    font-size: 1.5rem !important;
+  }
+
+  .activity-actions {
+    justify-content: center !important;
+    margin-top: 1rem;
+    border-top: 1px solid var(--glass-border);
+    padding-top: 1rem;
+  }
+}
+
+/* FIX MAPAS */
+.map-list-container {
+  max-height: 500px;
+  overflow-y: auto;
+  padding-right: 10px;
 }
