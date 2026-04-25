@@ -109,7 +109,11 @@ export default function TripHub() {
               <button className="btn btn-secondary btn-sm" onClick={() => navigate('/')}>
                 <ArrowLeft size={18} /> Mis viajes
               </button>
-              <span className="trip-card-status-badge" style={{ color: statusInfo.color, borderColor: statusInfo.color }}>
+              <span className="trip-card-status-badge" style={{ 
+                color: statusInfo.color, 
+                borderColor: statusInfo.color,
+                backgroundColor: statusInfo.color + '26' 
+              }}>
                 {statusInfo.label}
               </span>
             </div>
