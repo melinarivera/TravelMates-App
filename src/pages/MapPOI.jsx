@@ -8,7 +8,6 @@ import { Plus, MapPin, Trash2, Star, Navigation, ExternalLink } from 'lucide-rea
 import './ModulePage.css'
 
 const POI_TYPES = ['Restaurante', 'Museo', 'Playa', 'Parque', 'Hotel', 'Compras', 'Transporte', 'Otro']
-const POI_TYPES = ['Restaurante', 'Museo', 'Playa', 'Parque', 'Hotel', 'Compras', 'Transporte', 'Otro']
 
 export default function MapPOI() {
   const { tripId } = useParams()
