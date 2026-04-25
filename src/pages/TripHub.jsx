@@ -117,7 +117,7 @@ export default function TripHub() {
               {editingName && isTitular ? (
                 <div style={{ display: 'flex', gap: '0.5rem' }}>
                   <input type="text" className="form-input" style={{ fontSize: '2.5rem', fontWeight: 800 }} value={newName} onChange={e => setNewName(e.target.value)} autoFocus />
-                  <button className="btn btn-primary" onClick={updateName}><Check size={20} /></button>
+                  <button className="btn-edit-neon" onClick={updateName}><Check size={20} /></button>
                 </div>
               ) : (
                 <div style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
