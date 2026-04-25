@@ -51,16 +51,6 @@ export default function Dashboard() {
     setLoading(false)
   }
 
-  async function handleInvitation(tripId, status) {
-    const { error } = await supabase
-      .from('trip_members')
-      .update({ status })
-      .eq('trip_id', tripId)
-      .eq('user_id', user.id)
-
-    if (!error) fetchTrips()
-  }
-
   const handleFileChange = (e) => {
     const file = e.target.files[0]
     if (file) {
@@ -130,23 +120,23 @@ export default function Dashboard() {
 
       <section className="dashboard-hero">
         <div className="container">
-          <div className="dashboard-hero-content fade-in-up">
+          <div className="dashboard-hero-content">
             <div className="dashboard-greeting">
               <div className="hero-icon-glow">
-                <Plane size={48} color="white" />
+                <Plane size={32} color="white" />
               </div>
               <div>
-                <h1 className="dashboard-title text-gradient">¡Hola, aventurero!</h1>
-                <p className="dashboard-subtitle">Tus próximas aventuras te están esperando</p>
+                <h1 className="dashboard-title text-gradient">Viajes</h1>
+                <p className="dashboard-subtitle">¡Hola, aventurero!</p>
               </div>
             </div>
-            <button className="btn btn-primary btn-lg" onClick={() => setShowModal(true)}>
+            <button className="btn btn-primary btn-lg btn-new-trip-desktop" onClick={() => setShowModal(true)}>
               <Plus size={20} /> Nuevo viaje
             </button>
           </div>
 
-          <div className="dashboard-search fade-in-up delay-1">
-            <Search size={20} className="dashboard-search-icon" />
+          <div className="dashboard-search">
+            <Search size={20} className="dashboard-search-icon" style={{ position: 'absolute', left: '1rem', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-muted)' }} />
             <input
               type="search"
               placeholder="Buscar destinos o viajes..."
@@ -160,32 +150,14 @@ export default function Dashboard() {
 
       <div className="container dashboard-body">
         {loading ? (
-          <div className="dashboard-loading">
-            {[1,2,3].map(i => (
-              <div key={i} className="trip-card-skeleton glass-card" />
-            ))}
-          </div>
-        ) : filtered.length === 0 ? (
-          <div className="empty-state fade-in-up">
-            <div className="empty-state-icon">
-              <Briefcase size={48} color="var(--text-muted)" />
-            </div>
-            <h3 className="empty-state-title">
-              {search ? 'No encontramos ese viaje' : '¡Crea tu primer viaje!'}
-            </h3>
-            {!search && (
-              <button className="btn btn-primary" onClick={() => setShowModal(true)}>
-                <Plus size={18} /> Crear viaje
-              </button>
-            )}
+          <div className="dashboard-loading" style={{ display: 'grid', gap: '1rem' }}>
+            {[1,2,3].map(i => <div key={i} className="glass-card" style={{ height: 100, opacity: 0.5 }} />)}
           </div>
         ) : (
           <>
             {invitations.length > 0 && (
-              <section className="dashboard-section fade-in-up">
-                <h2 className="dashboard-section-title">
-                  <Clock size={22} color="var(--sun)" /> Invitaciones
-                </h2>
+              <section className="dashboard-section">
+                <h2 className="dashboard-section-title">Invitaciones</h2>
                 <div className="trips-grid">
                   {invitations.map((trip, i) => (
                     <TripCard key={trip.id} trip={trip} index={i} isInvitation onAccept={() => handleInvitation(trip.id, 'accepted')} onReject={() => handleInvitation(trip.id, 'rejected')} />
@@ -195,10 +167,8 @@ export default function Dashboard() {
             )}
 
             {myTrips.length > 0 && (
-              <section className="dashboard-section fade-in-up">
-                <h2 className="dashboard-section-title">
-                  <Plane size={22} color="var(--primary)" /> Mis viajes
-                </h2>
+              <section className="dashboard-section">
+                <h2 className="dashboard-section-title">Mis viajes</h2>
                 <div className="trips-grid">
                   {myTrips.map((trip, i) => (
                     <TripCard key={trip.id} trip={trip} index={i} onClick={() => navigate(`/trip/${trip.id}`)} />
@@ -208,10 +178,8 @@ export default function Dashboard() {
             )}
 
             {guestTrips.length > 0 && (
-              <section className="dashboard-section fade-in-up">
-                <h2 className="dashboard-section-title">
-                  <Globe size={22} color="var(--accent)" /> Participando
-                </h2>
+              <section className="dashboard-section">
+                <h2 className="dashboard-section-title">Participando</h2>
                 <div className="trips-grid">
                   {guestTrips.map((trip, i) => (
                     <TripCard key={trip.id} trip={trip} index={i} onClick={() => navigate(`/trip/${trip.id}`)} />
@@ -222,6 +190,11 @@ export default function Dashboard() {
           </>
         )}
       </div>
+
+      {/* Floating Action Button for Mobile */}
+      <button className="fab-mobile show-mobile-only" onClick={() => setShowModal(true)}>
+        <Plus size={32} />
+      </button>
 
       {showModal && (
         <Modal title="Nuevo Viaje" onClose={() => setShowModal(false)}>
@@ -250,14 +223,14 @@ export default function Dashboard() {
             </div>
 
             <div className="form-group">
-              <label className="form-label">Foto de portada</label>
+              <label className="form-label">Portada</label>
               <div className="file-upload-box" onClick={() => document.getElementById('file-input').click()}>
                 {imagePreview ? (
                   <img src={imagePreview} alt="Preview" className="file-preview" />
                 ) : (
                   <div className="file-upload-placeholder">
-                    <Camera size={32} color="var(--text-muted)" />
-                    <span>Subir archivo (JPG, PNG)</span>
+                    <Camera size={28} color="var(--text-muted)" />
+                    <span>Subir archivo</span>
                   </div>
                 )}
                 <input type="file" id="file-input" hidden accept="image/*" onChange={handleFileChange} />
@@ -266,8 +239,8 @@ export default function Dashboard() {
 
             <div className="modal-actions">
               <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button>
-              <button type="submit" className="btn btn-primary" disabled={creating}>
-                {creating ? <div className="spinner" /> : 'Crear viaje'}
+              <button type="submit" className="btn btn-primary" disabled={creating} style={{ flex: 1 }}>
+                Crear viaje
               </button>
             </div>
           </form>
@@ -281,16 +254,16 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
   const status = STATUS_MAP[trip.status] || STATUS_MAP.planning
 
   return (
-    <div className={`trip-card glass-card fade-in-up delay-${Math.min(index + 1, 5)} ${isInvitation ? 'trip-card-invitation' : ''}`} onClick={isInvitation ? null : onClick}>
+    <div className="trip-card glass-card fade-in-up" onClick={isInvitation ? null : onClick}>
       <div className="trip-card-cover">
         {trip.cover_url ? (
           <img src={trip.cover_url} alt={trip.name} />
         ) : (
-          <div className="trip-card-cover-placeholder" style={{ background: 'linear-gradient(135deg, #1e293b, #0f172a)' }}>
+          <div className="trip-card-cover-placeholder" style={{ background: 'linear-gradient(135deg, #1e293b, #0f172a)', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
              <Plane size={48} color="var(--primary)" opacity="0.3" />
           </div>
         )}
-        <div className={`badge ${status.badge} trip-card-badge`}>
+        <div className={`badge ${status.badge} trip-card-badge`} style={{ position: 'absolute', top: '10px', right: '10px' }}>
           {isInvitation ? 'Invitación' : status.label}
         </div>
       </div>
@@ -302,9 +275,9 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
         </div>
         
         {isInvitation ? (
-          <div className="invitation-buttons">
-            <button className="btn btn-primary btn-sm" onClick={onAccept}>Aceptar</button>
-            <button className="btn btn-secondary btn-sm" onClick={onReject}>Declinar</button>
+          <div className="invitation-buttons" style={{ display: 'flex', gap: '0.5rem', marginTop: '1rem' }}>
+            <button className="btn btn-primary btn-sm" style={{ flex: 1 }} onClick={onAccept}>Aceptar</button>
+            <button className="btn btn-secondary btn-sm" style={{ flex: 1 }} onClick={onReject}>Declinar</button>
           </div>
         ) : (
           <div className="trip-card-footer">
