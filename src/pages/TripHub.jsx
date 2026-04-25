@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
@@ -6,7 +6,8 @@ import Navbar from '../components/layout/Navbar'
 import {
   Users, DollarSign, Calendar, Map, MessageCircle,
   Settings, ArrowLeft, Edit3, Check, X, Send,
-  ChevronRight, Clock, MapPin, Plus, Camera, Image as ImageIcon
+  ChevronRight, Clock, MapPin, Plus, Camera, Image as ImageIcon,
+  Plane
 } from 'lucide-react'
 import Modal from '../components/ui/Modal'
 import './TripHub.css'
@@ -18,16 +19,17 @@ const STATUS_OPTIONS = [
 ]
 
 const HUB_MODULES = [
-  { key: 'members', label: 'Integrantes', desc: 'Gestiona quién viaja contigo', icon: <Users size={28} />, grad: 'var(--grad-members)' },
-  { key: 'expenses', label: 'Gastos', desc: 'Divide y controla el presupuesto', icon: <DollarSign size={28} />, grad: 'var(--grad-expenses)' },
+  { key: 'members', label: 'Integrantes', desc: 'Quién viaja contigo', icon: <Users size={28} />, grad: 'var(--grad-members)' },
+  { key: 'expenses', label: 'Gastos', desc: 'Presupuesto y balance', icon: <DollarSign size={28} />, grad: 'var(--grad-expenses)' },
   { key: 'itinerary', label: 'Itinerario', desc: 'Planifica día a día', icon: <Calendar size={28} />, grad: 'var(--grad-itinerary)' },
-  { key: 'map', label: 'Mapa & POI', desc: 'Puntos de interés del viaje', icon: <Map size={28} />, grad: 'var(--grad-map)' },
+  { key: 'map', label: 'Mapa & POI', desc: 'Puntos de interés', icon: <Map size={28} />, grad: 'var(--grad-map)' },
 ]
 
 export default function TripHub() {
   const { tripId } = useParams()
   const { user } = useAuth()
   const navigate = useNavigate()
+  const chatEndRef = useRef(null)
 
   const [trip, setTrip] = useState(null)
   const [myRole, setMyRole] = useState('invitado')
@@ -39,7 +41,6 @@ export default function TripHub() {
   const [chatMsg, setChatMsg] = useState('')
   const [sendingMsg, setSendingMsg] = useState(false)
   const [memberCount, setMemberCount] = useState(0)
-  const [showCoverModal, setShowCoverModal] = useState(false)
   const [coverPreview, setCoverPreview] = useState(null)
 
   useEffect(() => {
@@ -47,16 +48,28 @@ export default function TripHub() {
     fetchChat()
     fetchMemberCount()
 
-    // Realtime chat subscription
+    // Simplificamos la suscripción al chat
     const channel = supabase
       .channel(`chat_${tripId}`)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `trip_id=eq.${tripId}` }, 
-        () => { fetchChat() }
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, 
+        (payload) => {
+          if (payload.new.trip_id === tripId) {
+            fetchChat()
+          }
+        }
       )
       .subscribe()
 
     return () => { supabase.removeChannel(channel) }
   }, [tripId])
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages])
+
+  const scrollToBottom = () => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }
 
   async function fetchTrip() {
     const { data } = await supabase.from('trips').select('*').eq('id', tripId).single()
@@ -78,12 +91,11 @@ export default function TripHub() {
   async function fetchChat() {
     const { data, error } = await supabase
       .from('chat_messages')
-      .select('*, profiles:user_id (full_name)')
+      .select('*, profiles:user_id (full_name, email)')
       .eq('trip_id', tripId)
       .order('created_at', { ascending: true })
-      .limit(50)
     
-    if (error) console.error('Chat error:', error)
+    if (error) console.error('Chat fetch error:', error)
     if (data) setMessages(data)
   }
 
@@ -117,15 +129,21 @@ export default function TripHub() {
     e.preventDefault()
     if (!chatMsg.trim()) return
     setSendingMsg(true)
+    
     const { error } = await supabase.from('chat_messages').insert({
       trip_id: tripId,
       user_id: user.id,
       user_email: user.email,
       message: chatMsg.trim(),
     })
-    if (error) console.error('Send error:', error)
+
+    if (error) {
+      console.error('Send error:', error)
+      alert('Error al enviar mensaje. Revisa tu conexión.')
+    }
     setChatMsg('')
     setSendingMsg(false)
+    fetchChat() // Refrescar manual por si acaso
   }
 
   const isTitular = myRole === 'titular' || trip?.owner_id === user.id
@@ -142,8 +160,14 @@ export default function TripHub() {
       <Navbar tripName={trip?.name} />
 
       <div className="hub-hero-header" style={{ 
-        backgroundImage: trip?.cover_url ? `linear-gradient(to bottom, rgba(8,10,15,0.4), rgba(8,10,15,1)), url(${trip.cover_url})` : 'var(--grad-hero)'
+        backgroundImage: trip?.cover_url ? `linear-gradient(to bottom, rgba(8,10,15,0.4), rgba(8,10,15,1)), url(${trip.cover_url})` : 'none',
+        background: !trip?.cover_url ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' : undefined
       }}>
+        {!trip?.cover_url && (
+          <div className="hero-placeholder-icon fade-in-up">
+             <Plane size={120} color="var(--primary)" opacity="0.2" />
+          </div>
+        )}
         <div className="container">
           <div className="hub-hero-inner fade-in-up">
             <button className="btn btn-secondary btn-sm hub-back-btn" onClick={() => navigate('/')}>
@@ -171,30 +195,16 @@ export default function TripHub() {
               <div className="hub-meta-row">
                 <div className="hub-meta-item">
                    <MapPin size={18} color="var(--primary)" />
-                   <span>{trip?.destination || 'Destino pendiente'}</span>
+                   <span>{trip?.destination || 'Sin destino'}</span>
                 </div>
-                <div className="divider-v" />
                 <div className="hub-meta-item">
                    <Users size={18} color="var(--accent)" />
-                   <span>{memberCount} integrantes</span>
+                   <span>{memberCount} viajeros</span>
                 </div>
-                <div className="divider-v" />
-                <div className="hub-status-inline">
-                  {editingStatus && isTitular ? (
-                    <div className="hub-status-options-mini">
-                      {STATUS_OPTIONS.map(s => (
-                        <button key={s.value} className={`mini-status-pill ${trip?.status === s.value ? 'active' : ''}`} onClick={() => updateStatus(s.value)} style={{ '--status-color': s.color }}>
-                          {s.label}
-                        </button>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="hub-status-display" onClick={() => isTitular && setEditingStatus(true)}>
-                      <span className="badge" style={{ background: `${statusInfo.color}22`, color: statusInfo.color, borderColor: statusInfo.color }}>
-                        {statusInfo.label}
-                      </span>
-                    </div>
-                  )}
+                <div className="hub-status-display" onClick={() => isTitular && setEditingStatus(true)}>
+                  <span className="badge" style={{ background: `${statusInfo.color}22`, color: statusInfo.color, borderColor: `${statusInfo.color}44` }}>
+                    {statusInfo.label}
+                  </span>
                 </div>
               </div>
             </div>
@@ -202,7 +212,7 @@ export default function TripHub() {
             {isTitular && (
               <div className="hub-actions-top">
                 <button className="btn btn-secondary btn-sm" onClick={() => document.getElementById('hub-cover-input').click()}>
-                  <Camera size={16} /> Personalizar portada
+                  <Camera size={16} /> Cambiar portada
                 </button>
                 <input type="file" id="hub-cover-input" hidden accept="image/*" onChange={handleCoverUpload} />
               </div>
@@ -212,9 +222,9 @@ export default function TripHub() {
       </div>
 
       <div className="container hub-body">
-        <div className="hub-modules fade-in-up delay-1">
+        <div className="hub-modules">
           {HUB_MODULES.map((mod, i) => (
-            <Link key={mod.key} to={`/trip/${tripId}/${mod.key}`} className={`hub-module-card glass-card delay-${i + 1}`}>
+            <Link key={mod.key} to={`/trip/${tripId}/${mod.key}`} className="hub-module-card glass-card">
               <div className="hub-module-icon" style={{ background: mod.grad }}>
                 {mod.icon}
               </div>
@@ -227,22 +237,21 @@ export default function TripHub() {
           ))}
         </div>
 
-        <div className="hub-chat glass-card fade-in-up delay-3">
+        <div className="hub-chat glass-card">
           <div className="hub-chat-header">
             <MessageCircle size={22} color="var(--primary)" />
-            <h2 className="hub-chat-title">Chat de grupo</h2>
+            <h2 className="hub-chat-title">Chat del grupo</h2>
           </div>
 
-          <div className="hub-chat-messages" id="chat-messages">
+          <div className="hub-chat-messages">
             {messages.length === 0 ? (
               <div className="chat-empty">
-                <MessageCircle size={48} color="var(--text-muted)" opacity="0.3" />
-                <p>Comienza la conversación...</p>
+                <p>Escribe algo para empezar...</p>
               </div>
             ) : (
               messages.map(msg => {
                 const isMe = msg.user_id === user.id
-                const profile = Array.isArray(msg.profiles) ? msg.profiles[0] : msg.profiles
+                const profile = msg.profiles
                 const displayName = profile?.full_name || msg.user_email?.split('@')[0] || 'Viajero'
                 const initials = displayName.slice(0, 2).toUpperCase()
                 return (
@@ -259,10 +268,11 @@ export default function TripHub() {
                 )
               })
             )}
+            <div ref={chatEndRef} />
           </div>
 
           <form onSubmit={sendMessage} className="hub-chat-form">
-            <input type="text" className="form-input" placeholder="Escribe un mensaje..." value={chatMsg} onChange={e => setChatMsg(e.target.value)} />
+            <input type="text" className="form-input" placeholder="Mensaje..." value={chatMsg} onChange={e => setChatMsg(e.target.value)} />
             <button type="submit" className="btn btn-primary btn-icon" disabled={sendingMsg || !chatMsg.trim()}>
               <Send size={18} />
             </button>
