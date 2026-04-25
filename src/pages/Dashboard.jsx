@@ -6,7 +6,7 @@ import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import {
   Plus, Plane, MapPin, Calendar, Users,
-  Clock, ChevronRight, Search, Globe, Check
+  Clock, ChevronRight, Search, Globe, Check, XCircle
 } from 'lucide-react'
 import './Dashboard.css'
 
@@ -103,7 +103,7 @@ export default function Dashboard() {
       }
 
       setShowModal(false)
-      setForm({ name: '', destination: '', start_date: '', end_date: '', description: '' })
+      setForm({ name: '', destination: '', start_date: '', end_date: '', description: '', cover_url: '' })
       fetchTrips()
       // Wait a tiny bit to show success before navigating
       setTimeout(() => {
@@ -128,12 +128,12 @@ export default function Dashboard() {
 
       {/* Hero header */}
       <section className="dashboard-hero">
-        <div className="dashboard-hero-bg" />
         <div className="container">
           <div className="dashboard-hero-content fade-in-up">
             <div className="dashboard-greeting">
               <span className="dashboard-wave">👋</span>
               <div>
+                <h1 className="dashboard-title text-gradient">¡Hola, aventurero!</h1>
                 <p className="dashboard-subtitle">Tus próximas aventuras te están esperando</p>
               </div>
             </div>
@@ -167,10 +167,6 @@ export default function Dashboard() {
             {[1,2,3].map(i => (
               <div key={i} className="trip-card-skeleton">
                 <div className="skeleton" style={{ height: 160, borderRadius: 'var(--radius-lg)' }} />
-                <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                  <div className="skeleton" style={{ height: 20, width: '60%' }} />
-                  <div className="skeleton" style={{ height: 14, width: '40%' }} />
-                </div>
               </div>
             ))}
           </div>
@@ -196,7 +192,7 @@ export default function Dashboard() {
             {invitations.length > 0 && (
               <section className="dashboard-section fade-in-up">
                 <h2 className="dashboard-section-title">
-                  <Clock size={22} style={{ color: 'var(--sun-dk)' }} /> Invitaciones nuevas
+                  <Clock size={22} /> Invitaciones nuevas
                 </h2>
                 <div className="trips-grid">
                   {invitations.map((trip, i) => (
@@ -305,14 +301,14 @@ export default function Dashboard() {
                 value={form.cover_url}
                 onChange={e => setForm(f => ({ ...f, cover_url: e.target.value }))}
               />
-              <p style={{ fontSize: '0.7rem', color: 'var(--gray-400)', marginTop: '0.2rem' }}>Pega un enlace de Unsplash o Pexels para darle punch.</p>
+              <p style={{ fontSize: '0.7rem', color: 'var(--text-muted)', marginTop: '0.2rem' }}>Pega un enlace de Unsplash para darle punch.</p>
             </div>
             <div className="form-group">
               <label className="form-label" htmlFor="trip-desc">Descripción</label>
               <textarea
                 id="trip-desc"
                 className="form-input form-textarea"
-                placeholder="¡Una aventura épica que nunca olvidaremos!"
+                placeholder="¡Una aventura épica!"
                 value={form.description}
                 onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
                 rows={3}
@@ -323,7 +319,7 @@ export default function Dashboard() {
                 Cancelar
               </button>
               <button type="submit" className="btn btn-primary" disabled={creating} id="confirm-create-trip">
-                {creating ? <div className="spinner" style={{ borderTopColor: 'white', borderColor: 'rgba(255,255,255,0.3)' }} /> : <><Plus size={18} /> Crear viaje</>}
+                {creating ? <div className="spinner" /> : <><Plus size={18} /> Crear viaje</>}
               </button>
             </div>
           </form>
@@ -345,30 +341,33 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
       onClick={isInvitation ? null : onClick}
       id={`trip-card-${trip.id}`}
     >
-      <div className="trip-card-cover" style={{ 
-        background: trip.cover_url ? `url(${trip.cover_url}) center/cover no-repeat` : status.grad 
-      }}>
-        {!trip.cover_url && <div className="trip-card-icon">{status.icon}</div>}
+      <div className="trip-card-cover">
+        {trip.cover_url ? (
+          <img src={trip.cover_url} alt={trip.name} />
+        ) : (
+          <div style={{ background: status.grad, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyCenter: 'center' }}>
+            {status.icon}
+          </div>
+        )}
         <div className={`badge ${status.badge} trip-card-badge`}>
-          {isInvitation ? 'Nueva Invitación' : status.label}
+          {isInvitation ? 'Invitación' : status.label}
         </div>
       </div>
       <div className="trip-card-body">
         <h3 className="trip-card-name">{trip.name}</h3>
         <div className="trip-card-meta">
           <MapPin size={14} />
-          <span>{trip.destination || 'Destino pendiente'}</span>
+          <span>{trip.destination || 'Destino'}</span>
         </div>
         
         {isInvitation ? (
           <div className="invitation-actions">
-            <p className="invitation-text">Has sido invitado a este viaje</p>
             <div className="invitation-buttons">
               <button className="btn btn-primary btn-sm" onClick={onAccept}>
-                <Check size={14} /> Aceptar
+                Aceptar
               </button>
-              <button className="btn btn-ghost btn-sm" onClick={onReject}>
-                <XCircle size={14} /> Declinar
+              <button className="btn btn-secondary btn-sm" onClick={onReject}>
+                Declinar
               </button>
             </div>
           </div>
@@ -377,13 +376,13 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
             {trip.start_date && (
               <div className="trip-card-meta">
                 <Calendar size={14} />
-                <span>{new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-                {daysLeft > 0 && <span className="trip-days-left">en {daysLeft}d</span>}
+                <span>{new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })}</span>
+                {daysLeft > 0 && <span className="badge badge-primary" style={{ fontSize: '0.7rem' }}>en {daysLeft}d</span>}
               </div>
             )}
             <div className="trip-card-footer">
               <span className="trip-card-open">
-                Ver viaje <ChevronRight size={16} />
+                Explorar <ChevronRight size={16} />
               </span>
             </div>
           </>
