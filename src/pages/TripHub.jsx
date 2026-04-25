@@ -5,24 +5,22 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import {
   Users, DollarSign, Calendar, Map, MessageCircle,
-  Settings, ArrowLeft, Edit3, Check, X, Send,
-  ChevronRight, Clock, MapPin, Plus, Camera, Image as ImageIcon,
-  Plane
+  ArrowLeft, Edit3, Check, X, Send,
+  ChevronRight, MapPin, Camera, Plane
 } from 'lucide-react'
-import Modal from '../components/ui/Modal'
 import './TripHub.css'
 
 const STATUS_OPTIONS = [
   { value: 'planning', label: 'Planificando', color: 'var(--sun)' },
   { value: 'active',   label: 'En curso',     color: 'var(--primary)' },
-  { value: 'done',     label: 'Finalizado',   color: 'var(--slate)' },
+  { value: 'done',     label: 'Finalizado',   color: 'var(--text-muted)' },
 ]
 
 const HUB_MODULES = [
-  { key: 'members', label: 'Integrantes', desc: 'Quién viaja contigo', icon: <Users size={28} />, grad: 'var(--grad-members)' },
-  { key: 'expenses', label: 'Gastos', desc: 'Presupuesto y balance', icon: <DollarSign size={28} />, grad: 'var(--grad-expenses)' },
-  { key: 'itinerary', label: 'Itinerario', desc: 'Planifica día a día', icon: <Calendar size={28} />, grad: 'var(--grad-itinerary)' },
-  { key: 'map', label: 'Mapa & POI', desc: 'Puntos de interés', icon: <Map size={28} />, grad: 'var(--grad-map)' },
+  { key: 'members', label: 'Integrantes', desc: 'Quién viaja contigo', icon: <Users size={32} />, grad: 'var(--grad-main)' },
+  { key: 'expenses', label: 'Gastos', desc: 'Presupuesto y balance', icon: <DollarSign size={32} />, grad: 'linear-gradient(135deg, #10b981 0%, #059669 100%)' },
+  { key: 'itinerary', label: 'Itinerario', desc: 'Planifica día a día', icon: <Calendar size={32} />, grad: 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)' },
+  { key: 'map', label: 'Mapa & POI', desc: 'Puntos de interés', icon: <Map size={32} />, grad: 'linear-gradient(135deg, #06b6d4 0%, #0891b2 100%)' },
 ]
 
 export default function TripHub() {
@@ -34,33 +32,39 @@ export default function TripHub() {
   const [trip, setTrip] = useState(null)
   const [myRole, setMyRole] = useState('invitado')
   const [loading, setLoading] = useState(true)
-  const [editingStatus, setEditingStatus] = useState(false)
   const [editingName, setEditingName] = useState(false)
   const [newName, setNewName] = useState('')
   const [messages, setMessages] = useState([])
   const [chatMsg, setChatMsg] = useState('')
   const [sendingMsg, setSendingMsg] = useState(false)
   const [memberCount, setMemberCount] = useState(0)
-  const [coverPreview, setCoverPreview] = useState(null)
 
   useEffect(() => {
+    if (!tripId) return
     fetchTrip()
     fetchChat()
     fetchMemberCount()
 
-    // Simplificamos la suscripción al chat
+    console.log('Iniciando suscripción chat para viaje:', tripId)
     const channel = supabase
-      .channel(`chat_${tripId}`)
-      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages' }, 
-        (payload) => {
-          if (payload.new.trip_id === tripId) {
-            fetchChat()
-          }
-        }
-      )
-      .subscribe()
+      .channel(`room_${tripId}`)
+      .on('postgres_changes', { 
+        event: 'INSERT', 
+        schema: 'public', 
+        table: 'chat_messages',
+        filter: `trip_id=eq.${tripId}`
+      }, (payload) => {
+        console.log('Nuevo mensaje recibido vía Realtime:', payload)
+        fetchChat()
+      })
+      .subscribe((status) => {
+        console.log('Estado de la suscripción chat:', status)
+      })
 
-    return () => { supabase.removeChannel(channel) }
+    return () => {
+      console.log('Limpiando canal de chat')
+      supabase.removeChannel(channel)
+    }
   }, [tripId])
 
   useEffect(() => {
@@ -76,7 +80,6 @@ export default function TripHub() {
     if (data) { 
       setTrip(data)
       setNewName(data.name)
-      setCoverPreview(data.cover_url)
     }
     const { data: mem } = await supabase.from('trip_members').select('role').eq('trip_id', tripId).eq('user_id', user.id).single()
     if (mem) setMyRole(mem.role)
@@ -84,7 +87,7 @@ export default function TripHub() {
   }
 
   async function fetchMemberCount() {
-    const { count } = await supabase.from('trip_members').select('*', { count: 'exact', head: true }).eq('trip_id', tripId)
+    const { count } = await supabase.from('trip_members').select('*', { count: 'exact', head: true }).eq('trip_id', tripId).eq('status', 'accepted')
     setMemberCount(count || 0)
   }
 
@@ -95,21 +98,17 @@ export default function TripHub() {
       .eq('trip_id', tripId)
       .order('created_at', { ascending: true })
     
-    if (error) console.error('Chat fetch error:', error)
+    if (error) console.error('Error al cargar chat:', error)
     if (data) setMessages(data)
-  }
-
-  async function updateStatus(status) {
-    await supabase.from('trips').update({ status }).eq('id', tripId)
-    setTrip(t => ({ ...t, status }))
-    setEditingStatus(false)
   }
 
   async function updateName() {
     if (!newName.trim()) return
-    await supabase.from('trips').update({ name: newName }).eq('id', tripId)
-    setTrip(t => ({ ...t, name: newName }))
-    setEditingName(false)
+    const { error } = await supabase.from('trips').update({ name: newName }).eq('id', tripId)
+    if (!error) {
+      setTrip(t => ({ ...t, name: newName }))
+      setEditingName(false)
+    }
   }
 
   const handleCoverUpload = (e) => {
@@ -117,7 +116,6 @@ export default function TripHub() {
     if (file) {
       const reader = new FileReader()
       reader.onloadend = async () => {
-        setCoverPreview(reader.result)
         const { error } = await supabase.from('trips').update({ cover_url: reader.result }).eq('id', tripId)
         if (!error) setTrip(t => ({ ...t, cover_url: reader.result }))
       }
@@ -138,143 +136,117 @@ export default function TripHub() {
     })
 
     if (error) {
-      console.error('Send error:', error)
-      alert('Error al enviar mensaje. Revisa tu conexión.')
+      console.error('Error al enviar mensaje:', error)
+      alert('No se pudo enviar el mensaje.')
+    } else {
+      setChatMsg('')
+      fetchChat() // Refrescar por si el realtime tarda
     }
-    setChatMsg('')
     setSendingMsg(false)
-    fetchChat() // Refrescar manual por si acaso
   }
 
   const isTitular = myRole === 'titular' || trip?.owner_id === user.id
   const statusInfo = STATUS_OPTIONS.find(s => s.value === trip?.status) || STATUS_OPTIONS[0]
 
-  if (loading) return (
-    <div className="page-loading">
-      <div className="spinner spinner-lg" />
-    </div>
-  )
+  if (loading) return <div className="page-loading"><div className="spinner" /></div>
 
   return (
     <div className="hub-page">
-      <Navbar tripName={trip?.name} />
+      <Navbar />
 
-      <div className="hub-hero-header" style={{ 
-        backgroundImage: trip?.cover_url ? `linear-gradient(to bottom, rgba(8,10,15,0.4), rgba(8,10,15,1)), url(${trip.cover_url})` : 'none',
-        background: !trip?.cover_url ? 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)' : undefined
+      <header className="hub-hero-header" style={{ 
+        backgroundImage: trip?.cover_url ? `linear-gradient(to bottom, rgba(5,7,10,0.4), rgba(5,7,10,1)), url(${trip.cover_url})` : 'none',
+        backgroundColor: '#050710'
       }}>
         {!trip?.cover_url && (
-          <div className="hero-placeholder-icon fade-in-up">
-             <Plane size={120} color="var(--primary)" opacity="0.2" />
+          <div className="hero-placeholder-icon">
+             <Plane size={140} color="var(--primary)" opacity="0.1" />
           </div>
         )}
         <div className="container">
           <div className="hub-hero-inner fade-in-up">
-            <button className="btn btn-secondary btn-sm hub-back-btn" onClick={() => navigate('/')}>
+            <button className="btn btn-secondary btn-sm" style={{ width: 'fit-content' }} onClick={() => navigate('/')}>
               <ArrowLeft size={18} /> Mis viajes
             </button>
             
             <div className="hub-title-section">
               {editingName && isTitular ? (
-                <div className="hub-name-edit">
-                  <input type="text" className="form-input hub-name-input" value={newName} onChange={e => setNewName(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') updateName() }} autoFocus />
-                  <button className="btn btn-primary btn-icon btn-sm" onClick={updateName}><Check size={16} /></button>
-                  <button className="btn btn-ghost btn-icon btn-sm" onClick={() => setEditingName(false)}><X size={16} /></button>
+                <div className="hub-name-edit" style={{ display: 'flex', gap: '0.5rem' }}>
+                  <input type="text" className="form-input" style={{ fontSize: '2rem', fontWeight: 800 }} value={newName} onChange={e => setNewName(e.target.value)} autoFocus />
+                  <button className="btn btn-primary btn-icon" onClick={updateName}><Check size={20} /></button>
                 </div>
               ) : (
-                <div className="hub-name-row">
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                   <h1 className="hub-trip-name text-gradient">{trip?.name}</h1>
-                  {isTitular && (
-                    <button className="btn btn-ghost btn-icon" onClick={() => setEditingName(true)}>
-                      <Edit3 size={20} />
-                    </button>
-                  )}
+                  {isTitular && <button className="btn btn-ghost btn-icon" onClick={() => setEditingName(true)}><Edit3 size={24} /></button>}
                 </div>
               )}
               
-              <div className="hub-meta-row">
-                <div className="hub-meta-item">
-                   <MapPin size={18} color="var(--primary)" />
-                   <span>{trip?.destination || 'Sin destino'}</span>
-                </div>
-                <div className="hub-meta-item">
-                   <Users size={18} color="var(--accent)" />
-                   <span>{memberCount} viajeros</span>
-                </div>
-                <div className="hub-status-display" onClick={() => isTitular && setEditingStatus(true)}>
-                  <span className="badge" style={{ background: `${statusInfo.color}22`, color: statusInfo.color, borderColor: `${statusInfo.color}44` }}>
-                    {statusInfo.label}
-                  </span>
-                </div>
+              <div className="hub-meta-row" style={{ marginTop: '1rem' }}>
+                <div className="hub-meta-item"><MapPin size={20} color="var(--primary)" /> {trip?.destination}</div>
+                <div className="hub-meta-item"><Users size={20} color="var(--sun)" /> {memberCount} viajeros</div>
+                <span className="badge" style={{ color: statusInfo.color, borderColor: statusInfo.color, padding: '0.4rem 0.8rem' }}>{statusInfo.label}</span>
               </div>
             </div>
 
             {isTitular && (
-              <div className="hub-actions-top">
-                <button className="btn btn-secondary btn-sm" onClick={() => document.getElementById('hub-cover-input').click()}>
-                  <Camera size={16} /> Cambiar portada
-                </button>
-                <input type="file" id="hub-cover-input" hidden accept="image/*" onChange={handleCoverUpload} />
-              </div>
+              <button className="btn btn-secondary btn-sm" style={{ width: 'fit-content' }} onClick={() => document.getElementById('cover-file').click()}>
+                <Camera size={16} /> Cambiar portada
+              </button>
             )}
+            <input type="file" id="cover-file" hidden accept="image/*" onChange={handleCoverUpload} />
           </div>
         </div>
-      </div>
+      </header>
 
       <div className="container hub-body">
         <div className="hub-modules">
-          {HUB_MODULES.map((mod, i) => (
+          {HUB_MODULES.map(mod => (
             <Link key={mod.key} to={`/trip/${tripId}/${mod.key}`} className="hub-module-card glass-card">
               <div className="hub-module-icon" style={{ background: mod.grad }}>
                 {mod.icon}
               </div>
-              <div className="hub-module-info">
+              <div className="hub-module-content">
                 <h3 className="hub-module-title">{mod.label}</h3>
                 <p className="hub-module-desc">{mod.desc}</p>
               </div>
-              <ChevronRight size={20} className="hub-module-arrow" />
+              <ChevronRight size={24} className="hub-module-arrow" />
             </Link>
           ))}
         </div>
 
-        <div className="hub-chat glass-card">
+        <div className="hub-chat glass-card fade-in-up delay-1">
           <div className="hub-chat-header">
-            <MessageCircle size={22} color="var(--primary)" />
-            <h2 className="hub-chat-title">Chat del grupo</h2>
+            <MessageCircle size={24} color="var(--primary)" />
+            <h2 className="hub-chat-title">Chat Grupal</h2>
           </div>
 
           <div className="hub-chat-messages">
-            {messages.length === 0 ? (
-              <div className="chat-empty">
-                <p>Escribe algo para empezar...</p>
-              </div>
-            ) : (
-              messages.map(msg => {
-                const isMe = msg.user_id === user.id
-                const profile = msg.profiles
-                const displayName = profile?.full_name || msg.user_email?.split('@')[0] || 'Viajero'
-                const initials = displayName.slice(0, 2).toUpperCase()
-                return (
-                  <div key={msg.id} className={`chat-message ${isMe ? 'mine' : 'theirs'}`}>
-                    {!isMe && <div className="avatar avatar-sm">{initials}</div>}
-                    <div className="chat-bubble-wrap">
-                      {!isMe && <span className="chat-sender">{displayName}</span>}
-                      <div className="chat-bubble">{msg.message}</div>
-                      <span className="chat-time">
-                        {new Date(msg.created_at).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}
-                      </span>
-                    </div>
+            {messages.map(msg => {
+              const isMe = msg.user_id === user.id
+              const profile = msg.profiles
+              const name = profile?.full_name || msg.user_email?.split('@')[0] || 'Viajero'
+              const initials = name.slice(0, 2).toUpperCase()
+              return (
+                <div key={msg.id} className={`chat-message ${isMe ? 'mine' : 'theirs'}`}>
+                  {!isMe && <div className="avatar avatar-sm">{initials}</div>}
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: isMe ? 'flex-end' : 'flex-start' }}>
+                    {!isMe && <span style={{ fontSize: '0.75rem', fontWeight: 700, color: 'var(--text-muted)', marginBottom: '4px' }}>{name}</span>}
+                    <div className="chat-bubble">{msg.message}</div>
+                    <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                      {new Date(msg.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
                   </div>
-                )
-              })
-            )}
+                </div>
+              )
+            })}
             <div ref={chatEndRef} />
           </div>
 
           <form onSubmit={sendMessage} className="hub-chat-form">
-            <input type="text" className="form-input" placeholder="Mensaje..." value={chatMsg} onChange={e => setChatMsg(e.target.value)} />
+            <input type="text" className="form-input" placeholder="Escribe un mensaje..." value={chatMsg} onChange={e => setChatMsg(e.target.value)} />
             <button type="submit" className="btn btn-primary btn-icon" disabled={sendingMsg || !chatMsg.trim()}>
-              <Send size={18} />
+              <Send size={20} />
             </button>
           </form>
         </div>
