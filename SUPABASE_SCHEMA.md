@@ -57,14 +57,33 @@ CREATE TABLE IF NOT EXISTS public.trips (
 -- TRIP MEMBERS
 -- ============================================================
 CREATE TABLE IF NOT EXISTS public.trip_members (
-  id        UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  trip_id   UUID REFERENCES public.trips(id) ON DELETE CASCADE NOT NULL,
-  user_id   UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
-  role      TEXT DEFAULT 'invitado' CHECK (role IN ('titular', 'invitado')),
-  status    TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
-  created_at TIMESTAMPTZ DEFAULT NOW(),
-  UNIQUE(trip_id, user_id)
+  id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  trip_id      UUID REFERENCES public.trips(id) ON DELETE CASCADE NOT NULL,
+  user_id      UUID REFERENCES auth.users(id) ON DELETE CASCADE, -- Nullable for pending invites
+  invite_email TEXT, -- For invitations to non-registered users
+  role         TEXT DEFAULT 'invitado' CHECK (role IN ('titular', 'invitado')),
+  status       TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'accepted', 'rejected')),
+  created_at   TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(trip_id, user_id),
+  UNIQUE(trip_id, invite_email)
 );
+
+-- Trigger to link invites when a user signs up
+CREATE OR REPLACE FUNCTION public.handle_invite_on_signup()
+RETURNS TRIGGER AS $$
+BEGIN
+  UPDATE public.trip_members
+  SET user_id = NEW.id,
+      invite_email = NULL
+  WHERE invite_email = NEW.email;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
+
+DROP TRIGGER IF EXISTS on_profile_created_link_invites ON public.profiles;
+CREATE TRIGGER on_profile_created_link_invites
+  AFTER INSERT ON public.profiles
+  FOR EACH ROW EXECUTE FUNCTION public.handle_invite_on_signup();
 
 -- ============================================================
 -- EXPENSES
