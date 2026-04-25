@@ -104,6 +104,7 @@ export default function TripHub() {
       }}>
         <div className="container">
           <div className="hub-hero-inner fade-in-up">
+            
             <div className="hub-top-nav">
               <button className="btn btn-secondary btn-sm" onClick={() => navigate('/')}>
                 <ArrowLeft size={18} /> Mis viajes
@@ -115,14 +116,18 @@ export default function TripHub() {
             
             <div className="hub-title-section">
               {editingName && isTitular ? (
-                <div style={{ display: 'flex', gap: '0.8rem', alignItems: 'center' }}>
+                <div className="hub-title-row">
                   <input type="text" className="form-input" style={{ fontSize: '2.5rem', fontWeight: 800, flex: 1 }} value={newName} onChange={e => setNewName(e.target.value)} autoFocus />
                   <button className="btn-edit-neon" onClick={updateName}><Check size={24} /></button>
                 </div>
               ) : (
                 <div className="hub-title-row">
                   <h1 className="hub-trip-name text-gradient">{trip?.name}</h1>
-                  {isTitular && <button className="btn-edit-neon" onClick={() => setEditingName(true)}><Edit3 size={24} /></button>}
+                  {isTitular && (
+                    <button className="btn-edit-neon" onClick={() => setEditingName(true)}>
+                      <Edit3 size={24} />
+                    </button>
+                  )}
                 </div>
               )}
               
@@ -142,10 +147,10 @@ export default function TripHub() {
         </div>
       </header>
 
-      <div className="container hub-body" style={{ paddingBottom: '150px' }}>
+      <div className="container hub-body">
         <div className="hub-modules">
           {HUB_MODULES.map(mod => (
-            <Link key={mod.key} to={`/trip/${tripId}/${mod.key}`} className="hub-module-card glass-card">
+            <Link key={mod.key} to={`/trip/${tripId}/${mod.key}`} className="hub-module-card">
               <div className="hub-module-icon" style={{ background: mod.grad }}>
                 {mod.icon}
               </div>
@@ -158,11 +163,10 @@ export default function TripHub() {
           ))}
         </div>
 
-        {/* SECCIÓN CANAL DEL GRUPO - VISIBILIDAD CORREGIDA */}
         <div className="hub-channel-card">
           <h2 className="hub-module-title" style={{ fontSize: '2.2rem', marginBottom: '1.5rem' }}>Canal del Grupo</h2>
           <p className="hub-channel-desc">
-            Únete al canal oficial para coordinar los detalles finales de tu aventura con el resto del grupo.
+            Únete al canal oficial para coordinar los detalles con el resto del grupo.
           </p>
 
           <div className="hub-channel-actions">
@@ -176,7 +180,7 @@ export default function TripHub() {
               trip?.description ? (
                 <div style={{ display: 'flex', gap: '1.5rem', justifyContent: 'center', flexWrap: 'wrap' }}>
                   <a href={trip.description} target="_blank" rel="noreferrer" className="btn-entrar" style={{ textDecoration: 'none' }}>
-                    <ExternalLink size={20} /> Unirse al Canal
+                    <ExternalLink size={22} /> Unirse al Canal
                   </a>
                   {isTitular && (
                     <button className="btn-add-vibrant" style={{ padding: '0.8rem 1.5rem' }} onClick={() => setEditingLink(true)}>
@@ -190,11 +194,11 @@ export default function TripHub() {
                     <LinkIcon size={20} /> Configurar Enlace de Grupo
                   </button>
                 ) : (
-                  <p className="hub-channel-desc" style={{ fontStyle: 'italic', opacity: 0.7 }}>El titular aún no ha configurado el enlace.</p>
+                  <p className="hub-channel-desc" style={{ fontStyle: 'italic', opacity: 0.7 }}>Sin enlace configurado aún.</p>
                 )
-              )
-            )}
-          </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
