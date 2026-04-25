@@ -51,33 +51,55 @@ export default function Members() {
 
   async function inviteMember(e) {
     e.preventDefault()
+    if (!inviteEmail.trim()) return
     setInviting(true)
-    // Look up user by email
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('id')
-      .eq('email', inviteEmail)
-      .single()
 
-    if (profile) {
-      const { error } = await supabase.from('trip_members').insert({
-        trip_id: tripId,
-        user_id: profile.id,
-        role: 'invitado',
-        status: 'pending',
-      })
-      if (!error) {
-        setInviteEmail('')
-        setShowInvite(false)
-        fetchData()
+    try {
+      // 1. Check if user already exists in profiles
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('id')
+        .eq('email', inviteEmail.trim().toLowerCase())
+        .single()
+
+      if (profile) {
+        // User exists, add by ID
+        const { error } = await supabase.from('trip_members').insert({
+          trip_id: tripId,
+          user_id: profile.id,
+          role: 'invitado',
+          status: 'pending',
+        })
+        if (error) {
+          if (error.code === '23505') alert('Este usuario ya está en el viaje.')
+          else throw error
+        } else {
+          alert('¡Usuario añadido! Ahora debe aceptar la invitación.')
+        }
+      } else {
+        // User doesn't exist, add by email (the trigger will link them later)
+        const { error } = await supabase.from('trip_members').insert({
+          trip_id: tripId,
+          invite_email: inviteEmail.trim().toLowerCase(),
+          role: 'invitado',
+          status: 'pending',
+        })
+        if (error) {
+          if (error.code === '23505') alert('Ya hay una invitación pendiente para este email.')
+          else throw error
+        } else {
+          alert(`¡Invitación guardada! Cuando ${inviteEmail} se registre, aparecerá aquí automáticamente.`)
+        }
       }
-    } else {
-      // Send invite email (you can trigger a Supabase Edge Function here)
-      alert(`Invitación enviada a ${inviteEmail} (implementar con Edge Function)`)
       setInviteEmail('')
       setShowInvite(false)
+      fetchData()
+    } catch (err) {
+      console.error('Error inviting:', err)
+      alert('Hubo un error al enviar la invitación.')
+    } finally {
+      setInviting(false)
     }
-    setInviting(false)
   }
 
   async function removeMember(memberId) {
@@ -117,7 +139,7 @@ export default function Members() {
               const role = ROLE_MAP[member.role] || ROLE_MAP.invitado
               const status = STATUS_MAP[member.status] || STATUS_MAP.pending
               const initials = member.profile?.full_name?.slice(0, 2).toUpperCase()
-                || member.user_id?.slice(0, 2).toUpperCase()
+                || member.invite_email?.slice(0, 2).toUpperCase()
                 || '??'
               const isMe = member.user_id === user.id
 
@@ -126,7 +148,7 @@ export default function Members() {
                   <div className="avatar avatar-lg">{initials}</div>
                   <div className="member-info">
                     <div className="member-name">
-                      {member.profile?.full_name || 'Usuario'}
+                      {member.profile?.full_name || member.invite_email || 'Invitado pendiente'}
                       {isMe && <span className="member-you-tag">Tú</span>}
                     </div>
                     <div className="member-tags">
