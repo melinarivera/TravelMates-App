@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
-import { UserPlus, Trash2, Crown, User, Mail, CheckCircle, Clock, XCircle } from 'lucide-react'
+import { UserPlus, Trash2, Crown, User, Mail, CheckCircle, Clock, XCircle, Users } from 'lucide-react'
 import './ModulePage.css'
 
 const ROLE_MAP = {
