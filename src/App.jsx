@@ -9,6 +9,8 @@ import Itinerary from './pages/Itinerary'
 import MapPOI from './pages/MapPOI'
 import ToastProvider from './components/ui/ToastProvider'
 
+import LegalPages from './pages/LegalPages'
+
 function PrivateRoute({ children }) {
   const { user, loading } = useAuth()
   if (loading) return (
@@ -25,6 +27,12 @@ export default function App() {
       <ToastProvider />
       <Routes>
         <Route path="/auth" element={<AuthPage />} />
+        
+        {/* Páginas Legales Públicas */}
+        <Route path="/privacidad" element={<LegalPages type="privacidad" />} />
+        <Route path="/terminos" element={<LegalPages type="terminos" />} />
+        <Route path="/aviso-legal" element={<LegalPages type="aviso" />} />
+
         <Route path="/" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
         <Route path="/trip/:tripId" element={<PrivateRoute><TripHub /></PrivateRoute>} />
         <Route path="/trip/:tripId/members" element={<PrivateRoute><Members /></PrivateRoute>} />

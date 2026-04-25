@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Navigate } from 'react-router-dom'
+import { Navigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { Plane, Calendar, DollarSign, MessageCircle, Shield } from 'lucide-react'
 import './AuthPage.css'
@@ -136,9 +136,9 @@ export default function AuthPage() {
             <div style={{ textAlign: 'center', fontSize: '0.7rem', color: 'rgba(255,255,255,0.4)', marginTop: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.6rem' }}>
               <div>&copy; {new Date().getFullYear()} Melina Rivera. Todos los derechos reservados.</div>
               <div style={{ display: 'flex', gap: '1rem', justifyContent: 'center', flexWrap: 'wrap' }}>
-                <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Privacidad de Datos</a>
-                <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Términos y Condiciones</a>
-                <a href="#" style={{ color: 'inherit', textDecoration: 'none' }}>Aviso Legal (UE/España)</a>
+                <Link to="/privacidad" style={{ color: 'inherit', textDecoration: 'none' }}>Privacidad de Datos</Link>
+                <Link to="/terminos" style={{ color: 'inherit', textDecoration: 'none' }}>Términos y Condiciones</Link>
+                <Link to="/aviso-legal" style={{ color: 'inherit', textDecoration: 'none' }}>Aviso Legal (UE/España)</Link>
               </div>
             </div>
           </div>
