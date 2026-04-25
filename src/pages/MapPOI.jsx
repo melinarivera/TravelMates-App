@@ -6,7 +6,7 @@ import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
   Plus, Trash2, Map as MapIcon, MapPin, 
-  ExternalLink, Navigation, Info
+  Navigation, Info, Search
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -63,65 +63,85 @@ export default function MapPOI() {
               <p className="module-subtitle">Sitios para visitar</p>
             </div>
           </div>
-          {/* BOTÓN VERDE ARRIBA */}
-          <button className="btn btn-add-vibrant" onClick={() => setShowModal(true)}>
+          <button className="btn-add-vibrant" onClick={() => setShowModal(true)}>
             <Plus size={22} /> Guardar Lugar
           </button>
         </header>
 
-        <div className="map-list-container fade-in-up">
-          {pois.length === 0 ? (
-            <div className="empty-state glass-card" style={{ padding: '4rem' }}>
-               <Info size={48} opacity="0.1" style={{ marginBottom: '1rem' }} />
-               <p>Aún no hay lugares guardados.</p>
-            </div>
-          ) : (
-            <div className="items-list">
-              {pois.map(poi => (
-                <div key={poi.id} className="item-row glass-card">
-                  <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.4rem' }}>
-                       <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'white' }}>{poi.name}</span>
-                       <span className="badge-premium badge-ok">{poi.type}</span>
+        <div className="map-list-container fade-in-up" style={{ marginTop: '3rem' }}>
+          {loading ? <div className="page-loading"><div className="spinner" /></div> : (
+            pois.length === 0 ? (
+              <div className="glass-card" style={{ padding: '5rem', textAlign: 'center', opacity: 0.6 }}>
+                 <MapPin size={48} style={{ marginBottom: '1.5rem', color: '#00f2ff' }} />
+                 <p style={{ fontSize: '1.2rem' }}>Aún no hay sitios guardados para este viaje.</p>
+              </div>
+            ) : (
+              <div className="items-list">
+                {pois.map(poi => (
+                  <div key={poi.id} className="item-row glass-card poi-card">
+                    <div className="poi-header">
+                      <div className="poi-title-box">
+                        <div className="poi-name">
+                          <MapPin size={22} style={{ color: '#00f2ff' }} />
+                          {poi.name}
+                        </div>
+                        <div style={{ marginTop: '0.3rem' }}>
+                          <span className="poi-badge">{poi.type}</span>
+                        </div>
+                      </div>
+                      {isTitular && (
+                        <button className="btn-delete-vibrant" onClick={() => deletePOI(poi.id)}>
+                          <Trash2 size={20} />
+                        </button>
+                      )}
                     </div>
-                    {poi.address && <div className="member-email" style={{ display: 'flex' }}><MapPin size={14} /> {poi.address}</div>}
-                  </div>
-                  
-                  <div className="activity-actions">
-                    {poi.maps_url && (
-                      <a href={poi.maps_url} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" style={{ color: 'var(--badge-ok)' }}>
-                        <ExternalLink size={20} />
-                      </a>
+                    
+                    {poi.address && (
+                      <div className="poi-address">
+                        <Search size={14} /> {poi.address}
+                      </div>
                     )}
-                    {isTitular && (
-                      <button className="btn-delete-vibrant" onClick={() => deletePOI(poi.id)}>
-                        <Trash2 size={20} />
-                      </button>
-                    )}
+
+                    <div className="poi-actions">
+                      {poi.maps_url ? (
+                        <a href={poi.maps_url} target="_blank" rel="noreferrer" className="btn-open-maps">
+                          <Navigation size={18} /> Ver en Google Maps
+                        </a>
+                      ) : <div />}
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )
           )}
         </div>
       </div>
 
       {showModal && (
-        <Modal title="Guardar Sitio Verde" onClose={() => setShowModal(false)}>
+        <Modal title="Guardar Lugar" onClose={() => setShowModal(false)}>
           <form onSubmit={addPOI} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">Nombre del lugar</label>
-              <input type="text" className="form-input" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
+              <input type="text" className="form-input" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} placeholder="Ej: Torre Eiffel, Museo del Prado..." />
             </div>
             <div className="form-group">
-              <label className="form-label">Enlace de Maps</label>
+              <label className="form-label">Tipo de sitio</label>
+              <select className="form-input" value={form.type} onChange={e => setForm(f => ({ ...f, type: e.target.value }))}>
+                <option value="Museo">Museo 🖼️</option>
+                <option value="Restaurante">Restaurante 🍽️</option>
+                <option value="Monumento">Monumento 🗽</option>
+                <option value="Parque">Parque 🌳</option>
+                <option value="Tienda">Tienda 🛍️</option>
+                <option value="Otro">Otro ✨</option>
+              </select>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Enlace de Google Maps</label>
               <input type="url" className="form-input" value={form.maps_url} onChange={e => setForm(f => ({ ...f, maps_url: e.target.value }))} placeholder="https://goo.gl/maps/..." />
             </div>
-            <div className="modal-actions">
-              <button type="submit" className="btn btn-add-vibrant" disabled={saving} style={{ width: '100%', justifyContent: 'center' }}>
-                <Plus size={20} /> Guardar Punto Verde
-              </button>
-            </div>
+            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }}>
+              Guardar Lugar
+            </button>
           </form>
         </Modal>
       )}
