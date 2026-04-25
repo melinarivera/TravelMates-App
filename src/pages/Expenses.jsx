@@ -115,8 +115,8 @@ export default function Expenses() {
         <section className="expenses-stats fade-in-up">
           <div className="stat-card-premium stat-card-total">
             <span className="stat-card-label">Total Gastado</span>
-            <span className="stat-card-value">{totalSpent.toFixed(2)}€</span>
-            <PieChart size={80} className="stat-card-icon" />
+            <span className="stat-card-value">{(totalSpent || 0).toFixed(2)}€</span>
+            <DollarSign size={80} className="stat-card-icon" />
           </div>
           <div className="stat-card-premium stat-card-perperson">
             <span className="stat-card-label">Cada uno paga</span>
