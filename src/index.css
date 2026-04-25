@@ -103,6 +103,9 @@ html {
 body {
   font-family: var(--font-body);
   background-color: var(--off-white);
+  background-image: url('/Users/melina/.gemini/antigravity/brain/1c0fae4d-9187-453d-a43c-ad237e5163a0/travel_background_pattern_1777144451200.png');
+  background-size: 600px;
+  background-attachment: fixed;
   color: var(--gray-900);
   min-height: 100dvh;
   overflow-x: hidden;
