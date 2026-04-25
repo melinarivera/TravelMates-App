@@ -195,9 +195,10 @@ export default function TripHub() {
                   </button>
                 ) : (
                   <p className="hub-channel-desc" style={{ fontStyle: 'italic', opacity: 0.7 }}>Sin enlace configurado aún.</p>
-            )
-          )}
-        </div>
+                )
+              )
+            )}
+          </div>
       </div>
     </div>
   )
