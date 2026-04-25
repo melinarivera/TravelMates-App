@@ -607,3 +607,56 @@ select.form-input {
   background-size: 1.2rem;
   padding-right: 3rem !important;
 }
+
+/* REFINAMIENTO TOTAL DEL MODAL / FORMULARIO */
+
+.create-trip-form {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 2rem !important; /* Más espacio entre grupos de inputs */
+  padding: 1rem 0 !important;
+}
+
+.form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 0.8rem !important; /* Espacio entre label e input */
+}
+
+.form-label {
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  color: #00f2ff !important; /* Color Cian para las etiquetas */
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+  opacity: 0.8;
+}
+
+.form-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.form-input-icon {
+  position: absolute;
+  left: 1.2rem;
+  color: rgba(255, 255, 255, 0.3);
+  pointer-events: none;
+}
+
+.form-input {
+  width: 100% !important;
+  height: 60px !important; /* Inputs más altos y cómodos */
+  padding-left: 3.5rem !important; /* Espacio para el icono */
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 20px !important;
+  font-size: 1.1rem !important;
+}
+
+.form-input:focus {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: #00f2ff !important;
+  box-shadow: 0 0 20px rgba(0, 242, 255, 0.15) !important;
+}
