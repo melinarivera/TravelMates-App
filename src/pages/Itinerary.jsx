@@ -4,6 +4,10 @@ import { useAuth } from '../context/AuthContext'
 import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
+import { Plus, Trash2, Edit3, Calendar, Clock, MapPin, Check, X, ThumbsUp, ThumbsDown, DollarSign } from 'lucide-react'
+import './ModulePage.css'
+
+export default function Itinerary() {
   const { tripId } = useParams()
   const { user } = useAuth()
   const [days, setDays] = useState([])

@@ -119,6 +119,44 @@ export default function Members() {
     fetchData()
   }
 
+  async function transferTitle(targetUserId) {
+    if (!confirm('¿Seguro que quieres transferir la titularidad del viaje? Dejarás de ser el titular.')) return
+    
+    setLoading(true)
+    try {
+      // 1. Update target user to titular
+      const { error: err1 } = await supabase
+        .from('trip_members')
+        .update({ role: 'titular' })
+        .eq('trip_id', tripId)
+        .eq('user_id', targetUserId)
+      if (err1) throw err1
+
+      // 2. Update current user to invitado
+      const { error: err2 } = await supabase
+        .from('trip_members')
+        .update({ role: 'invitado' })
+        .eq('trip_id', tripId)
+        .eq('user_id', user.id)
+      if (err2) throw err2
+
+      // 3. Update trips table owner_id
+      const { error: err3 } = await supabase
+        .from('trips')
+        .update({ owner_id: targetUserId })
+        .eq('id', tripId)
+      if (err3) throw err3
+
+      alert('¡Titularidad transferida con éxito!')
+      fetchData()
+    } catch (err) {
+      console.error('Error transferring title:', err)
+      alert('Error al transferir la titularidad.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   const isTitular = myRole === 'titular' || trip?.owner_id === user.id
 
   return (
@@ -172,14 +210,25 @@ export default function Members() {
                       </span>
                     </div>
                   </div>
-                  {isTitular && !isMe && member.role !== 'titular' && (
-                    <button
-                      className="btn btn-danger btn-sm btn-icon"
-                      onClick={() => removeMember(member.id)}
-                      title="Eliminar integrante"
-                    >
-                      <Trash2 size={16} />
-                    </button>
+                   {isTitular && !isMe && member.status === 'accepted' && (
+                    <div className="member-actions" style={{ display: 'flex', gap: '0.5rem' }}>
+                      <button
+                        className="btn btn-ghost btn-sm"
+                        onClick={() => transferTitle(member.user_id)}
+                        title="Hacer titular"
+                        style={{ color: 'var(--sun)' }}
+                      >
+                        <Crown size={16} /> <span className="hide-mobile">Hacer titular</span>
+                      </button>
+                      <button
+                        className="btn btn-ghost btn-icon btn-sm"
+                        onClick={() => removeMember(member.id)}
+                        title="Eliminar integrante"
+                        style={{ color: 'var(--accent)' }}
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   )}
                 </div>
               )
