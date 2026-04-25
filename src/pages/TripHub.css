@@ -3,7 +3,7 @@
 }
 
 .hub-hero-header {
-  min-height: 400px;
+  min-height: 380px;
   background-size: cover;
   background-position: center;
   position: relative;
@@ -11,6 +11,15 @@
   align-items: flex-end;
   padding: 4rem 0 3rem;
   margin-bottom: 2rem;
+  overflow: hidden;
+}
+
+.hero-placeholder-icon {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
 }
 
 .hub-hero-inner {
@@ -26,14 +35,8 @@
   width: fit-content;
 }
 
-.hub-title-section {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
 .hub-trip-name {
-  font-size: clamp(2.5rem, 6vw, 4rem);
+  font-size: clamp(2.2rem, 6vw, 3.5rem);
   margin: 0;
   line-height: 1.1;
 }
@@ -54,155 +57,73 @@
   font-size: 1.1rem;
 }
 
-.divider-v {
-  width: 1px;
-  height: 24px;
-  background: rgba(255,255,255,0.1);
-}
-
-.hub-status-inline {
-  display: flex;
-  align-items: center;
-}
-
-.hub-actions-top {
-  margin-top: 1rem;
-}
-
-/* MODULES */
-.hub-modules {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 4rem;
-}
-
-.hub-module-card {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  padding: 2rem;
-  text-decoration: none;
-  transition: all 0.4s var(--ease-spring);
-}
-.hub-module-card:hover {
-  transform: translateY(-8px);
-  border-color: var(--primary);
-  box-shadow: 0 20px 40px -10px rgba(0,0,0,0.5);
-}
-
-.hub-module-icon {
-  width: 56px;
-  height: 56px;
-  border-radius: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-}
-
-.hub-module-title {
-  font-size: 1.5rem;
-  margin: 0;
-  color: white;
-}
-
-.hub-module-desc {
-  color: var(--text-muted);
-  font-size: 0.95rem;
-  line-height: 1.5;
-  margin: 0;
-}
-
-.hub-module-arrow {
-  margin-top: auto;
-  align-self: flex-end;
-  opacity: 0.5;
-  transition: transform 0.3s;
-}
-.hub-module-card:hover .hub-module-arrow {
-  transform: translateX(5px);
-  opacity: 1;
-}
-
 /* CHAT */
-.hub-chat {
-  overflow: hidden;
-}
-
-.hub-chat-header {
-  padding: 1.5rem 2rem;
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
-
-.hub-chat-title {
-  font-size: 1.25rem;
-  margin: 0;
-  color: white;
-}
-
 .hub-chat-messages {
   height: 400px;
   overflow-y: auto;
-  padding: 2rem;
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  background: rgba(0,0,0,0.2);
+  background: rgba(0,0,0,0.1);
+  scroll-behavior: smooth;
+}
+
+.chat-message {
+  display: flex;
+  gap: 0.75rem;
+  max-width: 85%;
+}
+
+.mine {
+  margin-left: auto;
+  flex-direction: row-reverse;
+}
+
+.chat-bubble-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.mine .chat-bubble-wrap {
+  align-items: flex-end;
 }
 
 .chat-bubble {
-  background: rgba(255,255,255,0.05);
-  padding: 1rem 1.25rem;
+  padding: 0.8rem 1.2rem;
   border-radius: 18px;
-  color: white;
-  max-width: 80%;
+  font-size: 0.95rem;
   line-height: 1.5;
+}
+
+.theirs .chat-bubble {
+  background: rgba(255,255,255,0.06);
+  color: white;
+  border-bottom-left-radius: 4px;
 }
 
 .mine .chat-bubble {
   background: var(--primary);
   color: white;
-  margin-left: auto;
   border-bottom-right-radius: 4px;
-}
-
-.theirs .chat-bubble {
-  border-bottom-left-radius: 4px;
+  box-shadow: 0 4px 15px var(--primary-glow);
 }
 
 .chat-sender {
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   font-weight: 800;
   color: var(--text-muted);
-  margin-bottom: 0.4rem;
-  display: block;
+  margin-bottom: 0.3rem;
 }
 
 .chat-time {
-  font-size: 0.7rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
-  margin-top: 0.4rem;
-  display: block;
-}
-
-.mine .chat-time { text-align: right; }
-
-.hub-chat-form {
-  padding: 1.5rem 2rem;
-  display: flex;
-  gap: 1rem;
-  background: rgba(15,23,42,0.4);
+  margin-top: 0.3rem;
 }
 
 @media (max-width: 768px) {
-  .hub-hero-header { min-height: 300px; padding-bottom: 2rem; }
+  .hub-hero-header { min-height: 280px; }
   .hub-meta-row { gap: 1rem; }
-  .divider-v { display: none; }
-  .hub-modules { grid-template-columns: 1fr; }
-  .hub-chat-messages { height: 300px; padding: 1rem; }
-  .chat-bubble { max-width: 90%; }
+  .hub-chat-messages { height: 350px; }
 }

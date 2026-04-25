@@ -210,7 +210,7 @@ export default function Dashboard() {
             {guestTrips.length > 0 && (
               <section className="dashboard-section fade-in-up">
                 <h2 className="dashboard-section-title">
-                  <Globe size={22} color="var(--accent)" /> Viajes donde participo
+                  <Globe size={22} color="var(--accent)" /> Participando
                 </h2>
                 <div className="trips-grid">
                   {guestTrips.map((trip, i) => (
@@ -227,11 +227,11 @@ export default function Dashboard() {
         <Modal title="Nuevo Viaje" onClose={() => setShowModal(false)}>
           <form onSubmit={createTrip} className="create-trip-form">
             <div className="form-group">
-              <label className="form-label">Nombre del viaje *</label>
+              <label className="form-label">Nombre del viaje</label>
               <input type="text" className="form-input" placeholder="Ej. Verano en la Montaña" value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} required />
             </div>
             <div className="form-group">
-              <label className="form-label">Destino *</label>
+              <label className="form-label">Destino</label>
               <div className="form-input-with-icon">
                 <MapPin size={18} className="input-icon" />
                 <input type="text" className="form-input" placeholder="Barcelona, España" value={form.destination} onChange={e => setForm(f => ({ ...f, destination: e.target.value }))} required />
@@ -240,11 +240,11 @@ export default function Dashboard() {
             
             <div className="grid-2">
               <div className="form-group">
-                <label className="form-label">Fecha inicio</label>
+                <label className="form-label">Inicio</label>
                 <input type="date" className="form-input" value={form.start_date} onChange={e => setForm(f => ({ ...f, start_date: e.target.value }))} />
               </div>
               <div className="form-group">
-                <label className="form-label">Fecha fin</label>
+                <label className="form-label">Fin</label>
                 <input type="date" className="form-input" value={form.end_date} onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))} />
               </div>
             </div>
@@ -257,7 +257,7 @@ export default function Dashboard() {
                 ) : (
                   <div className="file-upload-placeholder">
                     <Camera size={32} color="var(--text-muted)" />
-                    <span>Seleccionar foto (JPG, PNG)</span>
+                    <span>Subir archivo (JPG, PNG)</span>
                   </div>
                 )}
                 <input type="file" id="file-input" hidden accept="image/*" onChange={handleFileChange} />
@@ -267,7 +267,7 @@ export default function Dashboard() {
             <div className="modal-actions">
               <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)}>Cancelar</button>
               <button type="submit" className="btn btn-primary" disabled={creating}>
-                {creating ? <div className="spinner" /> : <><Plus size={18} /> Crear viaje</>}
+                {creating ? <div className="spinner" /> : 'Crear viaje'}
               </button>
             </div>
           </form>
@@ -279,9 +279,6 @@ export default function Dashboard() {
 
 function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
   const status = STATUS_MAP[trip.status] || STATUS_MAP.planning
-  const daysLeft = trip.start_date
-    ? Math.ceil((new Date(trip.start_date) - new Date()) / (1000 * 60 * 60 * 24))
-    : null
 
   return (
     <div className={`trip-card glass-card fade-in-up delay-${Math.min(index + 1, 5)} ${isInvitation ? 'trip-card-invitation' : ''}`} onClick={isInvitation ? null : onClick}>
@@ -289,8 +286,8 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
         {trip.cover_url ? (
           <img src={trip.cover_url} alt={trip.name} />
         ) : (
-          <div className="trip-card-cover-placeholder" style={{ background: status.grad }}>
-             <ImageIcon size={48} color="white" opacity="0.3" />
+          <div className="trip-card-cover-placeholder" style={{ background: 'linear-gradient(135deg, #1e293b, #0f172a)' }}>
+             <Plane size={48} color="var(--primary)" opacity="0.3" />
           </div>
         )}
         <div className={`badge ${status.badge} trip-card-badge`}>
@@ -301,7 +298,7 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
         <h3 className="trip-card-name">{trip.name}</h3>
         <div className="trip-card-meta">
           <MapPin size={14} />
-          <span>{trip.destination || 'Destino'}</span>
+          <span>{trip.destination || 'Sin destino'}</span>
         </div>
         
         {isInvitation ? (
@@ -313,7 +310,7 @@ function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
           <div className="trip-card-footer">
             <div className="trip-card-meta">
               <Calendar size={14} />
-              <span>{trip.start_date ? new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : 'Próximamente'}</span>
+              <span>{trip.start_date ? new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' }) : 'Pendiente'}</span>
             </div>
             <ChevronRight size={20} color="var(--primary)" />
           </div>
