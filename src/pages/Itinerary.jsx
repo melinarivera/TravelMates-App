@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
-  Plus, Trash2, Calendar, MapPin, ThumbsUp, ThumbsDown, Clock
+  Plus, Trash2, Calendar, MapPin, ThumbsUp, ThumbsDown, Clock, Edit3
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -84,7 +84,7 @@ export default function Itinerary() {
             </div>
           </div>
           <button className="btn-add-vibrant" onClick={() => setShowModal(true)}>
-            <Plus size={22} /> Nueva Propuesta
+            <Plus size={22} /> Añadir
           </button>
         </header>
 
@@ -92,7 +92,8 @@ export default function Itinerary() {
           <div className="itinerary-list" style={{ marginTop: '3rem' }}>
             {days.length === 0 ? (
               <div className="glass-card" style={{ padding: '4rem', textAlign: 'center', opacity: 0.6 }}>
-                 Aún no hay propuestas. ¡Sé el primero en proponer algo!
+                 <Calendar size={48} style={{ marginBottom: '1.5rem', color: 'var(--btn-add)' }} />
+                 <p style={{ fontSize: '1.2rem' }}>Aún no hay propuestas.</p>
               </div>
             ) : days.map(([date, acts]) => (
               <section key={date} className="itinerary-day-section fade-in-up">
@@ -159,28 +160,43 @@ export default function Itinerary() {
       </div>
 
       {showModal && (
-        <Modal title="Nueva Propuesta" onClose={() => setShowModal(false)}>
+        <Modal title="Añadir Propuesta" onClose={() => setShowModal(false)}>
           <form onSubmit={saveActivity} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">¿Qué plan propones?</label>
-              <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Ej: Cena en la playa" />
+              <div className="form-input-container">
+                <Edit3 className="form-input-icon" size={20} />
+                <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Ej: Cena en la playa..." />
+              </div>
             </div>
+
             <div className="grid-2">
               <div className="form-group">
                 <label className="form-label">Fecha</label>
-                <input type="date" className="form-input" value={form.day_date} onChange={e => setForm(f => ({ ...f, day_date: e.target.value }))} />
+                <div className="form-input-container">
+                  <Calendar className="form-input-icon" size={20} />
+                  <input type="date" className="form-input" value={form.day_date} onChange={e => setForm(f => ({ ...f, day_date: e.target.value }))} />
+                </div>
               </div>
               <div className="form-group">
                 <label className="form-label">Hora (opcional)</label>
-                <input type="time" className="form-input" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
+                <div className="form-input-container">
+                  <Clock className="form-input-icon" size={20} />
+                  <input type="time" className="form-input" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
+                </div>
               </div>
             </div>
+
             <div className="form-group">
               <label className="form-label">Lugar / Ubicación</label>
-              <input type="text" className="form-input" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Nombre del sitio..." />
+              <div className="form-input-container">
+                <MapPin className="form-input-icon" size={20} />
+                <input type="text" className="form-input" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Nombre del sitio..." />
+              </div>
             </div>
-            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }}>
-              Guardar Propuesta
+
+            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1rem', height: '60px', fontSize: '1.1rem', justifyContent: 'center' }}>
+              Añadir Propuesta
             </button>
           </form>
         </Modal>
