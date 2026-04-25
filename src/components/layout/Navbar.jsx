@@ -35,9 +35,7 @@ export default function Navbar() {
       <div className="navbar-inner">
         
         <Link to="/" className="navbar-logo">
-          <div className="navbar-logo-badge">
-            <Plane size={20} color="white" />
-          </div>
+          <img src="/logo.svg" alt="TravelMates Logo" style={{ width: '32px', height: '32px', objectFit: 'contain' }} />
           <span className="hide-mobile">TravelMates</span>
         </Link>
 
