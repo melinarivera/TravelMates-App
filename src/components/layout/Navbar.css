@@ -1,17 +1,18 @@
+/* NAVBAR RESPONSIVE ESTILO APP NATIVA */
+
 .navbar {
   position: sticky;
   top: 0;
   width: 100%;
   z-index: 1000;
-  background: rgba(8, 10, 15, 0.8);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: rgba(8, 10, 15, 0.9);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-  transition: all 0.3s;
 }
 
 .navbar-inner {
-  height: 72px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -27,158 +28,132 @@
   text-decoration: none;
   font-family: 'Outfit', sans-serif;
   font-weight: 800;
-  font-size: 1.4rem;
+  font-size: 1.25rem;
   color: white;
 }
 
 .navbar-logo-icon {
-  width: 36px;
-  height: 36px;
-  background: linear-gradient(135deg, var(--primary), var(--accent));
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  background: var(--grad-main);
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
+/* NAVEGACIÓN DESKTOP */
 .navbar-links {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.4rem;
+  padding: 0.3rem;
   background: rgba(255,255,255,0.03);
-  border-radius: 14px;
+  border-radius: 12px;
 }
 
 .navbar-link {
   display: flex;
   align-items: center;
-  gap: 0.6rem;
-  padding: 0.6rem 1.2rem;
-  border-radius: 10px;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
   color: var(--text-muted);
   font-weight: 600;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
   transition: all 0.2s;
   text-decoration: none;
 }
 
-.navbar-link:hover { color: white; background: rgba(255,255,255,0.05); }
-
 .navbar-link.active {
   background: var(--primary);
   color: white;
-  box-shadow: 0 4px 12px var(--primary-glow);
+  box-shadow: 0 4px 10px var(--primary-glow);
 }
 
 .navbar-actions {
   display: flex;
   align-items: center;
-  gap: 1.25rem;
-}
-
-.navbar-user {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.avatar {
-  width: 36px;
-  height: 36px;
-  background: var(--bg-surface);
-  border: 1px solid var(--glass-border);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8rem;
-  font-weight: 800;
-}
-
-.navbar-hamburger {
-  display: none;
-  background: rgba(255,255,255,0.05);
-  border: 1px solid var(--glass-border);
-  color: white;
-  padding: 0.6rem;
-  border-radius: 10px;
-  cursor: pointer;
-}
-
-/* MENÚ MÓVIL PANTALLA COMPLETA */
-.navbar-mobile {
-  position: fixed;
-  inset: 0;
-  background: #080a0f;
-  z-index: 2000;
-  display: flex;
-  flex-direction: column;
-  padding: 2rem;
-  transform: translateX(100%);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.navbar-mobile.open { transform: translateX(0); }
-
-.navbar-mobile-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 3rem;
-}
-
-.navbar-mobile-links {
-  display: flex;
-  flex-direction: column;
   gap: 1rem;
 }
 
-.navbar-mobile-link {
-  display: flex;
-  align-items: center;
-  gap: 1.25rem;
-  padding: 1.25rem;
-  background: rgba(255,255,255,0.03);
-  border: 1px solid var(--glass-border);
-  border-radius: 18px;
-  color: white;
-  text-decoration: none;
-  font-size: 1.2rem;
-  font-weight: 700;
-  font-family: 'Outfit', sans-serif;
+/* OCULTAR EN MÓVIL POR DEFECTO */
+.navbar-hamburger { display: none; }
+
+/* ============================================================
+   MOBILE: BOTTOM NAVIGATION (ESTILO APP)
+   ============================================================ */
+@media (max-width: 768px) {
+  /* Escondemos el logo y links superiores en páginas de viaje */
+  .navbar-links { display: none; }
+  
+  .navbar-inner {
+    height: 60px;
+    padding: 0 1rem;
+  }
+
+  /* Barra inferior fija solo si estamos dentro de un viaje */
+  .navbar-trip-active {
+    position: fixed;
+    bottom: 0;
+    top: auto;
+    border-bottom: none;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    background: rgba(15, 23, 42, 0.95);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .navbar-trip-active .navbar-inner {
+    height: 70px;
+    justify-content: space-around;
+  }
+
+  .navbar-trip-active .navbar-logo,
+  .navbar-trip-active .navbar-actions .navbar-logout-desktop {
+    display: none;
+  }
+
+  /* Links en la barra inferior */
+  .navbar-trip-active .navbar-links-mobile {
+    display: flex !important;
+    width: 100%;
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .navbar-link-mobile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: 0.2s;
+  }
+
+  .navbar-link-mobile.active {
+    color: var(--primary);
+  }
+
+  .navbar-link-mobile svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  /* Logout en la barra superior del Dashboard */
+  .navbar-dashboard .navbar-actions {
+    display: flex;
+  }
 }
 
-.navbar-mobile-link.active {
-  background: var(--primary);
-  border-color: var(--primary);
-}
-
-.navbar-mobile-footer {
-  margin-top: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.btn-logout-mobile {
-  width: 100%;
-  padding: 1.25rem;
+/* Botón de Logout pequeño en móvil para Dashboard */
+.btn-logout-mobile-top {
   background: rgba(244, 63, 94, 0.1);
   color: var(--coral);
-  border: 1px solid var(--coral);
-  border-radius: 18px;
-  font-weight: 800;
+  padding: 0.5rem;
+  border-radius: 8px;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.75rem;
-}
-
-@media (max-width: 1024px) {
-  .navbar-links, .navbar-actions .navbar-logout-desktop { display: none; }
-  .navbar-hamburger { display: flex; }
 }
