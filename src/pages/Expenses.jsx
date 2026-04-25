@@ -78,11 +78,11 @@ export default function Expenses() {
     fetchData()
   }
 
-  const totalSpent = expenses.reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0)
-  const perPerson = members.length > 0 ? totalSpent / members.length : 0
+  const totalSpent = (expenses || []).reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0)
+  const perPerson = (members || []).length > 0 ? totalSpent / members.length : 0
 
-  const balanceData = members.map(m => {
-    const paid = expenses
+  const balanceData = (members || []).map(m => {
+    const paid = (expenses || [])
       .filter(e => e.paid_by === m.user_id)
       .reduce((acc, curr) => acc + (parseFloat(curr.amount) || 0), 0)
     return {
