@@ -224,3 +224,30 @@
   flex-direction: column;
   gap: 1rem;
 }
+
+/* Invitation Card Styles */
+.trip-card-invitation {
+  border: 2px dashed var(--sun-dk);
+  background: linear-gradient(to bottom, var(--white), var(--sun-lt) 200%);
+}
+
+.invitation-actions {
+  margin-top: 1rem;
+  padding: 1rem;
+  background: var(--off-white);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.invitation-text {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--gray-600);
+  margin-bottom: 0.75rem;
+}
+
+.invitation-buttons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}

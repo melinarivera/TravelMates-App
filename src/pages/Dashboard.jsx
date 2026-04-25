@@ -34,14 +34,32 @@ export default function Dashboard() {
     setLoading(true)
     const { data, error } = await supabase
       .from('trip_members')
-      .select('trip:trips(*)')
+      .select('status, role, trip:trips(*)')
       .eq('user_id', user.id)
       .order('created_at', { foreignTable: 'trips', ascending: false })
 
     if (!error && data) {
-      setTrips(data.map(d => d.trip).filter(Boolean))
+      // Map the data to include the membership info inside the trip object
+      const mapped = data.map(d => ({
+        ...d.trip,
+        membership_status: d.status,
+        membership_role: d.role
+      })).filter(t => t.id)
+      setTrips(mapped)
     }
     setLoading(false)
+  }
+
+  async function handleInvitation(tripId, status) {
+    const { error } = await supabase
+      .from('trip_members')
+      .update({ status })
+      .eq('trip_id', tripId)
+      .eq('user_id', user.id)
+
+    if (!error) {
+      fetchTrips()
+    }
   }
 
   async function createTrip(e) {
@@ -101,7 +119,8 @@ export default function Dashboard() {
   )
 
   const myTrips = filtered.filter(t => t.owner_id === user.id)
-  const guestTrips = filtered.filter(t => t.owner_id !== user.id)
+  const invitations = filtered.filter(t => t.owner_id !== user.id && t.membership_status === 'pending')
+  const guestTrips = filtered.filter(t => t.owner_id !== user.id && t.membership_status === 'accepted')
 
   return (
     <div className="dashboard-page">
@@ -175,6 +194,26 @@ export default function Dashboard() {
           </div>
         ) : (
           <>
+            {invitations.length > 0 && (
+              <section className="dashboard-section fade-in-up">
+                <h2 className="dashboard-section-title">
+                  <Clock size={22} style={{ color: 'var(--sun-dk)' }} /> Invitaciones nuevas
+                </h2>
+                <div className="trips-grid">
+                  {invitations.map((trip, i) => (
+                    <TripCard 
+                      key={trip.id} 
+                      trip={trip} 
+                      index={i} 
+                      isInvitation
+                      onAccept={() => handleInvitation(trip.id, 'accepted')}
+                      onReject={() => handleInvitation(trip.id, 'rejected')}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+
             {myTrips.length > 0 && (
               <section className="dashboard-section fade-in-up">
                 <h2 className="dashboard-section-title">
@@ -187,6 +226,7 @@ export default function Dashboard() {
                 </div>
               </section>
             )}
+
             {guestTrips.length > 0 && (
               <section className="dashboard-section fade-in-up">
                 <h2 className="dashboard-section-title">
@@ -282,7 +322,7 @@ export default function Dashboard() {
   )
 }
 
-function TripCard({ trip, onClick, index }) {
+function TripCard({ trip, onClick, index, isInvitation, onAccept, onReject }) {
   const status = STATUS_MAP[trip.status] || STATUS_MAP.planning
   const daysLeft = trip.start_date
     ? Math.ceil((new Date(trip.start_date) - new Date()) / (1000 * 60 * 60 * 24))
@@ -290,14 +330,14 @@ function TripCard({ trip, onClick, index }) {
 
   return (
     <div
-      className={`trip-card fade-in-up delay-${Math.min(index + 1, 5)}`}
-      onClick={onClick}
+      className={`trip-card fade-in-up delay-${Math.min(index + 1, 5)} ${isInvitation ? 'trip-card-invitation' : ''}`}
+      onClick={isInvitation ? null : onClick}
       id={`trip-card-${trip.id}`}
     >
       <div className="trip-card-cover" style={{ background: status.grad }}>
         <div className="trip-card-emoji">{status.emoji}</div>
         <div className={`badge ${status.badge} trip-card-badge`}>
-          {status.label}
+          {isInvitation ? 'Nueva invitación' : status.label}
         </div>
       </div>
       <div className="trip-card-body">
@@ -306,18 +346,31 @@ function TripCard({ trip, onClick, index }) {
           <MapPin size={14} />
           <span>{trip.destination || 'Destino pendiente'}</span>
         </div>
-        {trip.start_date && (
-          <div className="trip-card-meta">
-            <Calendar size={14} />
-            <span>{new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-            {daysLeft > 0 && <span className="trip-days-left">en {daysLeft}d</span>}
+        
+        {isInvitation ? (
+          <div className="invitation-actions">
+            <p className="invitation-text">¿Te unes a este viaje?</p>
+            <div className="invitation-buttons">
+              <button className="btn btn-primary btn-sm" onClick={onAccept}>¡Claro! ✈️</button>
+              <button className="btn btn-ghost btn-sm" onClick={onReject}>Ahora no</button>
+            </div>
           </div>
+        ) : (
+          <>
+            {trip.start_date && (
+              <div className="trip-card-meta">
+                <Calendar size={14} />
+                <span>{new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+                {daysLeft > 0 && <span className="trip-days-left">en {daysLeft}d</span>}
+              </div>
+            )}
+            <div className="trip-card-footer">
+              <span className="trip-card-open">
+                Ver viaje <ChevronRight size={16} />
+              </span>
+            </div>
+          </>
         )}
-        <div className="trip-card-footer">
-          <span className="trip-card-open">
-            Ver viaje <ChevronRight size={16} />
-          </span>
-        </div>
       </div>
     </div>
   )
