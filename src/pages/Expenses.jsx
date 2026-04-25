@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase'
 import Navbar from '../components/layout/Navbar'
 import Modal from '../components/ui/Modal'
 import { 
-  Plus, Trash2, DollarSign, TrendingDown, TrendingUp, Wallet, Receipt
+  Plus, Trash2, DollarSign, TrendingDown, TrendingUp, Wallet, Receipt, PieChart
 } from 'lucide-react'
 import './ModulePage.css'
 
@@ -107,45 +107,47 @@ export default function Expenses() {
               <p className="module-subtitle">Cuentas claras, viajes felices</p>
             </div>
           </div>
-          <button className="btn btn-add-vibrant" onClick={() => setShowModal(true)}>
+          <button className="btn-add-vibrant" onClick={() => setShowModal(true)}>
             <Plus size={22} /> Nuevo Gasto
           </button>
         </header>
 
-        <section className="expenses-stats fade-in-up" style={{ marginBottom: '3rem' }}>
-          <div className="stat-card glass-card" style={{ borderBottom: '4px solid var(--btn-add)' }}>
-            <span className="stat-value">{totalSpent.toFixed(2)}€</span>
-            <span className="stat-label">Total Gastado</span>
+        <section className="expenses-stats fade-in-up">
+          <div className="stat-card-premium stat-card-total">
+            <span className="stat-card-label">Total Gastado</span>
+            <span className="stat-card-value">{totalSpent.toFixed(2)}€</span>
+            <PieChart size={80} className="stat-card-icon" />
           </div>
-          <div className="stat-card glass-card" style={{ borderBottom: '4px solid var(--badge-ok)' }}>
-            <span className="stat-value">{perPerson.toFixed(2)}€</span>
-            <span className="stat-label">Cada uno paga</span>
+          <div className="stat-card-premium stat-card-perperson">
+            <span className="stat-card-label">Cada uno paga</span>
+            <span className="stat-card-value">{perPerson.toFixed(2)}€</span>
+            <Users size={80} className="stat-card-icon" />
           </div>
         </section>
 
-        <div className="auth-tabs" style={{ marginBottom: '2.5rem' }}>
-          <button className={`auth-tab ${activeTab === 'list' ? 'active' : ''}`} onClick={() => setActiveTab('list')}>
-            <Receipt size={16} /> Lista de Gastos
+        <div className="segmented-control fade-in-up delay-1" style={{ marginBottom: '2.5rem' }}>
+          <button className={`segment-btn ${activeTab === 'list' ? 'active' : ''}`} onClick={() => setActiveTab('list')}>
+            <Receipt size={18} /> Lista de Gastos
           </button>
-          <button className={`auth-tab ${activeTab === 'balance' ? 'active' : ''}`} onClick={() => setActiveTab('balance')}>
-            <Wallet size={16} /> Balance Final
+          <button className={`segment-btn ${activeTab === 'balance' ? 'active' : ''}`} onClick={() => setActiveTab('balance')}>
+            <Wallet size={18} /> Balance Final
           </button>
         </div>
 
-        {loading ? <div className="spinner" /> : (
-          <div className="items-list fade-in-up">
+        {loading ? <div className="page-loading"><div className="spinner" /></div> : (
+          <div className="items-list fade-in-up delay-2">
             {activeTab === 'list' ? (
               expenses.map(exp => (
-                <div key={exp.id} className="item-row glass-card">
+                <div key={exp.id} className="item-row glass-card expense-item-card">
                   <div className="expense-info">
                     <div className="expense-desc" style={{ fontSize: '1.2rem', fontWeight: 800 }}>{exp.description}</div>
-                    <div className="expense-meta" style={{ marginTop: '0.4rem' }}>
-                      <span className="badge-premium badge-ok">{exp.category}</span>
-                      <span style={{ fontSize: '0.85rem', opacity: 0.7 }}>Pagado por: {exp.profiles?.full_name || exp.profiles?.email?.split('@')[0]}</span>
+                    <div className="member-tags" style={{ marginTop: '0.6rem' }}>
+                      <span className="badge-guest">{exp.category}</span>
+                      <span className="expense-subtitle">Pagado por: {exp.profiles?.full_name || exp.profiles?.email?.split('@')[0]}</span>
                     </div>
                   </div>
                   <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                    <div className="expense-amount" style={{ fontSize: '1.5rem', fontWeight: 900, color: 'white' }}>{parseFloat(exp.amount).toFixed(2)}€</div>
+                    <div className="expense-price">{parseFloat(exp.amount).toFixed(2)}€</div>
                     {isTitular && (
                       <button className="btn-delete-vibrant" onClick={() => deleteExpense(exp.id)}>
                         <Trash2 size={20} />
@@ -156,10 +158,10 @@ export default function Expenses() {
               ))
             ) : (
               balanceData.map(b => (
-                <div key={b.userId} className="item-row glass-card">
+                <div key={b.userId} className="item-row glass-card expense-item-card">
                   <div className="expense-info">
                     <div className="expense-desc" style={{ fontWeight: 800 }}>{b.name}</div>
-                    <div className="expense-meta">Aportación: {b.paid.toFixed(2)}€</div>
+                    <div className="expense-subtitle">Aportación: {b.paid.toFixed(2)}€</div>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                      <div style={{ 
@@ -167,15 +169,15 @@ export default function Expenses() {
                        alignItems: 'center', 
                        justifyContent: 'flex-end',
                        gap: '10px',
-                       color: b.balance >= 0 ? 'var(--mint)' : 'var(--btn-logout)',
+                       color: b.balance >= 0 ? '#39ff14' : '#ff3131',
                        fontWeight: 900,
-                       fontSize: '1.6rem'
+                       fontSize: '1.8rem'
                      }}>
-                       {b.balance >= 0 ? <TrendingUp size={22} /> : <TrendingDown size={22} />}
+                       {b.balance >= 0 ? <TrendingUp size={24} /> : <TrendingDown size={24} />}
                        {Math.abs(b.balance).toFixed(2)}€
                      </div>
-                     <span style={{ fontSize: '0.75rem', fontWeight: 800, textTransform: 'uppercase', opacity: 0.8 }}>
-                        {b.balance >= 0 ? 'A favor' : 'A pagar'}
+                     <span style={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', opacity: 0.9, color: b.balance >= 0 ? '#39ff14' : '#ff3131' }}>
+                        {b.balance >= 0 ? 'A favor' : 'Debe pagar'}
                      </span>
                   </div>
                 </div>
@@ -186,7 +188,7 @@ export default function Expenses() {
       </div>
 
       {showModal && (
-        <Modal title="Añadir Gasto Verde" onClose={() => setShowModal(false)}>
+        <Modal title="Nuevo Gasto" onClose={() => setShowModal(false)}>
           <form onSubmit={addExpense} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">Descripción</label>
@@ -200,19 +202,17 @@ export default function Expenses() {
               <div className="form-group">
                 <label className="form-label">Categoría</label>
                 <select className="form-input" value={form.category} onChange={e => setForm(f => ({ ...f, category: e.target.value }))}>
-                   <option value="Comida">Comida</option>
-                   <option value="Transporte">Transporte</option>
-                   <option value="Alojamiento">Alojamiento</option>
-                   <option value="Ocio">Ocio</option>
-                   <option value="Otros">Otros</option>
+                   <option value="Comida">Comida 🍕</option>
+                   <option value="Transporte">Transporte 🚗</option>
+                   <option value="Alojamiento">Alojamiento 🏨</option>
+                   <option value="Ocio">Ocio 🎡</option>
+                   <option value="Otros">Otros ✨</option>
                 </select>
               </div>
             </div>
-            <div className="modal-actions">
-              <button type="submit" className="btn btn-add-vibrant" disabled={saving} style={{ width: '100%', justifyContent: 'center' }}>
-                <Plus size={20} /> Guardar Gasto Verde
-              </button>
-            </div>
+            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }}>
+              <Plus size={20} /> Guardar Gasto
+            </button>
           </form>
         </Modal>
       )}
