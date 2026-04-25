@@ -60,11 +60,12 @@ export default function MapPOI() {
             <div className="module-icon-box"><MapIcon size={28} /></div>
             <div>
               <h1 className="module-title">Mapa</h1>
-              <p className="module-subtitle">Ubicaciones guardadas</p>
+              <p className="module-subtitle">Sitios para visitar</p>
             </div>
           </div>
-          <button className="btn btn-add-desktop hide-mobile" onClick={() => setShowModal(true)}>
-            <Plus size={20} /> Guardar Lugar
+          {/* BOTÓN VERDE ARRIBA */}
+          <button className="btn btn-add-vibrant" onClick={() => setShowModal(true)}>
+            <Plus size={22} /> Guardar Lugar
           </button>
         </header>
 
@@ -72,28 +73,28 @@ export default function MapPOI() {
           {pois.length === 0 ? (
             <div className="empty-state glass-card" style={{ padding: '4rem' }}>
                <Info size={48} opacity="0.1" style={{ marginBottom: '1rem' }} />
-               <p>No hay lugares guardados en el mapa.</p>
+               <p>Aún no hay lugares guardados.</p>
             </div>
           ) : (
             <div className="items-list">
               {pois.map(poi => (
                 <div key={poi.id} className="item-row glass-card">
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '0.4rem' }}>
-                       <span style={{ fontWeight: 800, fontSize: '1.2rem', color: 'white' }}>{poi.name}</span>
-                       <span className="badge badge-sky">{poi.type}</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.4rem' }}>
+                       <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'white' }}>{poi.name}</span>
+                       <span className="badge-premium badge-ok">{poi.type}</span>
                     </div>
-                    {poi.address && <div className="member-email"><MapPin size={14} /> {poi.address}</div>}
+                    {poi.address && <div className="member-email" style={{ display: 'flex' }}><MapPin size={14} /> {poi.address}</div>}
                   </div>
                   
                   <div className="activity-actions">
                     {poi.maps_url && (
-                      <a href={poi.maps_url} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" style={{ color: 'var(--primary)' }}>
+                      <a href={poi.maps_url} target="_blank" rel="noreferrer" className="btn btn-ghost btn-sm" style={{ color: 'var(--badge-ok)' }}>
                         <ExternalLink size={20} />
                       </a>
                     )}
                     {isTitular && (
-                      <button className="btn btn-ghost btn-sm" onClick={() => deletePOI(poi.id)} style={{ color: 'var(--coral)' }}>
+                      <button className="btn btn-ghost btn-icon btn-delete-vibrant" onClick={() => deletePOI(poi.id)}>
                         <Trash2 size={20} />
                       </button>
                     )}
@@ -105,24 +106,21 @@ export default function MapPOI() {
         </div>
       </div>
 
-      <button className="fab-module show-mobile-only" onClick={() => setShowModal(true)}>
-        <Plus size={32} />
-      </button>
-
       {showModal && (
-        <Modal title="Guardar Lugar" onClose={() => setShowModal(false)}>
+        <Modal title="Guardar Sitio Verde" onClose={() => setShowModal(false)}>
           <form onSubmit={addPOI} className="create-trip-form">
             <div className="form-group">
-              <label className="form-label">Nombre del sitio</label>
+              <label className="form-label">Nombre del lugar</label>
               <input type="text" className="form-input" required value={form.name} onChange={e => setForm(f => ({ ...f, name: e.target.value }))} />
             </div>
             <div className="form-group">
-              <label className="form-label">Link de Google Maps</label>
-              <input type="url" className="form-input" value={form.maps_url} onChange={e => setForm(f => ({ ...f, maps_url: e.target.value }))} placeholder="https://..." />
+              <label className="form-label">Enlace de Maps</label>
+              <input type="url" className="form-input" value={form.maps_url} onChange={e => setForm(f => ({ ...f, maps_url: e.target.value }))} placeholder="https://goo.gl/maps/..." />
             </div>
             <div className="modal-actions">
-              <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cancelar</button>
-              <button type="submit" className="btn btn-primary" disabled={saving}>Guardar</button>
+              <button type="submit" className="btn btn-add-vibrant" disabled={saving} style={{ width: '100%', justifyContent: 'center' }}>
+                <Plus size={20} /> Guardar Punto Verde
+              </button>
             </div>
           </form>
         </Modal>
