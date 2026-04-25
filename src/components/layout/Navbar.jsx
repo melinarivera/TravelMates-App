@@ -8,7 +8,6 @@ import {
 import './Navbar.css'
 
 const tripLinks = [
-  { to: '', label: 'Hub', icon: <Home size={18} /> },
   { to: '/members', label: 'Integrantes', icon: <Users size={18} /> },
   { to: '/expenses', label: 'Gastos', icon: <DollarSign size={18} /> },
   { to: '/itinerary', label: 'Itinerario', icon: <Calendar size={18} /> },
