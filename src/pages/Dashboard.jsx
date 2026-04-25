@@ -11,9 +11,9 @@ import {
 import './Dashboard.css'
 
 const STATUS_MAP = {
-  planning: { label: 'PLANIFICANDO', color: 'var(--badge-titular)', bg: 'rgba(251, 191, 36, 0.5)' },
-  active:   { label: 'EN CURSO',     color: '#10b981', bg: 'rgba(16, 185, 129, 0.5)' },
-  done:     { label: 'FINALIZADO',   color: '#fff', bg: 'rgba(255, 255, 255, 0.2)' },
+  planning: { label: 'PLANIFICANDO', color: '#00d4ff' }, // Azul Fluorescente
+  active:   { label: 'EN CURSO',     color: '#39ff14' }, // Verde Fluorescente
+  done:     { label: 'FINALIZADO',   color: '#fff' },
 }
 
 export default function Dashboard() {
@@ -91,7 +91,7 @@ export default function Dashboard() {
         <header className="dashboard-header fade-in-up">
           <div className="dashboard-title-group">
             <h1 className="dashboard-title text-gradient">Mis Viajes</h1>
-            <p className="dashboard-subtitle">Gestiona tus próximas aventuras</p>
+            <p className="dashboard-subtitle">Tus próximas aventuras</p>
           </div>
           <button className="btn-add-vibrant" onClick={() => setShowModal(true)}>
             <Plus size={22} /> Crear Nuevo Viaje
@@ -107,7 +107,7 @@ export default function Dashboard() {
                 <div className="hero-icon-glow"><Globe size={40} color="white" /></div>
                 <h3>¿Cuál será tu próxima aventura?</h3>
                 <button className="btn-add-vibrant" style={{ marginTop: '2.5rem' }} onClick={() => setShowModal(true)}>
-                   Comenzar ahora
+                   Comenzar
                 </button>
               </div>
             ) : trips.map(trip => {
@@ -119,13 +119,12 @@ export default function Dashboard() {
                       <img src={trip.cover_url} alt={trip.name} />
                     ) : (
                       <div className="trip-card-cover-placeholder">
-                        <Plane size={70} color="rgba(255,255,255,0.1)" />
+                        <Plane size={70} color="rgba(255,255,255,0.15)" />
                       </div>
                     )}
                     <div className="trip-card-status-badge" style={{ 
                       color: status.color, 
-                      borderColor: status.color,
-                      background: status.bg
+                      borderColor: status.color
                     }}>
                       {status.label}
                     </div>
@@ -164,7 +163,7 @@ export default function Dashboard() {
           <form onSubmit={createTrip} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">Nombre del viaje</label>
-              <input type="text" className="form-input" required value={newTrip.name} onChange={e => setNewTrip(t => ({ ...t, name: e.target.value }))} placeholder="Ej. Escapada a París" />
+              <input type="text" className="form-input" required value={newTrip.name} onChange={e => setNewTrip(t => ({ ...t, name: e.target.value }))} />
             </div>
             <div className="form-group">
               <label className="form-label">Destino</label>
@@ -181,7 +180,7 @@ export default function Dashboard() {
               </div>
             </div>
             <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }}>
-              Confirmar Viaje
+              Confirmar
             </button>
           </form>
         </Modal>
