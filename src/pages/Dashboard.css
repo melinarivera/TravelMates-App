@@ -93,7 +93,9 @@
   gap: 3rem;
 }
 
-.dashboard-section {}
+.dashboard-section {
+  position: relative;
+}
 
 .dashboard-section-title {
   display: flex;
@@ -140,7 +142,7 @@
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
 
-.badge-sun { background: var(--primary-lt); color: var(--primary-dk); }
+.badge-sun { background: var(--sun-lt); color: var(--sun-dk); }
 .badge-sky { background: var(--sky-lt); color: var(--sky-dk); }
 .badge-slate { background: var(--gray-100); color: var(--gray-600); }
 
