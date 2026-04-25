@@ -48,32 +48,25 @@ export default function AuthPage() {
           <p className="auth-brand-sub">La forma más sencilla de organizar viajes inolvidables con amigos y familia.</p>
 
           <div className="auth-features">
-            <div className="auth-feature fade-in-up delay-1">
+            <div className="auth-feature">
               <div className="auth-feature-icon-box"><Calendar size={20} /></div>
               <div>
                 <strong>Planificación Grupal</strong>
                 <p>Crea itinerarios donde todos pueden proponer y votar actividades.</p>
               </div>
             </div>
-            <div className="auth-feature fade-in-up delay-2">
+            <div className="auth-feature">
               <div className="auth-feature-icon-box"><DollarSign size={20} /></div>
               <div>
                 <strong>Cuentas Claras</strong>
                 <p>Registra gastos y deja que la app calcule quién debe cuánto a quién.</p>
               </div>
             </div>
-            <div className="auth-feature fade-in-up delay-3">
+            <div className="auth-feature">
               <div className="auth-feature-icon-box"><Map size={20} /></div>
               <div>
                 <strong>Lugares Favoritos</strong>
                 <p>Guarda puntos de interés en el mapa para no perderte nada.</p>
-              </div>
-            </div>
-            <div className="auth-feature fade-in-up delay-4">
-              <div className="auth-feature-icon-box"><MessageCircle size={20} /></div>
-              <div>
-                <strong>Todo en un solo lugar</strong>
-                <p>Chat integrado y toda la información del viaje siempre a mano.</p>
               </div>
             </div>
           </div>
@@ -82,15 +75,15 @@ export default function AuthPage() {
         <div className="auth-form-panel glass-card">
           <div className="auth-tabs">
             <button className={`auth-tab ${mode === 'login' ? 'active' : ''}`} onClick={() => { setMode('login'); setError('') }}>
-              Iniciar Sesión
+              Entrar
             </button>
             <button className={`auth-tab ${mode === 'register' ? 'active' : ''}`} onClick={() => { setMode('register'); setError('') }}>
-              Registrarse
+              Registro
             </button>
           </div>
 
           <h2 className="auth-form-title">{mode === 'login' ? '¡Bienvenido!' : 'Crea tu cuenta'}</h2>
-          <p className="auth-form-sub">{mode === 'login' ? 'Accede a tus planes de viaje' : 'Comienza tu aventura hoy mismo'}</p>
+          <p className="auth-form-sub">{mode === 'login' ? 'Accede a tus planes' : 'Comienza tu aventura hoy'}</p>
 
           {error && (
             <div className={`auth-alert ${error.includes('!') ? 'auth-alert-success' : 'auth-alert-error'}`}>
@@ -100,11 +93,11 @@ export default function AuthPage() {
 
           <form onSubmit={handleSubmit} className="auth-form">
             {mode === 'register' && (
-              <div className="form-group fade-in-up">
-                <label className="form-label">Nombre completo</label>
+              <div className="form-group">
+                <label className="form-label">Nombre y Apellido</label>
                 <div className="form-input-with-icon">
                   <User size={18} className="input-icon" />
-                  <input type="text" className="form-input" placeholder="Ej. Melina Rivera" value={name} onChange={e => setName(e.target.value)} required />
+                  <input type="text" className="form-input" placeholder="Nombre Apellido" value={name} onChange={e => setName(e.target.value)} required />
                 </div>
               </div>
             )}
@@ -113,7 +106,7 @@ export default function AuthPage() {
               <label className="form-label">Correo electrónico</label>
               <div className="form-input-with-icon">
                 <Mail size={18} className="input-icon" />
-                <input type="email" className="form-input" placeholder="tu@email.com" value={email} onChange={e => setEmail(e.target.value)} required />
+                <input type="email" className="form-input" placeholder="email@hola.com" value={email} onChange={e => setEmail(e.target.value)} required />
               </div>
             </div>
 
@@ -121,12 +114,12 @@ export default function AuthPage() {
               <label className="form-label">Contraseña</label>
               <div className="form-input-with-icon">
                 <Lock size={18} className="input-icon" />
-                <input type="password" className="form-input" placeholder="Mínimo 6 caracteres" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
+                <input type="password" className="form-input" placeholder="••••••••" value={password} onChange={e => setPassword(e.target.value)} required minLength={6} />
               </div>
             </div>
 
-            <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%' }}>
-              {loading ? <div className="spinner" /> : (mode === 'login' ? 'Entrar' : 'Registrarse')}
+            <button type="submit" className="btn btn-primary btn-lg" disabled={loading} style={{ width: '100%', marginTop: '1rem' }}>
+              {loading ? <div className="spinner" /> : (mode === 'login' ? 'Iniciar Sesión' : 'Registrarse')}
             </button>
           </form>
         </div>
