@@ -8,14 +8,14 @@ import { UserPlus, Trash2, Crown, User, Mail, CheckCircle, Clock, XCircle, Users
 import './ModulePage.css'
 
 const ROLE_MAP = {
-  titular:  { label: 'Titular',  icon: <Crown size={14} />,  color: 'var(--sun-dk)' },
-  invitado: { label: 'Invitado', icon: <User size={14} />,   color: 'var(--sky-dk)' },
+  titular:  { label: 'Titular',  icon: <Crown size={14} />,  color: 'var(--sun)' },
+  invitado: { label: 'Invitado', icon: <User size={14} />,   color: 'var(--accent)' },
 }
 
 const STATUS_MAP = {
   accepted: { label: 'Aceptado', icon: <CheckCircle size={14} />, color: 'var(--mint)' },
   pending:  { label: 'Pendiente', icon: <Clock size={14} />,      color: 'var(--sun)' },
-  rejected: { label: 'Rechazado', icon: <XCircle size={14} />,    color: 'var(--accent)' },
+  rejected: { label: 'Rechazado', icon: <XCircle size={14} />,    color: 'var(--coral)' },
 }
 
 export default function Members() {
@@ -36,17 +36,14 @@ export default function Members() {
     setLoading(true)
 
     try {
-      const { data: tripData, error: tripErr } = await supabase.from('trips').select('name, owner_id').eq('id', tripId).single()
-      if (tripErr) throw tripErr
+      const { data: tripData } = await supabase.from('trips').select('name, owner_id').eq('id', tripId).single()
       if (tripData) setTrip(tripData)
 
-      const { data, error: memErr } = await supabase
+      const { data } = await supabase
         .from('trip_members')
         .select('*, profile:profiles(full_name, avatar_url, email)')
         .eq('trip_id', tripId)
         .order('created_at')
-
-      if (memErr) throw memErr
 
       if (data) {
         setMembers(data)
@@ -66,7 +63,6 @@ export default function Members() {
     setInviting(true)
 
     try {
-      // 1. Check if user already exists in profiles
       const { data: profile } = await supabase
         .from('profiles')
         .select('id')
@@ -74,87 +70,42 @@ export default function Members() {
         .single()
 
       if (profile) {
-        // User exists, add by ID
-        const { error } = await supabase.from('trip_members').insert({
+        await supabase.from('trip_members').insert({
           trip_id: tripId,
           user_id: profile.id,
           role: 'invitado',
           status: 'pending',
         })
-        if (error) {
-          if (error.code === '23505') alert('Este usuario ya está en el viaje.')
-          else throw error
-        } else {
-          alert('¡Usuario añadido! Ahora debe aceptar la invitación.')
-        }
       } else {
-        // User doesn't exist, add by email (the trigger will link them later)
-        const { error } = await supabase.from('trip_members').insert({
+        await supabase.from('trip_members').insert({
           trip_id: tripId,
           invite_email: inviteEmail.trim().toLowerCase(),
           role: 'invitado',
           status: 'pending',
         })
-        if (error) {
-          if (error.code === '23505') alert('Ya hay una invitación pendiente para este email.')
-          else throw error
-        } else {
-          alert(`¡Invitación guardada! Cuando ${inviteEmail} se registre, aparecerá aquí automáticamente.`)
-        }
       }
       setInviteEmail('')
       setShowInvite(false)
       fetchData()
     } catch (err) {
       console.error('Error inviting:', err)
-      alert(`Error al enviar la invitación: ${err.message || 'Error desconocido'}`)
     } finally {
       setInviting(false)
     }
   }
 
   async function removeMember(memberId) {
-    if (!confirm('¿Eliminar este integrante del viaje?')) return
+    if (!confirm('¿Eliminar integrante?')) return
     await supabase.from('trip_members').delete().eq('id', memberId)
     fetchData()
   }
 
   async function transferTitle(targetUserId) {
-    if (!confirm('¿Seguro que quieres transferir la titularidad del viaje? Dejarás de ser el titular.')) return
-    
-    setLoading(true)
-    try {
-      // 1. Update target user to titular
-      const { error: err1 } = await supabase
-        .from('trip_members')
-        .update({ role: 'titular' })
-        .eq('trip_id', tripId)
-        .eq('user_id', targetUserId)
-      if (err1) throw err1
-
-      // 2. Update current user to invitado
-      const { error: err2 } = await supabase
-        .from('trip_members')
-        .update({ role: 'invitado' })
-        .eq('trip_id', tripId)
-        .eq('user_id', user.id)
-      if (err2) throw err2
-
-      // 3. Update trips table owner_id
-      const { error: err3 } = await supabase
-        .from('trips')
-        .update({ owner_id: targetUserId })
-        .eq('id', tripId)
-      if (err3) throw err3
-
-      alert('¡Titularidad transferida con éxito!')
-      fetchData()
-    } catch (err) {
-      console.error('Error transferring title:', err)
-      alert('Error al transferir la titularidad.')
-    } finally {
-      setLoading(false)
-    }
+    if (!confirm('¿Transferir titularidad?')) return
+    await supabase.from('trip_members').update({ role: 'titular' }).eq('trip_id', tripId).eq('user_id', targetUserId)
+    await supabase.from('trip_members').update({ role: 'invitado' }).eq('trip_id', tripId).eq('user_id', user.id)
+    await supabase.from('trips').update({ owner_id: targetUserId }).eq('id', tripId)
+    fetchData()
   }
 
   const isTitular = myRole === 'titular' || trip?.owner_id === user.id
@@ -163,73 +114,57 @@ export default function Members() {
     <div className="module-page">
       <Navbar tripName={trip?.name} />
       <div className="container module-body">
-        <div className="module-header fade-in-up">
-          <div className="module-header-icon" style={{ background: 'var(--grad-members)' }}>
-            <Users size={32} color="white" />
-          </div>
-          <div>
-            <h1 className="module-title">Integrantes</h1>
-            <p className="module-subtitle">{members.length} personas en este viaje</p>
-          </div>
-          {isTitular && (
-            <button className="btn btn-primary" onClick={() => setShowInvite(true)} style={{ marginLeft: 'auto' }} id="invite-member-btn">
-              <UserPlus size={18} /> Invitar
-            </button>
-          )}
-        </div>
+        <header className="module-header fade-in-up">
+           <div className="module-title-group">
+              <div className="module-icon-box">
+                <Users size={32} />
+              </div>
+              <div>
+                <h1 className="module-title text-gradient">Integrantes</h1>
+                <p className="module-subtitle">{members.length} viajeros confirmados</p>
+              </div>
+           </div>
+           {isTitular && (
+             <button className="btn btn-primary" onClick={() => setShowInvite(true)}>
+               <UserPlus size={18} /> Invitar amigo
+             </button>
+           )}
+        </header>
 
-        {loading ? (
-          <div className="members-loading">
-            {[1,2,3].map(i => <div key={i} className="member-skeleton skeleton" />)}
-          </div>
-        ) : (
-          <div className="members-list fade-in-up delay-1">
+        {loading ? <div className="spinner" /> : (
+          <div className="items-list fade-in-up delay-1">
             {members.map(member => {
               const role = ROLE_MAP[member.role] || ROLE_MAP.invitado
               const status = STATUS_MAP[member.status] || STATUS_MAP.pending
-              const initials = member.profile?.full_name?.slice(0, 2).toUpperCase()
-                || member.profile?.email?.slice(0, 2).toUpperCase()
-                || member.invite_email?.slice(0, 2).toUpperCase()
-                || '??'
+              const initials = (member.profile?.full_name || member.profile?.email || member.invite_email)?.slice(0, 2).toUpperCase() || '??'
               const isMe = member.user_id === user.id
 
               return (
-                <div key={member.id} className={`member-card glass ${isMe ? 'member-card-me' : ''}`}>
+                <div key={member.id} className="item-row glass-card">
                   <div className="avatar avatar-lg">{initials}</div>
-                  <div className="member-info">
-                    <div className="member-name">
-                      {member.profile?.full_name || member.profile?.email || member.invite_email || 'Usuario sin nombre'}
-                      {isMe && <span className="member-you-tag">Tú</span>}
+                  <div className="expense-info">
+                    <div className="expense-desc">
+                       {member.profile?.full_name || member.profile?.email || member.invite_email}
+                       {isMe && <span className="badge badge-accent" style={{ marginLeft: '1rem' }}>Tú</span>}
                     </div>
-                    <div className="member-tags">
-                      <span className="member-tag" style={{ color: role.color, background: `${role.color}22` }}>
-                        {role.icon} {role.label}
-                      </span>
-                      <span className="member-tag" style={{ color: status.color, background: `${status.color}22` }}>
-                        {status.icon} {status.label}
-                      </span>
+                    <div className="expense-meta">
+                       <span className="badge" style={{ color: role.color, borderColor: role.color }}>{role.label}</span>
+                       <span className="badge" style={{ color: status.color, borderColor: status.color }}>{status.label}</span>
                     </div>
                   </div>
-                   {isTitular && !isMe && member.status === 'accepted' && (
-                    <div className="member-actions" style={{ display: 'flex', gap: '0.5rem' }}>
-                      <button
-                        className="btn btn-ghost btn-sm"
-                        onClick={() => transferTitle(member.user_id)}
-                        title="Hacer titular"
-                        style={{ color: 'var(--sun)' }}
-                      >
-                        <Crown size={16} /> <span className="hide-mobile">Hacer titular</span>
-                      </button>
-                      <button
-                        className="btn btn-ghost btn-icon btn-sm"
-                        onClick={() => removeMember(member.id)}
-                        title="Eliminar integrante"
-                        style={{ color: 'var(--accent)' }}
-                      >
-                        <Trash2 size={16} />
-                      </button>
-                    </div>
-                  )}
+                  
+                  <div className="activity-actions">
+                     {isTitular && !isMe && member.status === 'accepted' && (
+                       <button className="btn btn-ghost btn-icon" onClick={() => transferTitle(member.user_id)} title="Hacer titular">
+                         <Crown size={20} color="var(--sun)" />
+                       </button>
+                     )}
+                     {isTitular && !isMe && (
+                       <button className="btn btn-ghost btn-icon" onClick={() => removeMember(member.id)} style={{ color: 'var(--coral)' }}>
+                         <Trash2 size={20} />
+                       </button>
+                     )}
+                  </div>
                 </div>
               )
             })}
@@ -238,31 +173,18 @@ export default function Members() {
       </div>
 
       {showInvite && (
-        <Modal title="👥 Invitar integrante" onClose={() => setShowInvite(false)}>
-          <form onSubmit={inviteMember} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+        <Modal title="Invitar viajero" onClose={() => setShowInvite(false)}>
+          <form onSubmit={inviteMember} className="create-trip-form">
             <div className="form-group">
-              <label className="form-label" htmlFor="invite-email">Email del integrante</label>
-              <div className="form-input-icon">
+              <label className="form-label">Email del amigo</label>
+              <div className="form-input-with-icon">
                 <Mail size={18} className="input-icon" />
-                <input
-                  id="invite-email"
-                  type="email"
-                  className="form-input"
-                  placeholder="amigo@email.com"
-                  value={inviteEmail}
-                  onChange={e => setInviteEmail(e.target.value)}
-                  required
-                />
+                <input type="email" className="form-input" placeholder="ejemplo@email.com" value={inviteEmail} onChange={e => setInviteEmail(e.target.value)} required />
               </div>
             </div>
-            <p style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>
-              El integrante recibirá un email para unirse al viaje.
-            </p>
             <div className="modal-actions">
               <button type="button" className="btn btn-ghost" onClick={() => setShowInvite(false)}>Cancelar</button>
-              <button type="submit" className="btn btn-primary" disabled={inviting} id="confirm-invite-btn">
-                {inviting ? <div className="spinner" /> : <><UserPlus size={16} /> Invitar</>}
-              </button>
+              <button type="submit" className="btn btn-primary" disabled={inviting}>Invitar</button>
             </div>
           </form>
         </Modal>
