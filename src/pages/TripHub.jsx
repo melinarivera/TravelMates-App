@@ -70,7 +70,8 @@ export default function TripHub() {
     const sub = supabase
       .channel(`chat:${tripId}`)
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'chat_messages', filter: `trip_id=eq.${tripId}` }, (payload) => {
-        setMessages(prev => [...prev, payload.new])
+        // Optimistically fetch to get the profile name or just refresh
+        fetchChat()
       })
       .subscribe()
     return () => supabase.removeChannel(sub)
@@ -95,7 +96,9 @@ export default function TripHub() {
       .select('*', { count: 'exact', head: true })
       .eq('trip_id', tripId)
     setMemberCount(count || 0)
-   async function fetchChat() {
+  }
+
+  async function fetchChat() {
     const { data } = await supabase
       .from('chat_messages')
       .select('*, profile:profiles(full_name)')
@@ -292,26 +295,6 @@ export default function TripHub() {
               })
             )}
           </div>
-
-          <form onSubmit={sendMessage} className="hub-chat-form">
-            <input
-              type="text"
-              className="form-input hub-chat-input"
-              placeholder="Escribe un mensaje..."
-              value={chatMsg}
-              onChange={e => setChatMsg(e.target.value)}
-              id="chat-input"
-            />
-            <button type="submit" className="btn btn-primary btn-icon" disabled={sendingMsg || !chatMsg.trim()} id="chat-send-btn">
-              <Send size={18} />
-            </button>
-          </form>
-        </div>
-      </div>
-    </div>
-  )
-}
-  </div>
 
           <form onSubmit={sendMessage} className="hub-chat-form">
             <input
