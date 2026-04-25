@@ -25,9 +25,9 @@ export default function Itinerary() {
     setLoading(true)
     const { data: acts } = await supabase
       .from('itinerary_activities')
-      .select('*, activity_votes(vote)')
+      .select('*, activity_votes(*)')
       .eq('trip_id', tripId)
-      .order('day_date')
+      .order('time')
 
     if (acts) {
       const grouped = acts.reduce((acc, act) => {
@@ -61,7 +61,11 @@ export default function Itinerary() {
   }
 
   async function vote(activityId, voteType) {
-    await supabase.from('activity_votes').upsert({ activity_id: activityId, user_id: user.id, vote: voteType })
+    await supabase.from('activity_votes').upsert({ 
+      activity_id: activityId, 
+      user_id: user.id, 
+      vote: voteType 
+    }, { onConflict: 'activity_id, user_id' })
     fetchData()
   }
 
@@ -79,46 +83,74 @@ export default function Itinerary() {
               <p className="module-subtitle">Planes y propuestas</p>
             </div>
           </div>
-          {/* BOTÓN VERDE ARRIBA */}
-          <button className="btn btn-add-vibrant" onClick={() => setShowModal(true)}>
+          <button className="btn-add-vibrant" onClick={() => setShowModal(true)}>
             <Plus size={22} /> Nueva Propuesta
           </button>
         </header>
 
-        {loading ? <div className="spinner" /> : (
-          <div className="itinerary-list">
-            {days.map(([date, acts]) => (
+        {loading ? <div className="page-loading"><div className="spinner" /></div> : (
+          <div className="itinerary-list" style={{ marginTop: '3rem' }}>
+            {days.length === 0 ? (
+              <div className="glass-card" style={{ padding: '4rem', textAlign: 'center', opacity: 0.6 }}>
+                 Aún no hay propuestas. ¡Sé el primero en proponer algo!
+              </div>
+            ) : days.map(([date, acts]) => (
               <section key={date} className="itinerary-day-section fade-in-up">
                 <h2 className="itinerary-day-title">
-                  {date === 'Sin fecha' ? date : new Date(date).toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' })}
+                  {date === 'Sin fecha' ? date : new Date(date + 'T12:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'short' })}
                 </h2>
                 <div className="items-list">
-                  {acts.map(act => (
-                    <div key={act.id} className="activity-card glass-card">
-                      <div className="activity-time">
-                        <Clock size={14} /> {act.time ? act.time.slice(0, 5) : 'Pendiente'}
-                      </div>
-                      <div className="activity-content">
+                  {acts.map(act => {
+                    const myVote = act.activity_votes?.find(v => v.user_id === user.id)?.vote
+                    const upVotes = act.activity_votes?.filter(v => v.vote === 'up').length || 0
+                    const downVotes = act.activity_votes?.filter(v => v.vote === 'down').length || 0
+
+                    return (
+                      <div key={act.id} className="activity-card glass-card">
+                        <div className="activity-top">
+                          <div className="activity-time-badge">
+                            <Clock size={16} /> {act.time ? act.time.slice(0, 5) : 'Pendiente'}
+                          </div>
+                          {act.location && (
+                            <div className="expense-subtitle" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <MapPin size={14} /> {act.location}
+                            </div>
+                          )}
+                        </div>
+
                         <h3 className="activity-title">{act.title}</h3>
-                        {act.location && <p className="activity-loc"><MapPin size={12} /> {act.location}</p>}
-                      </div>
-                      <div className="activity-actions">
-                         <div className="vote-btns">
-                            <button className="btn btn-sm vote-btn-up" onClick={() => vote(act.id, 'up')}>
-                              <ThumbsUp size={16} /> <span>{act.activity_votes?.filter(v => v.vote === 'up').length || 0}</span>
+                        
+                        {act.description && (
+                          <p className="expense-subtitle" style={{ marginTop: '-0.5rem', opacity: 0.7 }}>
+                            {act.description}
+                          </p>
+                        )}
+
+                        <div className="activity-bottom">
+                          <div className="vote-btns">
+                            <button 
+                              className={`vote-btn vote-btn-up ${myVote === 'up' ? 'voted' : ''}`} 
+                              onClick={() => vote(act.id, 'up')}
+                            >
+                              <ThumbsUp size={18} /> <span className="vote-count">{upVotes}</span>
                             </button>
-                            <button className="btn btn-sm vote-btn-down" onClick={() => vote(act.id, 'down')}>
-                              <ThumbsDown size={16} /> <span>{act.activity_votes?.filter(v => v.vote === 'down').length || 0}</span>
+                            <button 
+                              className={`vote-btn vote-btn-down ${myVote === 'down' ? 'voted' : ''}`} 
+                              onClick={() => vote(act.id, 'down')}
+                            >
+                              <ThumbsDown size={18} /> <span className="vote-count">{downVotes}</span>
                             </button>
-                         </div>
-                         {isTitular && (
-                           <button className="btn-delete-vibrant" onClick={() => deleteActivity(act.id)}>
-                             <Trash2 size={20} />
-                           </button>
-                         )}
+                          </div>
+                          
+                          {isTitular && (
+                            <button className="btn-delete-vibrant" onClick={() => deleteActivity(act.id)}>
+                              <Trash2 size={20} />
+                            </button>
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </section>
             ))}
@@ -127,11 +159,11 @@ export default function Itinerary() {
       </div>
 
       {showModal && (
-        <Modal title="Propuesta Verde" onClose={() => setShowModal(false)}>
+        <Modal title="Nueva Propuesta" onClose={() => setShowModal(false)}>
           <form onSubmit={saveActivity} className="create-trip-form">
             <div className="form-group">
-              <label className="form-label">¿Qué propones?</label>
-              <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+              <label className="form-label">¿Qué plan propones?</label>
+              <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Ej: Cena en la playa" />
             </div>
             <div className="grid-2">
               <div className="form-group">
@@ -139,15 +171,17 @@ export default function Itinerary() {
                 <input type="date" className="form-input" value={form.day_date} onChange={e => setForm(f => ({ ...f, day_date: e.target.value }))} />
               </div>
               <div className="form-group">
-                <label className="form-label">Hora</label>
+                <label className="form-label">Hora (opcional)</label>
                 <input type="time" className="form-input" value={form.time} onChange={e => setForm(f => ({ ...f, time: e.target.value }))} />
               </div>
             </div>
-            <div className="modal-actions">
-              <button type="submit" className="btn btn-add-vibrant" disabled={saving} style={{ width: '100%', justifyContent: 'center' }}>
-                <Plus size={20} /> Guardar Propuesta Verde
-              </button>
+            <div className="form-group">
+              <label className="form-label">Lugar / Ubicación</label>
+              <input type="text" className="form-input" value={form.location} onChange={e => setForm(f => ({ ...f, location: e.target.value }))} placeholder="Nombre del sitio..." />
             </div>
+            <button type="submit" className="btn-add-vibrant" disabled={saving} style={{ width: '100%', marginTop: '1rem', justifyContent: 'center' }}>
+              Guardar Propuesta
+            </button>
           </form>
         </Modal>
       )}
