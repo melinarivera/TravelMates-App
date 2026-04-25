@@ -6,7 +6,7 @@ import Navbar from '../components/layout/Navbar'
 import {
   Users, DollarSign, Calendar, Map, MessageCircle,
   Settings, ArrowLeft, Edit3, Check, X, Send,
-  ChevronRight, Clock, MapPin
+  ChevronRight, Clock, MapPin, Plus
 } from 'lucide-react'
 import './TripHub.css'
 
@@ -193,7 +193,18 @@ export default function TripHub() {
                   {trip.end_date && ` – ${new Date(trip.end_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}`}
                 </span>
               )}
-              <span className="hub-meta-item"><Users size={14} />{memberCount} integrantes</span>
+              <div className="hub-meta-item-group">
+                <span className="hub-meta-item"><Users size={14} />{memberCount} integrantes</span>
+                {isTitular && (
+                  <button 
+                    className="btn btn-ghost btn-icon btn-sm hub-add-member-quick" 
+                    onClick={() => navigate(`/trip/${tripId}/members`)}
+                    title="Añadir integrantes"
+                  >
+                    <Plus size={16} />
+                  </button>
+                )}
+              </div>
             </div>
 
             {trip?.description && <p className="hub-trip-desc">{trip.description}</p>}

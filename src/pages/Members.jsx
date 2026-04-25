@@ -22,8 +22,8 @@ export default function Members() {
   const { tripId } = useParams()
   const { user } = useAuth()
   const [members, setMembers] = useState([])
+  const [trip, setTrip] = useState(null)
   const [myRole, setMyRole] = useState('invitado')
-  const [tripName, setTripName] = useState('')
   const [loading, setLoading] = useState(true)
   const [showInvite, setShowInvite] = useState(false)
   const [inviteEmail, setInviteEmail] = useState('')
@@ -32,8 +32,8 @@ export default function Members() {
   useEffect(() => { fetchData() }, [tripId])
 
   async function fetchData() {
-    const { data: trip } = await supabase.from('trips').select('name').eq('id', tripId).single()
-    if (trip) setTripName(trip.name)
+    const { data: tripData } = await supabase.from('trips').select('name, owner_id').eq('id', tripId).single()
+    if (tripData) setTrip(tripData)
 
     const { data } = await supabase
       .from('trip_members')
@@ -86,11 +86,11 @@ export default function Members() {
     fetchData()
   }
 
-  const isTitular = myRole === 'titular'
+  const isTitular = myRole === 'titular' || trip?.owner_id === user.id
 
   return (
     <div className="module-page">
-      <Navbar tripName={tripName} />
+      <Navbar tripName={trip?.name} />
       <div className="container module-body">
         <div className="module-header fade-in-up">
           <div className="module-header-icon" style={{ background: 'var(--grad-members)' }}>
