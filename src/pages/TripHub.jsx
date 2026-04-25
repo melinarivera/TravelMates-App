@@ -199,6 +199,7 @@ export default function TripHub() {
               )
             )}
           </div>
+        </div>
       </div>
     </div>
   )
