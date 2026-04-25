@@ -120,7 +120,7 @@ export default function Expenses() {
           </div>
           <div className="stat-card-premium stat-card-perperson">
             <span className="stat-card-label">Cada uno paga</span>
-            <span className="stat-card-value">{perPerson.toFixed(2)}€</span>
+            <span className="stat-card-value">{(perPerson || 0).toFixed(2)}€</span>
             <Users size={80} className="stat-card-icon" />
           </div>
         </section>
