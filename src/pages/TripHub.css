@@ -141,10 +141,18 @@
   flex-wrap: wrap;
 }
 
-/* RESPONSIVE */
 @media (max-width: 768px) {
+  .hub-hero-header { min-height: 400px; padding: 3rem 0; }
   .hub-trip-name { font-size: 2.8rem; }
   .hub-title-row { flex-wrap: wrap; }
   .hub-meta-row { flex-direction: column; align-items: flex-start; gap: 1rem; }
   .hub-module-card { padding: 1.5rem; }
+  
+  /* OCULTAR MÓDULOS EN MÓVIL PORQUE YA ESTÁN EN EL NAVBAR */
+  .hub-modules { display: none !important; }
+  
+  /* ESPACIO EXTRA PARA QUE EL CANAL SE VEA COMPLETO */
+  .hub-body { padding-bottom: 250px !important; }
+  
+  .hub-channel-card { margin-top: 2rem; }
 }
