@@ -32,23 +32,20 @@
 .navbar-logo-icon {
   width: 36px;
   height: 36px;
-  background: var(--grad-hero);
+  background: var(--primary);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  box-shadow: var(--shadow-glow-coral);
+  box-shadow: var(--shadow-glow-accent);
 }
 
 .navbar-logo-text {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 1.2rem;
-  background: var(--grad-hero);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-dk);
 }
 
 .navbar-breadcrumb {
@@ -91,13 +88,13 @@
 }
 
 .navbar-link:hover {
-  background: var(--gray-50);
-  color: var(--coral);
+  background: var(--primary-lt);
+  color: var(--primary);
 }
 
 .navbar-link.active {
-  background: rgba(255,107,107,0.12);
-  color: var(--coral);
+  background: var(--primary-lt);
+  color: var(--primary);
 }
 
 .navbar-actions {
@@ -112,7 +109,7 @@
 }
 
 .navbar-logout { color: var(--gray-400); }
-.navbar-logout:hover { color: var(--coral) !important; }
+.navbar-logout:hover { color: var(--accent) !important; }
 
 /* Hamburger – always visible */
 .navbar-hamburger { display: flex; }
@@ -157,7 +154,7 @@
 }
 
 .navbar-mobile-link:hover { background: var(--gray-50); }
-.navbar-mobile-link.active { background: rgba(255,107,107,0.1); color: var(--coral); }
+.navbar-mobile-link.active { background: var(--primary-lt); color: var(--primary); }
 
 .navbar-mobile-divider {
   height: 1px;

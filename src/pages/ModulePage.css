@@ -33,10 +33,7 @@
 
 .module-title {
   font-size: clamp(1.4rem, 3vw, 1.8rem);
-  background: var(--grad-hero);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-dk);
   margin: 0;
 }
 
@@ -59,7 +56,7 @@
   transition: transform var(--trans-spring), box-shadow var(--trans-fast);
 }
 .member-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
-.member-card-me { border-left: 3px solid var(--coral); }
+.member-card-me { border-left: 3px solid var(--accent); }
 
 .member-info { flex: 1; min-width: 0; }
 
@@ -76,10 +73,7 @@
   font-size: 0.72rem;
   font-weight: 800;
   text-transform: uppercase;
-  background: var(--grad-hero);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--accent);
 }
 
 .member-tags { display: flex; gap: 0.5rem; flex-wrap: wrap; }
@@ -152,7 +146,7 @@
   text-align: right;
 }
 .balance-net.positive { color: var(--mint); }
-.balance-net.negative { color: var(--coral); }
+.balance-net.negative { color: var(--accent); }
 
 /* Expense items */
 .expenses-list { display: flex; flex-direction: column; gap: 0.75rem; }
@@ -276,9 +270,9 @@
   font-family: inherit;
 }
 .vote-up  { color: var(--mint); }
-.vote-down { color: var(--coral); }
-.vote-up:hover  { background: rgba(107,203,119,0.15); }
-.vote-down:hover { background: rgba(255,107,107,0.15); }
+.vote-down { color: var(--accent); }
+.vote-up:hover  { background: rgba(5,150,105,0.1); }
+.vote-down:hover { background: rgba(79, 70, 229, 0.1); }
 
 /* ============================================================
    MAP / POI
@@ -328,10 +322,13 @@
    RESPONSIVE
    ============================================================ */
 @media (max-width: 640px) {
+  .module-body { padding-top: 1.5rem; gap: 1rem; }
+  .module-header { flex-direction: column; align-items: flex-start; gap: 1rem; }
+  .module-header .btn { margin-left: 0 !important; width: 100%; order: 3; }
   .expenses-stats { grid-template-columns: 1fr; }
-  .module-header { gap: 0.75rem; }
-  .module-header .btn { margin-left: 0 !important; width: 100%; justify-content: center; }
-  .module-header { flex-direction: column; align-items: flex-start; }
+  .expense-stat { padding: 1rem; }
+  .member-card, .expense-item, .activity-card, .poi-card { padding: 0.85rem 1rem; }
+  .poi-actions, .activity-actions { flex-wrap: wrap; justify-content: flex-end; }
 }
 
 @media (max-width: 768px) {

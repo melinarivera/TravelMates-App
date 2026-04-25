@@ -50,7 +50,7 @@ export default function Navbar({ tripName }) {
             <div className="navbar-logo-icon">
               <Plane size={20} />
             </div>
-            <span className="navbar-logo-text">TripMates</span>
+            <span className="navbar-logo-text">TravelMates</span>
           </Link>
 
           {/* Breadcrumb in trip pages */}
@@ -132,7 +132,7 @@ export default function Navbar({ tripName }) {
 
           <div className="navbar-mobile-divider" />
 
-          <button className="navbar-mobile-link" onClick={handleSignOut} style={{ color: 'var(--coral)' }}>
+          <button className="navbar-mobile-link" onClick={handleSignOut} style={{ color: 'var(--accent)' }}>
             <LogOut size={18} />
             <span>Cerrar sesión</span>
           </button>

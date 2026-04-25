@@ -21,7 +21,7 @@
   font-size: 0.9rem;
   gap: 0.4rem;
 }
-.hub-back:hover { color: var(--coral); }
+.hub-back:hover { color: var(--accent); }
 
 /* Trip header card */
 .hub-header {
@@ -44,10 +44,7 @@
 
 .hub-trip-name {
   font-size: clamp(1.5rem, 4vw, 2rem);
-  background: var(--grad-hero);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--primary-dk);
   margin: 0;
 }
 
@@ -83,14 +80,14 @@
 }
 
 .hub-add-member-quick {
-  color: var(--coral) !important;
-  background: rgba(255,107,107,0.1) !important;
+  color: var(--accent) !important;
+  background: var(--accent-lt) !important;
   border-radius: var(--radius-full) !important;
   padding: 0.4rem !important;
   transition: all var(--trans-fast) !important;
 }
 .hub-add-member-quick:hover {
-  background: var(--coral) !important;
+  background: var(--accent) !important;
   color: var(--white) !important;
   transform: scale(1.1);
 }
@@ -211,7 +208,7 @@
   transition: transform var(--trans-fast);
 }
 .hub-module-card:hover .hub-module-arrow {
-  color: var(--coral);
+  color: var(--accent);
   transform: translateX(4px);
 }
 
@@ -283,7 +280,7 @@
   color: var(--gray-900);
 }
 .chat-message.mine .chat-bubble {
-  background: var(--grad-hero);
+  background: var(--primary);
   color: white;
 }
 
@@ -301,7 +298,9 @@
 .hub-chat-input { flex: 1; border-radius: var(--radius-full) !important; }
 
 @media (max-width: 640px) {
-  .hub-header { flex-direction: column; }
-  .hub-status-section { align-items: flex-start; }
+  .hub-header { padding: 1.25rem; }
+  .hub-status-section { align-items: flex-start; margin-top: 1rem; width: 100%; }
   .hub-modules { grid-template-columns: 1fr; }
+  .hub-chat { padding: 1rem; }
+  .hub-chat-messages { height: 250px; }
 }
