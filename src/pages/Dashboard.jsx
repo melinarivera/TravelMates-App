@@ -1,0 +1,297 @@
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../context/AuthContext'
+import { supabase } from '../lib/supabase'
+import Navbar from '../components/layout/Navbar'
+import Modal from '../components/ui/Modal'
+import {
+  Plus, Plane, MapPin, Calendar, Users,
+  Clock, ChevronRight, Search, Globe
+} from 'lucide-react'
+import './Dashboard.css'
+
+const STATUS_MAP = {
+  planning: { label: 'Planificando', badge: 'badge-planning', emoji: '🗓️', grad: 'var(--grad-planning)' },
+  active:   { label: 'En curso',     badge: 'badge-active',   emoji: '✈️', grad: 'var(--grad-active)' },
+  done:     { label: 'Finalizado',   badge: 'badge-done',     emoji: '🏁', grad: 'var(--grad-done)' },
+}
+
+export default function Dashboard() {
+  const { user } = useAuth()
+  const navigate = useNavigate()
+  const [trips, setTrips] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [search, setSearch] = useState('')
+  const [form, setForm] = useState({ name: '', destination: '', start_date: '', end_date: '', description: '' })
+  const [creating, setCreating] = useState(false)
+
+  useEffect(() => {
+    fetchTrips()
+  }, [user])
+
+  async function fetchTrips() {
+    setLoading(true)
+    const { data, error } = await supabase
+      .from('trip_members')
+      .select('trip:trips(*)')
+      .eq('user_id', user.id)
+      .order('created_at', { foreignTable: 'trips', ascending: false })
+
+    if (!error && data) {
+      setTrips(data.map(d => d.trip).filter(Boolean))
+    }
+    setLoading(false)
+  }
+
+  async function createTrip(e) {
+    e.preventDefault()
+    setCreating(true)
+    const { data: trip, error } = await supabase
+      .from('trips')
+      .insert({ ...form, owner_id: user.id, status: 'planning' })
+      .select()
+      .single()
+
+    if (!error && trip) {
+      await supabase.from('trip_members').insert({
+        trip_id: trip.id,
+        user_id: user.id,
+        role: 'titular',
+        status: 'accepted',
+      })
+      setShowModal(false)
+      setForm({ name: '', destination: '', start_date: '', end_date: '', description: '' })
+      fetchTrips()
+      navigate(`/trip/${trip.id}`)
+    }
+    setCreating(false)
+  }
+
+  const filtered = trips.filter(t =>
+    t.name?.toLowerCase().includes(search.toLowerCase()) ||
+    t.destination?.toLowerCase().includes(search.toLowerCase())
+  )
+
+  const myTrips = filtered.filter(t => t.owner_id === user.id)
+  const guestTrips = filtered.filter(t => t.owner_id !== user.id)
+
+  return (
+    <div className="dashboard-page">
+      <Navbar />
+
+      {/* Hero header */}
+      <section className="dashboard-hero">
+        <div className="dashboard-hero-bg" />
+        <div className="container">
+          <div className="dashboard-hero-content fade-in-up">
+            <div className="dashboard-greeting">
+              <span className="dashboard-wave">👋</span>
+              <div>
+                <h1 className="dashboard-title">¡Hola, aventurero!</h1>
+                <p className="dashboard-subtitle">Tus próximas aventuras te están esperando</p>
+              </div>
+            </div>
+            <button
+              className="btn btn-primary btn-lg"
+              onClick={() => setShowModal(true)}
+              id="create-trip-btn"
+            >
+              <Plus size={20} /> Nuevo viaje
+            </button>
+          </div>
+
+          {/* Search */}
+          <div className="dashboard-search fade-in-up delay-1">
+            <Search size={20} className="dashboard-search-icon" />
+            <input
+              type="search"
+              placeholder="Buscar destinos o viajes..."
+              className="dashboard-search-input"
+              value={search}
+              onChange={e => setSearch(e.target.value)}
+              id="dashboard-search"
+            />
+          </div>
+        </div>
+      </section>
+
+      <div className="container dashboard-body">
+        {loading ? (
+          <div className="dashboard-loading">
+            {[1,2,3].map(i => (
+              <div key={i} className="trip-card-skeleton">
+                <div className="skeleton" style={{ height: 160, borderRadius: 'var(--radius-lg)' }} />
+                <div style={{ padding: '1rem', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+                  <div className="skeleton" style={{ height: 20, width: '60%' }} />
+                  <div className="skeleton" style={{ height: 14, width: '40%' }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : filtered.length === 0 ? (
+          <div className="empty-state fade-in-up">
+            <div className="empty-state-icon">✈️</div>
+            <h3 className="empty-state-title">
+              {search ? 'No encontramos ese viaje' : '¡Crea tu primer viaje!'}
+            </h3>
+            <p className="empty-state-text">
+              {search
+                ? 'Prueba con otro término de búsqueda'
+                : 'Planifica una aventura increíble con tu familia o amigos'}
+            </p>
+            {!search && (
+              <button className="btn btn-primary" onClick={() => setShowModal(true)}>
+                <Plus size={18} /> Crear viaje
+              </button>
+            )}
+          </div>
+        ) : (
+          <>
+            {myTrips.length > 0 && (
+              <section className="dashboard-section fade-in-up">
+                <h2 className="dashboard-section-title">
+                  <Plane size={22} /> Mis viajes
+                </h2>
+                <div className="trips-grid">
+                  {myTrips.map((trip, i) => (
+                    <TripCard key={trip.id} trip={trip} index={i} onClick={() => navigate(`/trip/${trip.id}`)} />
+                  ))}
+                </div>
+              </section>
+            )}
+            {guestTrips.length > 0 && (
+              <section className="dashboard-section fade-in-up">
+                <h2 className="dashboard-section-title">
+                  <Globe size={22} /> Viajes donde participo
+                </h2>
+                <div className="trips-grid">
+                  {guestTrips.map((trip, i) => (
+                    <TripCard key={trip.id} trip={trip} index={i} onClick={() => navigate(`/trip/${trip.id}`)} />
+                  ))}
+                </div>
+              </section>
+            )}
+          </>
+        )}
+      </div>
+
+      {/* Create trip modal */}
+      {showModal && (
+        <Modal title="🌍 Nuevo Viaje" onClose={() => setShowModal(false)}>
+          <form onSubmit={createTrip} className="create-trip-form">
+            <div className="form-group">
+              <label className="form-label" htmlFor="trip-name">Nombre del viaje *</label>
+              <input
+                id="trip-name"
+                type="text"
+                className="form-input"
+                placeholder="Verano en la Costa ☀️"
+                value={form.name}
+                onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
+                required
+              />
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="trip-destination">Destino *</label>
+              <div className="form-input-icon">
+                <MapPin size={18} className="input-icon" />
+                <input
+                  id="trip-destination"
+                  type="text"
+                  className="form-input"
+                  placeholder="Barcelona, España"
+                  value={form.destination}
+                  onChange={e => setForm(f => ({ ...f, destination: e.target.value }))}
+                  required
+                />
+              </div>
+            </div>
+            <div className="grid-2" style={{ gap: '1rem' }}>
+              <div className="form-group">
+                <label className="form-label" htmlFor="trip-start">Fecha inicio</label>
+                <input
+                  id="trip-start"
+                  type="date"
+                  className="form-input"
+                  value={form.start_date}
+                  onChange={e => setForm(f => ({ ...f, start_date: e.target.value }))}
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label" htmlFor="trip-end">Fecha fin</label>
+                <input
+                  id="trip-end"
+                  type="date"
+                  className="form-input"
+                  value={form.end_date}
+                  onChange={e => setForm(f => ({ ...f, end_date: e.target.value }))}
+                />
+              </div>
+            </div>
+            <div className="form-group">
+              <label className="form-label" htmlFor="trip-desc">Descripción</label>
+              <textarea
+                id="trip-desc"
+                className="form-input form-textarea"
+                placeholder="¡Una aventura épica que nunca olvidaremos!"
+                value={form.description}
+                onChange={e => setForm(f => ({ ...f, description: e.target.value }))}
+                rows={3}
+              />
+            </div>
+            <div className="modal-actions">
+              <button type="button" className="btn btn-ghost" onClick={() => setShowModal(false)}>
+                Cancelar
+              </button>
+              <button type="submit" className="btn btn-primary" disabled={creating} id="confirm-create-trip">
+                {creating ? <div className="spinner" style={{ borderTopColor: 'white', borderColor: 'rgba(255,255,255,0.3)' }} /> : <><Plus size={18} /> Crear viaje</>}
+              </button>
+            </div>
+          </form>
+        </Modal>
+      )}
+    </div>
+  )
+}
+
+function TripCard({ trip, onClick, index }) {
+  const status = STATUS_MAP[trip.status] || STATUS_MAP.planning
+  const daysLeft = trip.start_date
+    ? Math.ceil((new Date(trip.start_date) - new Date()) / (1000 * 60 * 60 * 24))
+    : null
+
+  return (
+    <div
+      className={`trip-card fade-in-up delay-${Math.min(index + 1, 5)}`}
+      onClick={onClick}
+      id={`trip-card-${trip.id}`}
+    >
+      <div className="trip-card-cover" style={{ background: status.grad }}>
+        <div className="trip-card-emoji">{status.emoji}</div>
+        <div className={`badge ${status.badge} trip-card-badge`}>
+          {status.label}
+        </div>
+      </div>
+      <div className="trip-card-body">
+        <h3 className="trip-card-name">{trip.name}</h3>
+        <div className="trip-card-meta">
+          <MapPin size={14} />
+          <span>{trip.destination || 'Destino pendiente'}</span>
+        </div>
+        {trip.start_date && (
+          <div className="trip-card-meta">
+            <Calendar size={14} />
+            <span>{new Date(trip.start_date).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' })}</span>
+            {daysLeft > 0 && <span className="trip-days-left">en {daysLeft}d</span>}
+          </div>
+        )}
+        <div className="trip-card-footer">
+          <span className="trip-card-open">
+            Ver viaje <ChevronRight size={16} />
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}

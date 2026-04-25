@@ -1,0 +1,226 @@
+.dashboard-page { min-height: 100dvh; background: var(--off-white); }
+
+/* Hero */
+.dashboard-hero {
+  position: relative;
+  overflow: hidden;
+  padding: 3rem 0 2rem;
+  background: var(--white);
+  border-bottom: 1px solid var(--gray-100);
+}
+
+.dashboard-hero-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,107,107,0.06) 0%, rgba(168,85,247,0.06) 50%, rgba(78,205,196,0.06) 100%);
+  pointer-events: none;
+}
+
+.dashboard-hero-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-greeting {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.dashboard-wave {
+  font-size: 2.5rem;
+  animation: float 3s ease-in-out infinite;
+  display: block;
+}
+
+.dashboard-title {
+  font-size: clamp(1.6rem, 4vw, 2.2rem);
+  background: var(--grad-hero);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.dashboard-subtitle {
+  color: var(--gray-500);
+  font-size: 1rem;
+  margin-top: 0.25rem;
+}
+
+/* Search */
+.dashboard-search {
+  position: relative;
+  max-width: 520px;
+}
+
+.dashboard-search-icon {
+  position: absolute;
+  left: 1.1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--gray-400);
+  pointer-events: none;
+}
+
+.dashboard-search-input {
+  width: 100%;
+  padding: 0.9rem 1.1rem 0.9rem 3rem;
+  border: 2px solid var(--gray-100);
+  border-radius: var(--radius-full);
+  font-size: 0.95rem;
+  font-family: var(--font-body);
+  background: var(--white);
+  color: var(--gray-900);
+  transition: all var(--trans-fast);
+  box-shadow: var(--shadow-sm);
+}
+.dashboard-search-input:focus {
+  outline: none;
+  border-color: var(--coral);
+  box-shadow: 0 0 0 4px rgba(255,107,107,0.1);
+}
+
+/* Body */
+.dashboard-body {
+  padding-top: 2.5rem;
+  padding-bottom: 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.dashboard-section {}
+
+.dashboard-section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.2rem;
+  color: var(--gray-700);
+  margin-bottom: 1.25rem;
+}
+
+/* Trip grid */
+.trips-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+/* Trip card */
+.trip-card {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all var(--trans-spring);
+  border: 1px solid var(--gray-100);
+}
+.trip-card:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+.trip-card-cover {
+  height: 140px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trip-card-emoji {
+  font-size: 3.5rem;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
+  animation: float 4s ease-in-out infinite;
+}
+
+.trip-card-badge {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+}
+
+.trip-card-body {
+  padding: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trip-card-name {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trip-card-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--gray-500);
+}
+
+.trip-days-left {
+  margin-left: auto;
+  background: rgba(255,107,107,0.12);
+  color: var(--coral-dk);
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.15rem 0.6rem;
+  border-radius: var(--radius-full);
+}
+
+.trip-card-footer {
+  margin-top: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--gray-100);
+}
+
+.trip-card-open {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--coral);
+  transition: gap var(--trans-fast);
+}
+.trip-card:hover .trip-card-open { gap: 0.5rem; }
+
+/* Skeleton */
+.dashboard-loading {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.trip-card-skeleton {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  border: 1px solid var(--gray-100);
+}
+
+/* Modal actions */
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}
+
+.create-trip-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
