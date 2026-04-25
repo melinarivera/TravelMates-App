@@ -93,3 +93,103 @@
   box-shadow: 0 0 15px rgba(0, 212, 255, 0.3) !important;
   font-weight: 900 !important;
 }
+
+/* ESTILOS DE INTEGRANTES Y BADGES PREMIUM */
+
+.member-card {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1.5rem !important;
+  padding: 1.5rem 2.5rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.member-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+.member-name {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 0.2rem;
+}
+
+.member-tags {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+/* BADGE TITULAR (AMARILLO/MOSTAZA PREMIUM) */
+.badge-titular {
+  background: rgba(251, 191, 36, 0.1) !important;
+  color: #fbbf24 !important;
+  border: 1px solid #fbbf24 !important;
+  box-shadow: 0 0 10px rgba(251, 191, 36, 0.2) !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 12px !important;
+  font-size: 0.75rem !important;
+  font-weight: 900 !important;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* BADGE INVITADO (LIND MORADO CRISTAL) */
+.badge-guest {
+  background: rgba(188, 19, 254, 0.1) !important;
+  color: #bc13fe !important;
+  border: 1px solid #bc13fe !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 12px !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* BADGE ACEPTADO (VERDE NEÓN CRISTAL) */
+.badge-ok {
+  background: rgba(57, 255, 20, 0.1) !important;
+  color: #39ff14 !important;
+  border: 1px solid #39ff14 !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 12px !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+}
+
+/* BADGE PENDIENTE (GRIS/SLATE CRISTAL) */
+.badge-pending {
+  background: rgba(148, 163, 184, 0.1) !important;
+  color: #94a3b8 !important;
+  border: 1px solid #94a3b8 !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 12px !important;
+  font-size: 0.75rem !important;
+  font-weight: 800 !important;
+  text-transform: uppercase;
+}
+
+/* AVATAR VIBRANTE */
+.avatar {
+  width: 55px;
+  height: 55px;
+  border-radius: 18px;
+  background: var(--grad-main);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 900;
+  font-size: 1.3rem;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+  border: 2px solid rgba(255,255,255,0.1);
+}
