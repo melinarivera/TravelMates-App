@@ -81,9 +81,8 @@ export default function Navbar() {
                 <span>{link.label}</span>
               </Link>
             ))}
-            <button className="navbar-link-mobile" onClick={handleLogout} style={{ border: 'none', background: 'transparent', color: 'var(--btn-logout)' }}>
+            <button className="btn-logout-vibrant show-mobile-only" onClick={handleLogout}>
               <LogOut size={24} />
-              <span style={{ color: 'var(--btn-logout)' }}>Salir</span>
             </button>
           </div>
         )}
