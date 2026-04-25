@@ -134,11 +134,15 @@
   justify-content: center;
 }
 
-.trip-card-emoji {
-  font-size: 3.5rem;
-  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.15));
-  animation: float 4s ease-in-out infinite;
+.trip-card-icon {
+  font-size: 2.5rem;
+  color: white;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
 }
+
+.badge-sun { background: var(--primary-lt); color: var(--primary-dk); }
+.badge-sky { background: var(--sky-lt); color: var(--sky-dk); }
+.badge-slate { background: var(--gray-100); color: var(--gray-600); }
 
 .trip-card-badge {
   position: absolute;
@@ -227,8 +231,8 @@
 
 /* Invitation Card Styles */
 .trip-card-invitation {
-  border: 2px dashed var(--sun-dk);
-  background: linear-gradient(to bottom, var(--white), var(--sun-lt) 200%);
+  border: 2px dashed var(--primary);
+  background: linear-gradient(to bottom, var(--white), var(--primary-lt) 200%);
 }
 
 .invitation-actions {
