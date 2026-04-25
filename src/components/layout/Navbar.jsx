@@ -26,6 +26,7 @@ export default function Navbar({ tripName }) {
   const basePath = isTripPage ? `/trip/${tripId}` : ''
 
   const handleSignOut = async () => {
+    setOpen(false)
     await signOut()
     navigate('/auth')
   }
@@ -34,10 +35,18 @@ export default function Navbar({ tripName }) {
 
   return (
     <>
+      {/* Backdrop to close mobile menu */}
+      {open && (
+        <div
+          className="navbar-backdrop"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
       <nav className="navbar">
         <div className="navbar-inner">
           {/* Logo */}
-          <Link to="/" className="navbar-logo">
+          <Link to="/" className="navbar-logo" onClick={() => setOpen(false)}>
             <div className="navbar-logo-icon">
               <Plane size={20} />
             </div>
@@ -83,8 +92,9 @@ export default function Navbar({ tripName }) {
             </button>
             <button
               className="btn btn-ghost btn-icon navbar-hamburger"
-              onClick={() => setOpen(!open)}
+              onClick={() => setOpen(o => !o)}
               aria-label="Menu"
+              aria-expanded={open}
             >
               {open ? <X size={22} /> : <Menu size={22} />}
             </button>
@@ -92,29 +102,41 @@ export default function Navbar({ tripName }) {
         </div>
 
         {/* Mobile drawer */}
-        {open && (
-          <div className="navbar-mobile">
-            {isTripPage && tripLinks.map(link => {
-              const href = `${basePath}${link.to}`
-              const active = location.pathname === href
-              return (
-                <Link
-                  key={link.to}
-                  to={href}
-                  className={`navbar-mobile-link ${active ? 'active' : ''}`}
-                  onClick={() => setOpen(false)}
-                >
-                  {link.icon}
-                  <span>{link.label}</span>
-                </Link>
-              )
-            })}
-            <button className="navbar-mobile-link" onClick={handleSignOut} style={{ color: 'var(--coral)' }}>
-              <LogOut size={18} />
-              <span>Cerrar sesión</span>
-            </button>
-          </div>
-        )}
+        <div className={`navbar-mobile${open ? ' open' : ''}`}>
+          {/* Dashboard link always visible */}
+          <Link
+            to="/"
+            className={`navbar-mobile-link ${location.pathname === '/' ? 'active' : ''}`}
+            onClick={() => setOpen(false)}
+          >
+            <Home size={18} />
+            <span>Mis viajes</span>
+          </Link>
+
+          {/* Trip sub-links if inside a trip */}
+          {isTripPage && tripLinks.slice(1).map(link => {
+            const href = `${basePath}${link.to}`
+            const active = location.pathname === href
+            return (
+              <Link
+                key={link.to}
+                to={href}
+                className={`navbar-mobile-link ${active ? 'active' : ''}`}
+                onClick={() => setOpen(false)}
+              >
+                {link.icon}
+                <span>{link.label}</span>
+              </Link>
+            )
+          })}
+
+          <div className="navbar-mobile-divider" />
+
+          <button className="navbar-mobile-link" onClick={handleSignOut} style={{ color: 'var(--coral)' }}>
+            <LogOut size={18} />
+            <span>Cerrar sesión</span>
+          </button>
+        </div>
       </nav>
       <div className="navbar-spacer" />
     </>
