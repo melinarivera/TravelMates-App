@@ -32,21 +32,32 @@ export default function Members() {
   useEffect(() => { fetchData() }, [tripId])
 
   async function fetchData() {
-    const { data: tripData } = await supabase.from('trips').select('name, owner_id').eq('id', tripId).single()
-    if (tripData) setTrip(tripData)
+    if (!tripId) return
+    setLoading(true)
 
-    const { data } = await supabase
-      .from('trip_members')
-      .select('*, profile:profiles(full_name, avatar_url)')
-      .eq('trip_id', tripId)
-      .order('created_at')
+    try {
+      const { data: tripData, error: tripErr } = await supabase.from('trips').select('name, owner_id').eq('id', tripId).single()
+      if (tripErr) throw tripErr
+      if (tripData) setTrip(tripData)
 
-    if (data) {
-      setMembers(data)
-      const me = data.find(m => m.user_id === user.id)
-      if (me) setMyRole(me.role)
+      const { data, error: memErr } = await supabase
+        .from('trip_members')
+        .select('*, profile:profiles(full_name, avatar_url)')
+        .eq('trip_id', tripId)
+        .order('created_at')
+
+      if (memErr) throw memErr
+
+      if (data) {
+        setMembers(data)
+        const me = data.find(m => m.user_id === user.id)
+        if (me) setMyRole(me.role)
+      }
+    } catch (err) {
+      console.error('Error fetching members:', err)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   async function inviteMember(e) {
