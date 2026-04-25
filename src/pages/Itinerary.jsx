@@ -46,7 +46,8 @@ export default function Itinerary() {
   async function saveActivity(e) {
     e.preventDefault()
     setSaving(true)
-    await supabase.from('itinerary_activities').insert({ ...form, trip_id: tripId, user_id: user.id })
+    const { error } = await supabase.from('itinerary_activities').insert({ ...form, trip_id: tripId, user_id: user.id })
+    if (error) alert(error.message)
     setShowModal(false)
     setForm({ day_date: '', time: '', title: '', location: '', description: '', type: 'activity', source: 'manual' })
     fetchData()
@@ -75,11 +76,11 @@ export default function Itinerary() {
             <div className="module-icon-box"><Calendar size={28} /></div>
             <div>
               <h1 className="module-title">Itinerario</h1>
-              <p className="module-subtitle">Planes confirmados y propuestas</p>
+              <p className="module-subtitle">Cronograma del viaje</p>
             </div>
           </div>
           <button className="btn btn-add-desktop hide-mobile" onClick={() => setShowModal(true)}>
-            <Plus size={20} /> Proponer Actividad
+            <Plus size={20} /> Añadir
           </button>
         </header>
 
@@ -94,21 +95,24 @@ export default function Itinerary() {
                   {acts.map(act => (
                     <div key={act.id} className="activity-card glass-card">
                       <div className="activity-time">
-                        <Clock size={16} /> {act.time || 'Pendiente'}
+                        <Clock size={14} /> {act.time ? act.time.slice(0, 5) : 'Pendiente'}
                       </div>
                       <div className="activity-content">
                         <h3 className="activity-title">{act.title}</h3>
-                        {act.location && <p className="activity-loc"><MapPin size={14} /> {act.location}</p>}
+                        {act.location && <p className="activity-loc"><MapPin size={12} /> {act.location}</p>}
                       </div>
                       <div className="activity-actions">
-                         <div className="vote-btns">
-                            <button className="btn btn-ghost btn-sm" onClick={() => vote(act.id, 'up')}>
+                         <div className="vote-btns" style={{ display: 'flex', gap: '0.5rem' }}>
+                            <button className="btn btn-sm vote-btn-up" onClick={() => vote(act.id, 'up')}>
                               <ThumbsUp size={16} /> <span>{act.activity_votes?.filter(v => v.vote === 'up').length || 0}</span>
+                            </button>
+                            <button className="btn btn-sm vote-btn-down" onClick={() => vote(act.id, 'down')}>
+                              <ThumbsDown size={16} /> <span>{act.activity_votes?.filter(v => v.vote === 'down').length || 0}</span>
                             </button>
                          </div>
                          {isTitular && (
-                           <button className="btn btn-ghost btn-sm" onClick={() => deleteActivity(act.id)} style={{ color: 'var(--coral)' }}>
-                             <Trash2 size={16} />
+                           <button className="btn btn-ghost btn-sm" onClick={() => deleteActivity(act.id)} style={{ color: 'var(--coral)', marginLeft: 'auto' }}>
+                             <Trash2 size={18} />
                            </button>
                          )}
                       </div>
@@ -126,11 +130,11 @@ export default function Itinerary() {
       </button>
 
       {showModal && (
-        <Modal title="Nueva Actividad" onClose={() => setShowModal(false)}>
+        <Modal title="Añadir Actividad" onClose={() => setShowModal(false)}>
           <form onSubmit={saveActivity} className="create-trip-form">
             <div className="form-group">
               <label className="form-label">Título</label>
-              <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} />
+              <input type="text" className="form-input" required value={form.title} onChange={e => setForm(f => ({ ...f, title: e.target.value }))} placeholder="Ej. Cena, Museo..." />
             </div>
             <div className="grid-2">
               <div className="form-group">
@@ -143,8 +147,7 @@ export default function Itinerary() {
               </div>
             </div>
             <div className="modal-actions">
-              <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Cerrar</button>
-              <button type="submit" className="btn btn-primary" disabled={saving}>Guardar</button>
+              <button type="submit" className="btn btn-primary" disabled={saving} style={{ width: '100%' }}>Guardar Actividad</button>
             </div>
           </form>
         </Modal>
