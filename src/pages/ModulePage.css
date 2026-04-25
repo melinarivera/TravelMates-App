@@ -1,49 +1,62 @@
-/* MEJORA DE RESALTE Y ESPACIADO - MIS VIAJES ONLY */
+/* SISTEMA FLUORESCENTE - NEON VIBES */
 
-.dashboard-body {
-  padding-top: 4rem !important;
-  padding-bottom: 8rem !important;
+:root {
+  --neon-red:   #ff3131; /* Rojo Eléctrico */
+  --neon-green: #39ff14; /* Verde Neón */
+  --neon-blue:  #00d4ff; /* Azul Eléctrico */
+  --neon-purple:#bc13fe; /* Morado Vibrante */
 }
 
-.trips-grid {
-  gap: 3.5rem !important; /* Más espacio entre tarjetas */
-  margin-top: 4rem !important;
-}
-
-/* BOTÓN VERDE SÓLIDO TOTAL */
+/* BOTONES FLUORESCENTES */
 .btn-add-vibrant {
-  background: #10b981 !important; /* Verde Sólido */
-  color: #000 !important; /* Texto negro para contraste máximo si es necesario, o blanco muy grueso */
+  background: var(--neon-green) !important;
+  color: #000 !important; /* Texto negro para contraste máximo sobre neón */
   font-weight: 900 !important;
-  border-radius: 14px !important;
-  padding: 1rem 2rem !important;
-  box-shadow: 0 10px 25px rgba(16, 185, 129, 0.5) !important;
+  box-shadow: 0 0 20px rgba(57, 255, 20, 0.4) !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+.btn-delete-vibrant, .btn-logout-vibrant {
+  background: var(--neon-red) !important;
+  color: white !important;
   border: none !important;
-  font-size: 1rem !important;
-  color: white !important; /* Mantenemos blanco pero con peso 900 */
-}
-
-.btn-add-vibrant:hover {
-  transform: translateY(-3px) scale(1.02);
-  background: #059669 !important; /* Verde un poco más oscuro al pasar el ratón */
-}
-
-/* ESTADOS QUE RESALTAN (MÁS OPACIDAD) */
-.trip-card-status-badge {
-  padding: 0.6rem 1.2rem !important;
-  border-radius: 12px !important;
-  font-size: 0.75rem !important;
+  box-shadow: 0 0 20px rgba(255, 49, 49, 0.4) !important;
   font-weight: 900 !important;
-  letter-spacing: 0.1em !important;
-  backdrop-filter: blur(15px) !important;
-  border: 2px solid rgba(255,255,255,0.2) !important;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.4) !important;
 }
 
-/* FORMULARIO MODAL CON MÁS AIRE */
-.create-trip-form {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-  margin-top: 1rem;
+.btn-delete-vibrant:hover, .btn-logout-vibrant:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 30px rgba(255, 49, 49, 0.6) !important;
+}
+
+/* BADGE PLANIFICADO AZUL FLUORESCENTE */
+.trip-card-status-badge {
+  background: rgba(0, 212, 255, 0.2) !important;
+  color: var(--neon-blue) !important;
+  border: 2px solid var(--neon-blue) !important;
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.4) !important;
+  font-weight: 900 !important;
+}
+
+/* BOTÓN ENTRAR ORIGINAL MORADO */
+.btn-entrar {
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%) !important;
+  color: white !important;
+  padding: 0.7rem 1.6rem !important;
+  border-radius: 12px !important;
+  font-weight: 800 !important;
+  box-shadow: 0 5px 15px rgba(139, 92, 246, 0.4) !important;
+  border: 1px solid rgba(255,255,255,0.2) !important;
+}
+
+.btn-entrar:hover {
+  background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%) !important;
+  box-shadow: 0 8px 20px rgba(139, 92, 246, 0.6) !important;
+}
+
+/* AVIÓN CENTRADO (DASHBOARD) */
+.trip-card-cover-placeholder {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
