@@ -274,6 +274,21 @@
 .vote-up:hover  { background: rgba(5,150,105,0.1); }
 .vote-down:hover { background: rgba(79, 70, 229, 0.1); }
 
+.vote-section {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: var(--gray-50);
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-md);
+}
+
+.vote-count {
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-left: 0.2rem;
+}
+
 /* ============================================================
    MAP / POI
    ============================================================ */
