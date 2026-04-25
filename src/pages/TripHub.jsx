@@ -210,23 +210,6 @@ export default function TripHub() {
                 </div>
               )}
               
-              <div className="hub-meta-white">
-                {trip?.destination && <span><MapPin size={16} />{trip.destination}</span>}
-                <div className="divider-v" />
-                <span><Users size={16} />{memberCount} integrantes</span>
-              </div>
-            </div>
-
-            {isTitular && (
-              <button className="btn btn-ghost-white hub-edit-cover" onClick={() => setShowCoverModal(true)}>
-                <Edit3 size={16} /> Cambiar portada
-              </button>
-            )}
-          </div>
-        </div>
-      </div>
-
-      <div className="container hub-body">
 
         {/* Module cards */}
         <div className="hub-modules fade-in-up delay-1">
