@@ -24,7 +24,7 @@
 | 📅 **Itinerarios Colaborativos** | Planifica día a día las actividades de tu viaje en tiempo real con todo tu grupo. |
 | 💸 **Control de Gastos** | Lleva un registro claro de quién pagó qué y cuánto debe cada persona. Presupuesto compartido sin estrés. |
 | 📍 **Puntos de Interés** | Descubre, guarda y comparte en un mapa interactivo los lugares que no pueden dejar de visitar. |
-| 💬 **Chat Grupal Integrado** | Mantén la comunicación centralizada por cada viaje para no perder ningún detalle. |
+| 💬 **Enlace de Grupo** | Vincula el grupo de WhatsApp o Telegram de tu viaje para que todos los integrantes tengan acceso rápido desde la app. |
 | 🎨 **Diseño Moderno e Intuitivo** | Una interfaz limpia, amigable y responsiva, lista para usar en cualquier dispositivo. |
 
 ---
