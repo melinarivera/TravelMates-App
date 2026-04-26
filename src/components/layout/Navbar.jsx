@@ -35,7 +35,7 @@ export default function Navbar() {
       <div className="navbar-inner">
         
         <Link to="/" className="navbar-logo" style={{ textDecoration: 'none' }}>
-          <img src="/logo.svg" alt="TravelMates Logo" style={{ width: '42px', height: '42px', objectFit: 'contain' }} />
+          <img src={`${import.meta.env.BASE_URL}logo.svg`} alt="TravelMates Logo" style={{ width: '42px', height: '42px', objectFit: 'contain' }} />
           <span style={{ fontSize: '1.2rem', fontWeight: 800, color: 'white', fontFamily: "'Outfit', sans-serif", letterSpacing: '-0.5px' }}>TravelMates</span>
         </Link>
 
