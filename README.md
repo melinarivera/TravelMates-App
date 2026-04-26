@@ -48,51 +48,6 @@ El ecosistema de **TravelMates** está construido sobre tecnologías modernas pa
 
 ---
 
-## 🛠️ Instalación Local
-
-> ⚠️ **Antes de continuar, lee la sección de [Licencia y Uso](#%EF%B8%8F-licencia-y-uso) al final de este documento.**
-
-Sigue estos pasos para correr el proyecto en tu entorno local:
-
-**1. Clonar el repositorio**
-```bash
-git clone https://github.com/melinarivera/TravelMates-App.git
-cd TravelMates-App
-```
-
-**2. Instalar dependencias**
-```bash
-npm install
-```
-
-**3. Configurar variables de entorno**
-
-Crea un archivo `.env` en la raíz del proyecto tomando como base `.env.example` y agrega tus credenciales de Supabase:
-```env
-VITE_SUPABASE_URL=tu_url_de_supabase
-VITE_SUPABASE_ANON_KEY=tu_clave_anon_de_supabase
-```
-
-**4. Ejecutar en modo desarrollo**
-```bash
-npm run dev
-```
-La aplicación estará disponible en `http://localhost:5173/`.
-
----
-
-## 📦 Despliegue
-
-El proyecto está configurado para desplegarse en **GitHub Pages**. Para publicar una nueva versión:
-
-```bash
-npm run deploy
-```
-
-Este comando construye la versión de producción (`dist/`) y la sube automáticamente a la rama `gh-pages`.
-
----
-
 ## ⚖️ Licencia y Uso
 
 **© 2025 Melina Rivera. Todos los derechos reservados.**
